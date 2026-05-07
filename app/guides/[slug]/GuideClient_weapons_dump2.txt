@@ -1,0 +1,245 @@
+{activeTab === 'WEAPONS' && (
+          <motion.div 
+            key="weapons"
+            variants={tabVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-[1400px] mx-auto w-full h-full z-30"
+          >
+             <div className="w-full h-full bg-[#090812] rounded-[2rem] border border-cyan-500/20 shadow-[0_20px_60px_-15px_rgba(6,182,212,0.3)] flex overflow-hidden relative font-sans text-slate-200">
+                 {/* Background Elements */}
+                 <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-cyan-500/30 rounded-full blur-[120px] opacity-70 mix-blend-screen pointer-events-none" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-fuchsia-600/20 rounded-full blur-[100px] opacity-70 -translate-x-1/4 translate-y-1/4 mix-blend-screen pointer-events-none" />
+                    <div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-[100px] opacity-50 mix-blend-screen pointer-events-none" />
+                 </div>
+                 
+                 {/* Left Panel: Weapon List */}
+                 <div className="hidden lg:flex w-[35%] flex-col bg-white/[0.03] backdrop-blur-3xl border-r border-white/10 z-10 p-6 sm:p-8 relative shadow-[10px_0_30px_-15px_rgba(0,0,0,0.5)]">
+                    <div className="flex items-center gap-3 mb-8 ml-1">
+                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-950/80 to-fuchsia-950/80 flex items-center justify-center border border-cyan-500/30 shadow-sm shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                          <img src="https://api.iconify.design/game-icons:crossed-swords.svg?color=%2306b6d4" className="w-5 h-5 opacity-90 drop-shadow-sm" alt="Weapon" />
+                       </div>
+                       <h2 className="text-[15px] font-black text-white uppercase tracking-[0.15em] drop-shadow-sm">
+                          Featured Weapons
+                       </h2>
+                    </div>
+                    <div className="flex-1 flex flex-col space-y-4 pb-6 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent">
+                      {(content.weapons || []).map((weapon: any, i: number) => {
+                        const isSelected = selectedWeaponIdx === i;
+                        const weaponRank = weapon.rank || (weapon.isBis ? 'S+' : (i === 1 ? 'S' : (i === 2 ? 'A' : 'B')));
+                        
+                        const rankInfo = weaponRank === 'S+' ? { color: 'text-amber-500', glow: 'bg-amber-400' } :
+                                         weaponRank === 'S'  ? { color: 'text-fuchsia-500', glow: 'bg-fuchsia-400' } :
+                                         weaponRank === 'A'  ? { color: 'text-sky-500', glow: 'bg-sky-400' } :
+                                         { color: 'text-slate-400', glow: 'bg-slate-400' };
+
+                        const bgGradient = weaponRank === 'S+' ? 'from-amber-500/80 to-orange-500/80' :
+                                           weaponRank === 'S'  ? 'from-fuchsia-500/80 to-purple-500/80' :
+                                           weaponRank === 'A'  ? 'from-cyan-500/80 to-indigo-500/80' :
+                                           'from-slate-600/80 to-slate-700/80';
+
+                        const isSig = weapon.isSignature;
+                        return (
+                          <div 
+                            key={i} 
+                            onClick={() => setSelectedWeaponIdx(i)} 
+                            className={`group relative h-[110px] rounded-[1.25rem] flex items-center transition-all duration-500 cursor-pointer overflow-hidden border p-2 gap-4 ${
+                              isSelected 
+                                ? (isSig 
+                                    ? 'border-fuchsia-400/80 bg-fuchsia-950/30 shadow-[0_0_30px_-5px_rgba(192,38,211,0.4)] scale-[1.02] z-10' 
+                                    : 'border-cyan-400/80 bg-cyan-950/30 shadow-[0_0_30px_-5px_rgba(6,182,212,0.4)] scale-[1.02] z-10') 
+                                : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 hover:shadow-md hover:-translate-y-0.5'
+                            }`}
+                          >
+                             
+                             {/* Indicator Line */}
+                             {isSelected && (
+                               <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 rounded-r-md ${isSig ? 'bg-fuchsia-400 shadow-[0_0_15px_rgba(192,38,211,0.8)]' : 'bg-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.8)]'}`} />
+                             )}
+
+                             {/* Image Container */}
+                             <div className={`w-[80px] sm:w-[90px] h-full rounded-xl flex items-center justify-center relative overflow-hidden shrink-0 transition-all duration-500 ${isSelected ? '' : 'grayscale-[0.2] opacity-80 group-hover:grayscale-0 group-hover:opacity-100'}`}>
+                                <div className={`absolute inset-0 border border-black/5 rounded-xl z-20`} />
+                                <div className={`absolute inset-0 bg-gradient-to-br opacity-80 z-10 ${isSelected ? bgGradient : 'from-[#0B0A10] to-[#1A1825] group-hover:from-slate-800/80 group-hover:to-slate-700/80'}`} />
+                                
+                                {/* Rank Badge Overlay inside image container */}
+                                <div className={`absolute top-0 right-0 bg-black/80 backdrop-blur-md rounded-bl-lg px-2.5 py-0.5 z-30 flex items-center justify-center border-l border-b border-black/5 shadow-sm`}>
+                                   <span className={`text-[11px] font-black italic drop-shadow-sm leading-none ${rankInfo.color}`}>{weaponRank}</span>
+                                </div>
+
+                                {weapon.imageUrl ? (
+                                   <img src={weapon.imageUrl} alt="" className="absolute inset-0 w-[120%] h-[120%] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] transform -rotate-12 scale-90 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-700 ease-out origin-center z-20 mix-blend-normal" />
+                                ) : (
+                                   <img src="https://api.iconify.design/game-icons:broadsword.svg?color=%2394a3b8" className="w-[42px] h-[42px] opacity-40 z-20 drop-shadow-sm" alt="Weapon" />
+                                )}
+                             </div>
+                             
+                             {/* Content */}
+                             <div className="flex flex-col justify-center flex-1 min-w-0 pr-4 py-2 relative z-20">
+                                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                  {isSig && (
+                                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-fuchsia-300 bg-fuchsia-950/50 border border-fuchsia-500/30 rounded leading-none flex items-center gap-1 shadow-sm">
+                                      <img src="https://api.iconify.design/game-icons:sparkles.svg?color=%23c026d3" className="w-2.5 h-2.5" alt="Signature" /> Signature
+                                    </span>
+                                  )}
+                                  {weapon.isBis && !isSig && (
+                                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 rounded leading-none flex items-center gap-1 shadow-sm">
+                                      <img src="https://api.iconify.design/game-icons:bullseye.svg?color=%2322d3ee" className="w-2.5 h-2.5" alt="BiS" /> BiS
+                                    </span>
+                                  )}
+                                </div>
+
+                                <h3 className={`font-bold text-sm tracking-wide leading-tight mb-2 truncate ${isSelected ? 'text-white' : 'text-slate-400 group-hover:text-white transition-colors'}`}>{weapon.name}</h3>
+                                
+                                <div className="flex items-center gap-1.5">
+                                   <div className="flex items-center bg-black/50 shadow-sm px-2.5 py-1 rounded-md border border-white/10">
+                                     {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
+                                        <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5 Stars" className="h-[12px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]" />
+                                     ) : parseInt(weapon.rarity) === 4 ? (
+                                        <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4 Stars" className="h-[12px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(192,38,211,0.3)]" />
+                                     ) : (
+                                        <div className="flex gap-0.5">
+                                          {[...Array(parseInt(weapon.rarity))].map((_, idx) => (
+                                            <img key={idx} src="https://api.iconify.design/game-icons:crested-helmet.svg?color=%2394a3b8" className="w-3 h-3 opacity-60" alt="Star" />
+                                          ))}
+                                        </div>
+                                     )}
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                 </div>
+
+                 {/* Right Panel: Weapon Details */}
+                 <div className="flex-1 relative z-10 p-8 lg:p-12 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent flex flex-col pt-10">
+                   {content.weapons && content.weapons.length > 0 && (
+                       (() => {
+                         const weapon = content.weapons[selectedWeaponIdx] || content.weapons[0];
+                         const isBis = weapon.isBis || selectedWeaponIdx === 0;
+                         const rankText = weapon.rank || (isBis ? 'S+' : (selectedWeaponIdx === 1 ? 'S' : (selectedWeaponIdx === 2 ? 'A' : 'B')));
+                         const rankColor = rankText === 'S+' ? 'text-amber-500' : 
+                                           rankText === 'S' ? 'text-fuchsia-500' : 
+                                           rankText === 'A' ? 'text-sky-500' : 'text-slate-500';
+
+                         return (
+                          <motion.div 
+                            key={weapon.name}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                            className="flex flex-col min-h-full relative w-full pt-10"
+                          >
+                             {/* Weapon Image Display Component */}
+                             <div className="absolute right-[-15%] top-[0%] bottom-0 w-[60%] flex items-center justify-center z-0 pointer-events-none opacity-40 lg:opacity-100 mix-blend-multiply">
+                                {weapon.imageUrl && (
+                                  <motion.img 
+                                   initial={{ opacity: 0, scale: 0.9, rotate: (weapon.imageRotate !== undefined ? weapon.imageRotate : -12) + 5 }}
+                                   animate={{ opacity: 1, scale: 1, rotate: weapon.imageRotate !== undefined ? weapon.imageRotate : -12 }}
+                                   transition={{ duration: 0.8, ease: "easeOut" }}
+                                   src={weapon.imageUrl} 
+                                   alt={weapon.name} 
+                                   className="drop-shadow-[0_30px_60px_rgba(0,0,0,0.3)] object-contain mix-blend-plus-darker"
+                                   style={{
+                                      width: '120%', 
+                                      height: '110%', 
+                                      transform: `scale(${weapon.imageScale !== undefined ? weapon.imageScale : 1}) translate(${weapon.imageX || 0}px, ${weapon.imageY || 0}px)`
+                                   }}
+                                  />
+                                )}
+                             </div>
+
+                             {/* Text Column */}
+                             <div className="w-full lg:w-[60%] flex flex-col z-20 shrink-0">
+                                <div className="mb-8">
+                                   <div className="flex flex-wrap gap-2 mb-4">
+                                     {weapon.isSignature && (
+                                        <span className="px-3 py-1.5 bg-fuchsia-950/60 text-fuchsia-300 text-[10px] font-black uppercase tracking-[0.2em] rounded border border-fuchsia-500/40 shadow-[0_0_20px_rgba(192,38,211,0.3)] flex items-center gap-1.5 shadow-sm">
+                                          <img src="https://api.iconify.design/game-icons:sparkles.svg?color=%23c026d3" className="w-3.5 h-3.5 opacity-90" alt="Signature" /> SIGNATURE
+                                        </span>
+                                     )}
+                                     {weapon.isBis && (
+                                        <span className="px-3 py-1.5 bg-cyan-950/60 text-cyan-300 text-[10px] font-black uppercase tracking-[0.2em] rounded border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.3)] flex items-center gap-1.5 shadow-sm">
+                                          <img src="https://api.iconify.design/game-icons:bullseye.svg?color=%23d97706" className="w-3.5 h-3.5 opacity-90" alt="BiS" /> BEST IN SLOT
+                                        </span>
+                                     )}
+                                   </div>
+                                   <h2 className="font-sans font-black text-[38px] lg:text-[46px] text-white leading-[1.1] mb-6 tracking-tight drop-shadow-sm">{weapon.name}</h2>
+                                   
+                                   <div className="flex items-center gap-4 text-[14px] font-bold text-slate-300 mb-8">
+                                     <div className="flex gap-2 items-center bg-white shadow-sm px-4 py-2 rounded-xl border border-white/10">
+                                        <span className="text-slate-400 uppercase tracking-widest text-[10px] mr-2">Rarity</span>
+                                        {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
+                                           <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5 Stars" className="h-[18px] w-auto object-contain drop-shadow-sm" />
+                                        ) : parseInt(weapon.rarity) === 4 ? (
+                                           <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4 Stars" className="h-[18px] w-auto object-contain drop-shadow-sm" />
+                                        ) : (
+                                           [...Array(parseInt(weapon.rarity) || 0)].map((_, i) => (
+                                             <img key={i} src="https://api.iconify.design/game-icons:crested-helmet.svg?color=%2394a3b8" className="w-4 h-4 opacity-70" alt="Star" />
+                                           ))
+                                        )}
+                                     </div>
+                                     <div className="flex items-center gap-3">
+                                       <span className="text-slate-400 uppercase tracking-widest text-[10px]">Rank</span>
+                                       <span className={`font-black italic text-[24px] leading-none ${rankColor} drop-shadow-sm`}>{rankText}</span>
+                                     </div>
+                                   </div>
+                                </div>
+                                
+                                <div className="flex gap-4 mb-8">
+                                   <div className="flex-1 bg-[#151423]/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col justify-center shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-colors">
+                                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-fuchsia-500/40 to-transparent opacity-30 rounded-bl-full pointer-events-none" />
+                                      <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
+                                        <img src="https://api.iconify.design/game-icons:crossed-axes.svg?color=%23e879f9" className="w-4 h-4 opacity-80" alt="Base ATK" />
+                                        <span className="text-[11px] font-bold uppercase tracking-widest">Base ATK</span>
+                                      </div>
+                                      <span className="text-[32px] font-black text-fuchsia-400 drop-shadow-[0_0_10px_rgba(232,121,249,0.5)] font-mono tracking-tighter leading-none relative z-10">{weapon.baseAtk || '587'}</span>
+                                   </div>
+                                   <div className="flex-1 bg-[#151423]/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 flex flex-col justify-center shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-colors">
+                                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-cyan-500/40 to-transparent opacity-30 rounded-bl-full pointer-events-none" />
+                                      <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
+                                        <img src="https://api.iconify.design/game-icons:lightning-trio.svg?color=%2322d3ee" className="w-4 h-4 opacity-80" alt="Secondary Stat" />
+                                        <span className="text-[11px] font-bold uppercase tracking-widest leading-tight truncate">{weapon.secondaryStat || 'CRIT Rate'}</span>
+                                      </div>
+                                      <span className="text-[32px] font-black text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)] font-mono tracking-tighter leading-none relative z-10">{weapon.secondaryStatValue || '24.3%'}</span>
+                                   </div>
+                                </div>
+                                
+                                <div className="mb-6 z-10 w-full xl:w-[110%] bg-[#0F0E18]/90 backdrop-blur-xl rounded-[1.5rem] p-6 sm:p-8 border border-white/10 shadow-xl relative overflow-hidden shrink-0">
+                                   <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-cyan-400 to-fuchsia-500 shadow-[0_0_20px_rgba(6,182,212,0.5)]" />
+                                   <p className="text-[14px] text-slate-200 leading-relaxed font-semibold whitespace-pre-wrap">
+                                     {weapon.passiveDescription || weapon.description}
+                                   </p>
+                                </div>
+                                
+                                {weapon.reasoning && (
+                                  <div className="z-10 w-full xl:w-[110%] bg-[#101928]/80 rounded-2xl p-6 border border-cyan-500/20">
+                                     <div className="flex items-center gap-2 mb-3">
+                                        <img src="https://api.iconify.design/game-icons:bookmark.svg?color=%23d97706" className="w-4 h-4 opacity-80" alt="Info" />
+                                        <span className="font-black text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)] uppercase tracking-widest text-[11px]">Why this weapon?</span>
+                                     </div>
+                                     <p className="text-[14px] text-slate-600 font-medium leading-relaxed drop-shadow-sm pl-6 border-l-2 border-cyan-500/40 py-1">
+                                       {weapon.reasoning}
+                                     </p>
+                                  </div>
+                                )}
+                             </div>
+                          </motion.div>
+                         );
+                       })()
+                   )}
+                 </div>
+                 
+                 {/* Close Button - Optional */}
+                 <button onClick={() => setActiveTab('OVERVIEW')} className="absolute top-6 right-8 text-slate-400 hover:text-slate-700 bg-white/50 hover:bg-white p-3 rounded-full backdrop-blur-md border border-white/10 transition-all z-40 shadow-sm">
+                   <X size={24} />
+                 </button>
+             </div>
+          </motion.div>
+        )}
+
+        
