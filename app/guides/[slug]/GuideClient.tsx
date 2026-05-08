@@ -712,9 +712,17 @@ export default function GuideClient({ guide }: { guide: any }) {
 
             <motion.div
               style={{ x: bgTextX, y: bgTextY }}
-              className="absolute top-[8%] left-[-5%] overflow-hidden pointer-events-none w-[150%]"
+              className="absolute top-[5%] left-[-5%] overflow-hidden pointer-events-none w-[150%] select-none"
             >
-              <span className="text-[35vw] font-black uppercase tracking-tighter text-transparent stroke-black leading-none break-all opacity-[0.03] [WebkitTextStroke:4px_#000]">
+              <span
+                className="text-[30vw] lg:text-[35vw] font-black uppercase tracking-tighter leading-none break-all block"
+                style={{
+                  WebkitTextStroke: '3px rgba(0,0,0,0.08)',
+                  color: 'transparent',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '0 0 80px rgba(0,0,0,0.02)',
+                }}
+              >
                 {guide.name}
               </span>
             </motion.div>
