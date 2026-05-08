@@ -325,8 +325,17 @@ export default function AdminDashboard() {
     
     setStatus("loading");
     try {
-      const { error } = await supabase.from("guides").delete().eq('slug', slug);
+      const { error, count } = await supabase
+        .from("guides")
+        .delete({ count: 'exact' })
+        .eq('slug', slug);
+        
       if (error) throw error;
+      
+      if (count === 0) {
+        throw new Error("Delete blocked by Supabase! You must add a DELETE policy in your Row Level Security (RLS) settings in the Supabase Dashboard.");
+      }
+      
       setStatus("success");
       setErrorMessage(`Guide ${slug} deleted successfully!`);
       
@@ -1751,39 +1760,130 @@ export default function AdminDashboard() {
   </div>
 )}
 {activeTab === "skills" && (
-                    <div className="space-y-8">
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-semibold text-white">Skill Priority</h3>
-                        {(contentData.skillPriority || []).map((skill: any, idx: number) => (
-                        <div key={idx} className="bg-[#0f172a] border border-slate-700 rounded-lg p-5 relative group">
-                          <button type="button" onClick={() => removeItem("skillPriority", idx)} className="absolute top-4 right-4 text-slate-500 hover:text-red-400 transition-colors">
-                            <X size={18} />
-                          </button>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div className="space-y-2">
-                              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Skill Name</label>
-                              <input type="text" value={skill.name || ""} onChange={(e) => updateItem("skillPriority", idx, "name", e.target.value)} className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
-                            </div>
-                            <div className="space-y-2">
-                              <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Priority Level</label>
-                              <select value={skill.priority || "high"} onChange={(e) => updateItem("skillPriority", idx, "priority", e.target.value)} className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono">
-                                <option value="high">High</option>
-                                <option value="medium">Medium</option>
-                                <option value="low">Low</option>
-                              </select>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Reason</label>
-                            <textarea value={skill.reason || ""} onChange={(e) => updateItem("skillPriority", idx, "reason", e.target.value)} className="w-full h-16 bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
-                          </div>
+                    <div className="space-y-6">
+                      {/* Section Header with live preview */}
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                            <Zap size={16} className="text-amber-400" />
+                            Skill Upgrade Priority
+                          </h3>
+                          <span className="text-[10px] font-mono text-slate-500 border border-slate-700 px-2 py-0.5 rounded">
+                            {(contentData.skillPriority || []).length} skills
+                          </span>
                         </div>
-                      ))}
-                      <button type="button" onClick={() => addItem("skillPriority", { name: "", priority: "medium", reason: "" })} className="w-full py-4 border border-dashed border-amber-500/30 rounded-xl text-amber-400 hover:text-amber-300 hover:border-amber-500/60 hover:bg-amber-500/5 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wider text-xs">
+
+                        {/* Live Preview Strip */}
+                        {(contentData.skillPriority || []).length > 0 && (
+                          <div className="bg-white/5 backdrop-blur border border-slate-700/50 rounded-xl p-3 mb-4">
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-2">Live Preview</p>
+                            <div className="flex items-center flex-wrap gap-1.5">
+                              {(contentData.skillPriority || []).map((skill: any, idx: number) => {
+                                const p = skill.priority?.toLowerCase();
+                                const isHigh = p === 'high';
+                                const isMed = p === 'medium';
+                                return (
+                                  <span key={idx} className="contents">
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold ${isHigh ? "bg-white text-black" : isMed ? "bg-slate-600 text-slate-200" : "bg-slate-800 text-slate-400 border border-slate-700"}`}>
+                                      <span className="font-mono text-[8px] opacity-40">{String(idx + 1).padStart(2, '0')}</span>
+                                      <span>{skill.name || '—'}</span>
+                                    </div>
+                                    {idx < (contentData.skillPriority || []).length - 1 && (
+                                      <span className="text-slate-600 text-[10px] font-bold select-none">›</span>
+                                    )}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Skill Cards */}
+                      <div className="space-y-3">
+                        {(contentData.skillPriority || []).map((skill: any, idx: number) => {
+                          const p = skill.priority?.toLowerCase();
+                          const isHigh = p === 'high';
+                          const isMed = p === 'medium';
+                          const accentColor = isHigh ? 'amber' : isMed ? 'blue' : 'slate';
+
+                          return (
+                            <div key={idx} className="relative group">
+                              {/* Card */}
+                              <div className={`bg-[#0f172a] border rounded-xl overflow-hidden transition-all duration-200 ${isHigh ? "border-amber-500/30 hover:border-amber-500/50" : isMed ? "border-blue-500/20 hover:border-blue-500/40" : "border-slate-700/50 hover:border-slate-600"}`}>
+                                {/* Top bar with rank + name inline */}
+                                <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-800/50">
+                                  {/* Rank badge */}
+                                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${isHigh ? "bg-amber-500/20 text-amber-400" : isMed ? "bg-blue-500/20 text-blue-400" : "bg-slate-700 text-slate-400"}`}>
+                                    {String(idx + 1).padStart(2, '0')}
+                                  </div>
+
+                                  {/* Skill name input */}
+                                  <input
+                                    type="text"
+                                    value={skill.name || ""}
+                                    onChange={(e) => updateItem("skillPriority", idx, "name", e.target.value)}
+                                    placeholder="Skill name..."
+                                    aria-label={`Skill ${idx + 1} name`}
+                                    className="flex-1 bg-transparent text-sm text-white font-bold focus:outline-none placeholder:text-slate-600"
+                                  />
+
+                                  {/* Priority toggle buttons */}
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    {[
+                                      { val: 'high', label: '★', tip: 'Max', cls: 'bg-amber-500 text-black shadow-[0_0_8px_rgba(245,158,11,0.3)]' },
+                                      { val: 'medium', label: '●', tip: 'High', cls: 'bg-blue-500 text-white shadow-[0_0_6px_rgba(59,130,246,0.3)]' },
+                                      { val: 'low', label: '○', tip: 'Norm', cls: 'bg-slate-600 text-slate-300' },
+                                    ].map(opt => (
+                                      <button
+                                        key={opt.val}
+                                        type="button"
+                                        onClick={() => updateItem("skillPriority", idx, "priority", opt.val)}
+                                        title={opt.tip}
+                                        className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black transition-all duration-150 ${skill.priority === opt.val ? opt.cls : "bg-slate-800 text-slate-600 hover:text-slate-400 hover:bg-slate-700"}`}
+                                      >
+                                        {opt.label}
+                                      </button>
+                                    ))}
+                                  </div>
+
+                                  {/* Delete */}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeItem("skillPriority", idx)}
+                                    className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
+                                    aria-label={`Remove skill ${idx + 1}`}
+                                  >
+                                    <X size={14} />
+                                  </button>
+                                </div>
+
+                                {/* Reason textarea — compact */}
+                                <div className="px-4 py-2.5">
+                                  <textarea
+                                    value={skill.reason || ""}
+                                    onChange={(e) => updateItem("skillPriority", idx, "reason", e.target.value)}
+                                    placeholder="Why prioritize this skill..."
+                                    aria-label={`Skill ${idx + 1} reason`}
+                                    className="w-full bg-transparent text-[13px] text-slate-400 focus:text-slate-200 focus:outline-none placeholder:text-slate-700 resize-none leading-relaxed transition-colors"
+                                    rows={2}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Add button */}
+                      <button
+                        type="button"
+                        onClick={() => addItem("skillPriority", { name: "", priority: "medium", reason: "" })}
+                        className="w-full py-3.5 border border-dashed border-amber-500/30 rounded-xl text-amber-400 hover:text-amber-300 hover:border-amber-500/60 hover:bg-amber-500/5 transition-all flex items-center justify-center gap-2 font-bold uppercase tracking-wider text-xs"
+                      >
                         <Plus size={16} strokeWidth={3} /> Add Skill
                       </button>
                     </div>
-                  </div>
                   )}
 
                   {/* Teams Tab */}

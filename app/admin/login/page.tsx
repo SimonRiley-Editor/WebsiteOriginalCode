@@ -62,12 +62,12 @@ export default function AdminLogin() {
 
   const strength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
   const strengthLabel = ['', 'Weak', 'Good', 'Strong'];
-  const strengthColor = ['', '#EF4444', '#F59E0B', '#10B981'];
+  const strengthClass = ['', 'bg-[#EF4444]', 'bg-[#F59E0B]', 'bg-[#10B981]'];
+  const strengthTextClass = ['', 'text-[#EF4444]', 'text-[#F59E0B]', 'text-[#10B981]'];
 
   return (
     <div
-      className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden"
-      style={{ fontFamily: 'var(--font-cinzel), serif' }}
+      className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden font-cinzel"
     >
       {/* Live Wallpaper Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -75,9 +75,7 @@ export default function AdminLogin() {
           <source src="https://res.cloudinary.com/ds6dwbk37/video/upload/v1778157719/Wuthering_Waves_-_Shorekeeper_Live_Wallpaper_jthaws.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.65)_100%)]" />
-        <div className="absolute inset-0 mix-blend-overlay bg-black/20"
-          style={{ backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)` }}
-        />
+        <div className="absolute inset-0 mix-blend-overlay bg-black/20 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.08)_2px,rgba(0,0,0,0.08)_4px)]" />
       </div>
 
       {/* 3D Tilt Card */}
@@ -94,9 +92,9 @@ export default function AdminLogin() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         {/* Glow that follows tilt */}
-        <div
+        <motion.div
           className="absolute -inset-1 rounded-[36px] opacity-30 blur-xl transition-all duration-300 pointer-events-none"
-          style={{
+          animate={{
             background: `radial-gradient(circle at ${50 + mousePos.x * 3}% ${50 - mousePos.y * 3}%, rgba(255,255,255,0.3), transparent 70%)`
           }}
         />
@@ -186,8 +184,7 @@ export default function AdminLogin() {
                   onBlur={() => setIsFocused(false)}
                   onKeyUp={(e) => setCapsLock(e.getModifierState('CapsLock'))}
                   placeholder="Enter password"
-                  className="w-full bg-black/20 backdrop-blur-md border border-white/8 rounded-xl px-4 py-3.5 pr-12 text-white placeholder:text-white/20 focus:outline-none transition-all text-sm"
-                  style={{ fontFamily: 'var(--font-rajdhani), sans-serif', letterSpacing: showPassword ? '0.05em' : '0.2em' }}
+                  className={`w-full bg-black/20 backdrop-blur-md border border-white/8 rounded-xl px-4 py-3.5 pr-12 text-white placeholder:text-white/20 focus:outline-none transition-all text-sm font-rajdhani ${showPassword ? 'tracking-[0.05em]' : 'tracking-[0.2em]'}`}
                 />
 
                 {/* Toggle visibility */}
@@ -217,8 +214,7 @@ export default function AdminLogin() {
                           className="h-[2px] flex-1 rounded-full bg-white/10 overflow-hidden"
                         >
                           <motion.div
-                            className="h-full rounded-full"
-                            style={{ backgroundColor: strengthColor[strength] }}
+                            className={`h-full rounded-full ${strengthClass[strength]}`}
                             initial={{ width: '0%' }}
                             animate={{ width: strength >= i ? '100%' : '0%' }}
                             transition={{ duration: 0.3, delay: i * 0.05 }}
@@ -226,7 +222,7 @@ export default function AdminLogin() {
                         </motion.div>
                       ))}
                     </div>
-                    <span className="text-[10px] tracking-wider" style={{ color: strengthColor[strength], fontFamily: 'var(--font-rajdhani)' }}>
+                    <span className={`text-[10px] tracking-wider font-rajdhani ${strengthTextClass[strength]}`}>
                       {strengthLabel[strength]}
                     </span>
                   </motion.div>

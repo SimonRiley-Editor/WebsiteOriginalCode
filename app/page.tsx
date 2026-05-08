@@ -44,6 +44,17 @@ export default function LandingPage() {
   const [prevSection, setPrevSection] = useState('intro');
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get('section');
+      if (section && SECTION_ORDER.includes(section)) {
+        setActiveSection(section);
+        setInitialLoading(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchGuides = async () => {
       if (!supabase) {
         setLoading(false);
@@ -95,8 +106,7 @@ export default function LandingPage() {
       <AnimatePresence>
         {initialLoading && <InitialLoader key="loader" onComplete={() => setInitialLoading(false)} />}
       </AnimatePresence>
-      
-      <main className={`h-[100dvh] w-full bg-[#f3f4f6] text-[#1A1A1A] font-sans selection:bg-cyan-200 overflow-hidden flex flex-col relative ${initialLoading ? 'opacity-0' : 'opacity-100 transition-opacity duration-1000'}`}>
+      <main className="h-[100dvh] w-full bg-[#f3f4f6] text-[#1A1A1A] font-sans selection:bg-cyan-200 overflow-hidden flex flex-col relative">
         
         {/* Active Section Content */}
         <div className="flex-1 w-full relative z-20 overflow-hidden flex flex-col">
