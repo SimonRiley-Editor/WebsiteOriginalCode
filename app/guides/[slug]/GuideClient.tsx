@@ -56,6 +56,37 @@ import {
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
+// Sanitize HTML from the rich text editor, allowing only safe formatting tags
+const sanitizeHtml = (html: string): string => {
+  if (!html) return '';
+  // If the content has no HTML tags at all, return as-is (plain text backward compat)
+  if (!/<[a-z][\s\S]*>/i.test(html)) return html;
+  // Remove dangerous tags entirely
+  let clean = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/<object[\s\S]*?<\/object>/gi, '')
+    .replace(/<embed[\s\S]*?>/gi, '')
+    .replace(/<link[\s\S]*?>/gi, '')
+    .replace(/<meta[\s\S]*?>/gi, '');
+  // Remove event handler attributes
+  clean = clean.replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  // Remove javascript: URLs
+  clean = clean.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, '');
+  return clean;
+};
+
+const RichText = ({ html, fallback = '', className = '' }: { html?: string, fallback?: string, className?: string }) => {
+  const content = html || fallback;
+  if (!content) return null;
+  // If it contains HTML tags, render as HTML
+  if (/<[a-z][\s\S]*>/i.test(content)) {
+    return <span className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }} />;
+  }
+  // Plain text fallback
+  return <span className={className}>{content}</span>;
+};
+
 const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -299,7 +330,7 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
               <div className="w-full h-px bg-gradient-to-r from-rose-500/50 via-white/10 to-transparent mb-4" />
 
               <p className="text-sm font-normal text-slate-300 leading-relaxed max-w-full font-sans break-words pb-1">
-                {activeSeq.description || 'Awakens the hidden potential locked within this fractured memory.'}
+                <RichText html={activeSeq.description} fallback="Awakens the hidden potential locked within this fractured memory." />
               </p>
             </div>
           </motion.div>
@@ -812,7 +843,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                     <div className="absolute top-0 right-0 w-48 h-48 bg-gray-100 rounded-full blur-3xl -z-10 group-hover/desc:bg-gray-200 transition-colors duration-500" />
                     <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover/desc:translate-x-[100%] -translate-x-[100%] transition-transform duration-1000 z-20 pointer-events-none skew-x-[-20deg]" />
                     <p className="text-gray-800 font-bold text-lg leading-relaxed mb-6">
-                      {content.description || "A powerful resonator specialized in combat."}
+                      <RichText html={content.description} fallback="A powerful resonator specialized in combat." />
                     </p>
 
                     {content.quote && (
@@ -857,11 +888,11 @@ export default function GuideClient({ guide }: { guide: any }) {
                                 <div className="group/sp relative">
                                   <div className={cn(
                                     "flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all duration-200 cursor-default",
-                                    isHigh 
-                                      ? "bg-black text-white border-black hover:bg-gray-900 shadow-sm" 
-                                      : isMed 
-                                      ? "bg-gray-100 text-black border-black/15 hover:bg-gray-200 hover:border-black/30" 
-                                      : "bg-white text-gray-500 border-black/8 hover:bg-gray-50 hover:border-black/15"
+                                    isHigh
+                                      ? "bg-black text-white border-black hover:bg-gray-900 shadow-sm"
+                                      : isMed
+                                        ? "bg-gray-100 text-black border-black/15 hover:bg-gray-200 hover:border-black/30"
+                                        : "bg-white text-gray-500 border-black/8 hover:bg-gray-50 hover:border-black/15"
                                   )}>
                                     <span className={cn(
                                       "text-[9px] font-mono leading-none shrink-0 tabular-nums",
@@ -931,7 +962,7 @@ export default function GuideClient({ guide }: { guide: any }) {
 
                   <div className="relative z-10">
                     <p className="text-white/80 font-medium text-sm leading-relaxed mb-6">
-                      {content.movablePanel?.description || `${guide.name}'s optimal combat efficiency relies on rapid burst sequences and tight rotations. Observe combat flow limits to maximize output.`}
+                      <RichText html={content.movablePanel?.description} fallback={`${guide.name}'s optimal combat efficiency relies on rapid burst sequences and tight rotations. Observe combat flow limits to maximize output.`} />
                     </p>
 
                     <div className="bg-black/20 rounded-xl p-4 border border-white/5 flex flex-col gap-3">
@@ -1122,11 +1153,15 @@ export default function GuideClient({ guide }: { guide: any }) {
                             </div>
 
                             <div className="text-[13px] sm:text-[14px] text-slate-700 leading-[1.9] font-medium whitespace-pre-wrap relative z-10 [text-wrap:pretty] pl-2 xl:pl-4 border-l border-slate-200">
-                              {skillData.description?.split('\n').map((line: string, i: number) => (
-                                <p key={i} className={cn("mb-4", line.startsWith('※') || line.includes('Damage:') ? cn("font-bold text-slate-800", elementStyle.color) : "")}>
-                                  {line}
-                                </p>
-                              ))}
+                              {(/<[a-z][\s\S]*>/i.test(skillData.description || '')) ? (
+                                <RichText html={skillData.description} />
+                              ) : (
+                                skillData.description?.split('\n').map((line: string, i: number) => (
+                                  <p key={i} className={cn("mb-4", line.startsWith('※') || line.includes('Damage:') ? cn("font-bold text-slate-800", elementStyle.color) : "")}>
+                                    {line}
+                                  </p>
+                                ))
+                              )}
                             </div>
                           </div>
 
@@ -1259,238 +1294,266 @@ export default function GuideClient({ guide }: { guide: any }) {
           </motion.div>
         )}
 
-        {activeTab === 'WEAPONS' && (
+                                        {activeTab === 'WEAPONS' && (
           <motion.div
             key="weapons"
             variants={tabVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-[1400px] mx-auto w-full h-full z-30"
+            className="absolute inset-0 pt-24 pb-6 px-3 sm:px-6 max-w-[1440px] mx-auto w-full h-full z-30"
           >
-            <div className="w-full h-full bg-white rounded-[2rem] border border-cyan-200 shadow-[0_20px_60px_-15px_rgba(6,182,212,0.15)] flex overflow-hidden relative font-sans text-slate-800">
+            <div className="w-full h-full bg-[#f7f4f0] rounded-[2rem] border border-stone-200/80 shadow-[0_30px_80px_-20px_rgba(120,90,60,0.12)] flex overflow-hidden relative font-sans text-stone-800">
+
+              {/* Warm atmospheric background */}
               <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-cyan-200 rounded-full blur-[120px] opacity-60 mix-blend-multiply pointer-events-none" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-fuchsia-200 rounded-full blur-[100px] opacity-60 -translate-x-1/4 translate-y-1/4 mix-blend-multiply pointer-events-none" />
-                <div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] bg-indigo-200 rounded-full blur-[100px] opacity-50 mix-blend-multiply pointer-events-none" />
+                <div className="absolute top-[-20%] right-[-10%] w-[700px] h-[700px] bg-amber-100/40 rounded-full blur-[180px] mix-blend-multiply" />
+                <div className="absolute bottom-[-20%] left-[-15%] w-[500px] h-[500px] bg-rose-100/30 rounded-full blur-[150px] mix-blend-multiply" />
+                <div className="absolute top-[30%] left-[50%] w-[400px] h-[400px] bg-violet-100/20 rounded-full blur-[120px] mix-blend-multiply" />
+                <div className="absolute inset-0 opacity-[0.3]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a08060' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
               </div>
 
-              <div className="hidden lg:flex w-[35%] flex-col bg-white/60 backdrop-blur-3xl border-r border-cyan-100 z-10 p-6 sm:p-8 relative shadow-[10px_0_30px_-15px_rgba(6,182,212,0.1)]">
-                <div className="flex items-center gap-3 mb-8 ml-1">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-50 to-fuchsia-50 flex items-center justify-center border border-cyan-200 shadow-sm shadow-cyan-100">
-                    <img src="https://api.iconify.design/game-icons:crossed-swords.svg?color=%2306b6d4" className="w-5 h-5 opacity-90 drop-shadow-sm" alt="Weapon" />
+              {/* ═══════ Left Sidebar ═══════ */}
+              <div className="hidden lg:flex w-[330px] xl:w-[370px] flex-col border-r border-stone-200/60 z-10 relative shrink-0 bg-white/40 backdrop-blur-xl">
+                <div className="px-6 pt-8 pb-5 border-b border-stone-200/60">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-stone-100 to-amber-50 flex items-center justify-center border border-stone-200 shadow-sm">
+                      <Sword size={18} className="text-amber-700/70" />
+                    </div>
+                    <div>
+                      <h2 className="text-[14px] font-black text-stone-700 uppercase tracking-[0.2em]">Arsenal</h2>
+                      <p className="text-[10px] text-stone-400 font-medium tracking-wider mt-0.5">{(content.weapons || []).length} WEAPONS RANKED</p>
+                    </div>
                   </div>
-                  <h2 className="text-[15px] font-black text-slate-800 uppercase tracking-[0.15em] drop-shadow-sm">
-                    Featured Weapons
-                  </h2>
                 </div>
-                <div className="flex-1 flex flex-col space-y-4 pb-6 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent">
+
+                <div className="flex-1 flex flex-col gap-2 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-stone-300/50 scrollbar-track-transparent">
                   {(content.weapons || []).map((weapon: any, i: number) => {
                     const isSelected = selectedWeaponIdx === i;
                     const weaponRank = weapon.rank || (weapon.isBis ? 'S+' : (i === 1 ? 'S' : (i === 2 ? 'A' : 'B')));
-
-                    const rankInfo = weaponRank === 'S+' ? { color: 'text-amber-500', glow: 'bg-amber-400' } :
-                      weaponRank === 'S' ? { color: 'text-fuchsia-500', glow: 'bg-fuchsia-400' } :
-                        weaponRank === 'A' ? { color: 'text-sky-500', glow: 'bg-sky-400' } :
-                          { color: 'text-slate-500', glow: 'bg-slate-400' };
-
-                    const bgGradient = weaponRank === 'S+' ? 'from-amber-100 to-orange-100' :
-                      weaponRank === 'S' ? 'from-fuchsia-100 to-purple-100' :
-                        weaponRank === 'A' ? 'from-cyan-100 to-indigo-100' :
-                          'from-slate-100 to-slate-200';
-
                     const isSig = weapon.isSignature;
+                    const rk: Record<string,{t:string,bg:string,br:string}> = {
+                      'S+': {t:'text-amber-700',bg:'from-amber-50 to-orange-50',br:'border-amber-300'},
+                      'S':  {t:'text-rose-600',bg:'from-rose-50 to-pink-50',br:'border-rose-300'},
+                      'A':  {t:'text-sky-600',bg:'from-sky-50 to-indigo-50',br:'border-sky-300'},
+                      'B':  {t:'text-stone-500',bg:'from-stone-50 to-slate-50',br:'border-stone-300'},
+                    };
+                    const r = rk[weaponRank] || rk['B'];
                     return (
-                      <div
-                        key={i}
-                        onClick={() => setSelectedWeaponIdx(i)}
-                        className={`group relative h-[110px] rounded-[1.25rem] flex items-center transition-all duration-500 cursor-pointer overflow-hidden border p-2 gap-4 ${isSelected
-                            ? (isSig
-                              ? 'border-fuchsia-300 bg-white shadow-[0_15px_30px_-5px_rgba(192,38,211,0.15)] scale-[1.02] z-10'
-                              : 'border-cyan-300 bg-white shadow-[0_15px_30px_-5px_rgba(6,182,212,0.15)] scale-[1.02] z-10')
-                            : 'border-slate-200/50 bg-white/40 hover:bg-white hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5'
-                          }`}
-                      >
-                        {isSelected && (
-                          <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 rounded-r-md ${isSig ? 'bg-fuchsia-500 shadow-[0_0_15px_rgba(192,38,211,0.4)]' : 'bg-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]'}`} />
-                        )}
+                      <div key={i} onClick={() => setSelectedWeaponIdx(i)}
+                        className={cn(
+                          "group relative flex items-center gap-4 p-3 rounded-2xl cursor-pointer transition-all duration-400 border overflow-hidden",
+                          isSelected
+                            ? `bg-gradient-to-r ${r.bg} ${r.br} shadow-[0_8px_24px_-6px_rgba(160,120,80,0.15)]`
+                            : "bg-white/50 border-stone-200/40 hover:bg-white/80 hover:border-stone-200 hover:shadow-[0_4px_16px_-4px_rgba(160,120,80,0.08)]"
+                        )}>
+                        {isSelected && <div className={cn("absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 rounded-r-full", r.t === 'text-amber-700' ? 'bg-amber-500' : r.t === 'text-rose-600' ? 'bg-rose-500' : r.t === 'text-sky-600' ? 'bg-sky-500' : 'bg-stone-400')} />}
 
-                        <div className={`w-[80px] sm:w-[90px] h-full rounded-xl flex items-center justify-center relative overflow-hidden shrink-0 transition-all duration-500 ${isSelected ? '' : 'grayscale-[0.2] opacity-80 group-hover:grayscale-0 group-hover:opacity-100'}`}>
-                          <div className={`absolute inset-0 border border-black/5 rounded-xl z-20`} />
-                          <div className={`absolute inset-0 bg-gradient-to-br opacity-80 z-10 ${isSelected ? bgGradient : 'from-slate-50 to-white group-hover:from-cyan-50 group-hover:to-white'}`} />
-
-                          <div className={`absolute top-0 right-0 bg-white/90 backdrop-blur-md rounded-bl-lg px-2.5 py-0.5 z-30 flex items-center justify-center border-l border-b border-black/5 shadow-sm`}>
-                            <span className={`text-[11px] font-black italic drop-shadow-sm leading-none ${rankInfo.color}`}>{weaponRank}</span>
-                          </div>
-
+                        {/* Larger weapon thumbnail */}
+                        <div className={cn(
+                          "w-[82px] h-[82px] rounded-xl flex items-center justify-center relative overflow-hidden shrink-0 transition-all duration-500 border",
+                          isSelected ? "border-stone-200 bg-white shadow-md" : "border-stone-100 bg-gradient-to-br from-stone-50 to-white"
+                        )}>
+                          <div className={cn("absolute inset-0 bg-gradient-to-br opacity-50", isSelected ? r.bg : 'from-stone-50/50 to-transparent')} />
                           {weapon.imageUrl ? (
-                            <img src={weapon.imageUrl} alt="" className="absolute inset-0 w-[120%] h-[120%] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] transform -rotate-12 scale-90 group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-700 ease-out origin-center z-20 mix-blend-normal" />
-                          ) : (
-                            <img src="https://api.iconify.design/game-icons:broadsword.svg?color=%2394a3b8" className="w-[42px] h-[42px] opacity-40 z-20 drop-shadow-sm" alt="Weapon" />
-                          )}
+                            <img src={weapon.imageUrl} alt="" className={cn(
+                              "w-[150%] h-[150%] object-contain drop-shadow-[0_4px_12px_rgba(80,50,20,0.2)] transition-all duration-600 -rotate-[25deg]",
+                              isSelected ? "opacity-100 scale-[0.6]" : "opacity-50 scale-[0.5] group-hover:opacity-80 group-hover:scale-[0.55]"
+                            )} />
+                          ) : <Sword size={24} className="text-stone-300" />}
+                          {/* Rank corner badge */}
+                          <div className={cn("absolute top-0 right-0 px-2 py-0.5 text-[9px] font-black rounded-bl-lg border-l border-b bg-white/90 backdrop-blur-sm shadow-sm", r.t, r.br)}>{weaponRank}</div>
                         </div>
 
-                        <div className="flex flex-col justify-center flex-1 min-w-0 pr-4 py-2 relative z-20">
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
-                            {isSig && (
-                              <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-fuchsia-600 bg-fuchsia-50 border border-fuchsia-200 rounded leading-none flex items-center gap-1 shadow-sm">
-                                <img src="https://api.iconify.design/game-icons:sparkles.svg?color=%23c026d3" className="w-2.5 h-2.5" alt="Signature" /> Signature
-                              </span>
-                            )}
-                            {weapon.isBis && !isSig && (
-                              <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-widest text-cyan-700 bg-cyan-50 border border-cyan-200 rounded leading-none flex items-center gap-1 shadow-sm">
-                                <img src="https://api.iconify.design/game-icons:bullseye.svg?color=%2322d3ee" className="w-2.5 h-2.5" alt="BiS" /> BiS
-                              </span>
-                            )}
+                        {/* Info */}
+                        <div className="flex-1 min-w-0 py-1">
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            {isSig && <span className="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest text-amber-800 bg-amber-100 border border-amber-200 rounded-md leading-none shadow-sm">SIG</span>}
+                            {weapon.isBis && !isSig && <span className="px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md leading-none shadow-sm">BiS</span>}
                           </div>
-
-                          <h3 className={`font-bold text-sm tracking-wide leading-tight mb-2 truncate ${isSelected ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-800 transition-colors'}`}>{weapon.name}</h3>
-
-                          <div className="flex items-center gap-1.5">
-                            <div className="flex items-center bg-white shadow-sm px-2.5 py-1 rounded-md border border-cyan-100">
-                              {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
-                                <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5 Stars" className="h-[12px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]" />
-                              ) : parseInt(weapon.rarity) === 4 ? (
-                                <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4 Stars" className="h-[12px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(192,38,211,0.3)]" />
-                              ) : (
-                                <div className="flex gap-0.5">
-                                  {[...Array(parseInt(weapon.rarity))].map((_, idx) => (
-                                    <img key={idx} src="https://api.iconify.design/game-icons:crested-helmet.svg?color=%2394a3b8" className="w-3 h-3 opacity-60" alt="Star" />
-                                  ))}
-                                </div>
-                              )}
-                            </div>
+                          <h3 className={cn("font-bold text-[13px] tracking-wide leading-tight mb-2 truncate transition-colors", isSelected ? "text-stone-800" : "text-stone-400 group-hover:text-stone-700")}>{weapon.name}</h3>
+                          <div className="flex items-center">
+                            {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
+                              <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5★" className="h-[11px] w-auto object-contain opacity-70" />
+                            ) : parseInt(weapon.rarity) === 4 ? (
+                              <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4★" className="h-[11px] w-auto object-contain opacity-70" />
+                            ) : (
+                              <div className="flex gap-0.5">{[...Array(parseInt(weapon.rarity))].map((_,idx) => <Star key={idx} size={9} className="text-stone-300 fill-stone-200" />)}</div>
+                            )}
                           </div>
                         </div>
+                        {isSelected && <ChevronRight size={14} className="text-stone-400 shrink-0" />}
                       </div>
                     )
                   })}
                 </div>
               </div>
 
-              <div className="flex-1 relative z-10 p-8 lg:p-12 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-500/20 scrollbar-track-transparent flex flex-col pt-10">
-                {content.weapons && content.weapons.length > 0 && (
-                  (() => {
-                    const weapon = content.weapons[selectedWeaponIdx] || content.weapons[0];
-                    const isBis = weapon.isBis || selectedWeaponIdx === 0;
-                    const rankText = weapon.rank || (isBis ? 'S+' : (selectedWeaponIdx === 1 ? 'S' : (selectedWeaponIdx === 2 ? 'A' : 'B')));
-                    const rankColor = rankText === 'S+' ? 'text-amber-500' :
-                      rankText === 'S' ? 'text-fuchsia-500' :
-                        rankText === 'A' ? 'text-sky-500' : 'text-slate-500';
-
-                    return (
-                      <motion.div
-                        key={weapon.name}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="flex flex-col min-h-full relative w-full pt-10"
-                      >
-                        <div className="absolute right-[-15%] top-[0%] bottom-0 w-[60%] flex items-center justify-center z-0 pointer-events-none opacity-40 lg:opacity-100 mix-blend-multiply">
-                          {weapon.imageUrl && (
-                            <motion.img
-                              initial={{ opacity: 0, scale: 0.9, rotate: (weapon.imageRotate !== undefined ? weapon.imageRotate : -12) + 5 }}
-                              animate={{ opacity: 1, scale: 1, rotate: weapon.imageRotate !== undefined ? weapon.imageRotate : -12 }}
-                              transition={{ duration: 0.8, ease: "easeOut" }}
-                              src={weapon.imageUrl}
-                              alt={weapon.name}
-                              className="drop-shadow-[0_30px_60px_rgba(0,0,0,0.3)] object-contain mix-blend-plus-darker"
-                              style={{
-                                width: '120%',
-                                height: '110%',
-                                transform: `scale(${weapon.imageScale !== undefined ? weapon.imageScale : 1}) translate(${weapon.imageX || 0}px, ${weapon.imageY || 0}px)`
-                              }}
-                            />
-                          )}
-                        </div>
-
-                        <div className="w-full lg:w-[60%] flex flex-col z-20 shrink-0">
-                          <div className="mb-8">
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {weapon.isSignature && (
-                                <span className="px-3 py-1.5 bg-fuchsia-50 text-fuchsia-700 text-[10px] font-black uppercase tracking-[0.2em] rounded border border-fuchsia-200 shadow-sm flex items-center gap-1.5 shadow-sm">
-                                  <img src="https://api.iconify.design/game-icons:sparkles.svg?color=%23c026d3" className="w-3.5 h-3.5 opacity-90" alt="Signature" /> SIGNATURE
-                                </span>
-                              )}
-                              {weapon.isBis && (
-                                <span className="px-3 py-1.5 bg-cyan-50 text-cyan-700 text-[10px] font-black uppercase tracking-[0.2em] rounded border border-cyan-200 shadow-sm flex items-center gap-1.5 shadow-sm">
-                                  <img src="https://api.iconify.design/game-icons:bullseye.svg?color=%2322d3ee" className="w-3.5 h-3.5 opacity-90" alt="BiS" /> BEST IN SLOT
-                                </span>
-                              )}
-                            </div>
-                            <h2 className="font-sans font-black text-[38px] lg:text-[46px] text-slate-800 leading-[1.1] mb-6 tracking-tight drop-shadow-sm">{weapon.name}</h2>
-
-                            <div className="flex items-center gap-4 text-[14px] font-bold text-slate-600 mb-8">
-                              <div className="flex gap-2 items-center bg-white shadow-sm px-4 py-2 rounded-xl border border-cyan-100">
-                                <span className="text-slate-400 uppercase tracking-widest text-[10px] mr-2">Rarity</span>
-                                {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
-                                  <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5 Stars" className="h-[18px] w-auto object-contain drop-shadow-sm" />
-                                ) : parseInt(weapon.rarity) === 4 ? (
-                                  <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4 Stars" className="h-[18px] w-auto object-contain drop-shadow-sm" />
-                                ) : (
-                                  [...Array(parseInt(weapon.rarity) || 0)].map((_, i) => (
-                                    <img key={i} src="https://api.iconify.design/game-icons:crested-helmet.svg?color=%2394a3b8" className="w-4 h-4 opacity-70" alt="Star" />
-                                  ))
-                                )}
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-slate-400 uppercase tracking-widest text-[10px]">Rank</span>
-                                <span className={`font-black italic text-[24px] leading-none ${rankColor} drop-shadow-sm`}>{rankText}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-4 mb-8">
-                            <div className="flex-1 bg-white/80 backdrop-blur-md border border-cyan-100 rounded-2xl p-5 flex flex-col justify-center shadow-sm relative overflow-hidden group hover:border-cyan-300 transition-colors">
-                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-fuchsia-100 to-transparent opacity-30 rounded-bl-full pointer-events-none" />
-                              <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
-                                <img src="https://api.iconify.design/game-icons:crossed-axes.svg?color=%23e879f9" className="w-4 h-4 opacity-80" alt="Base ATK" />
-                                <span className="text-[11px] font-bold uppercase tracking-widest">Base ATK</span>
-                              </div>
-                              <span className="text-[32px] font-black text-fuchsia-600 font-mono tracking-tighter leading-none relative z-10">{weapon.baseAtk || '587'}</span>
-                            </div>
-                            <div className="flex-1 bg-white/80 backdrop-blur-md border border-cyan-100 rounded-2xl p-5 flex flex-col justify-center shadow-sm relative overflow-hidden group hover:border-cyan-300 transition-colors">
-                              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-cyan-100 to-transparent opacity-30 rounded-bl-full pointer-events-none" />
-                              <div className="flex items-center gap-2 text-slate-500 mb-2 relative z-10">
-                                <img src="https://api.iconify.design/game-icons:lightning-trio.svg?color=%2322d3ee" className="w-4 h-4 opacity-80" alt="Secondary Stat" />
-                                <span className="text-[11px] font-bold uppercase tracking-widest leading-tight truncate">{weapon.secondaryStat || 'CRIT Rate'}</span>
-                              </div>
-                              <span className="text-[32px] font-black text-cyan-600 font-mono tracking-tighter leading-none relative z-10">{weapon.secondaryStatValue || '24.3%'}</span>
-                            </div>
-                          </div>
-
-                          <div className="mb-6 z-10 w-full xl:w-[110%] bg-white/90 backdrop-blur-xl rounded-[1.5rem] p-6 sm:p-8 border border-cyan-100 shadow-xl relative overflow-hidden shrink-0">
-                            <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-cyan-400 to-fuchsia-400" />
-                            <p className="text-[14px] text-slate-700 leading-relaxed font-semibold whitespace-pre-wrap">
-                              {weapon.passiveDescription || weapon.description}
-                            </p>
-                          </div>
-
-                          {weapon.reasoning && (
-                            <div className="z-10 w-full xl:w-[110%] bg-cyan-50/50 rounded-2xl p-6 border border-cyan-100/50">
-                              <div className="flex items-center gap-2 mb-3">
-                                <img src="https://api.iconify.design/game-icons:bookmark.svg?color=%23d97706" className="w-4 h-4 opacity-80" alt="Info" />
-                                <span className="font-black text-cyan-700 uppercase tracking-widest text-[11px]">Why this weapon?</span>
-                              </div>
-                              <p className="text-[14px] text-slate-600 font-medium leading-relaxed drop-shadow-sm pl-6 border-l-2 border-cyan-400/40 py-1">
-                                {weapon.reasoning}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })()
-                )}
+              {/* Mobile weapon pills */}
+              <div className="lg:hidden absolute top-5 left-5 right-14 z-40 flex gap-1.5 overflow-x-auto no-scrollbar">
+                {(content.weapons || []).map((weapon: any, i: number) => (
+                  <button key={i} onClick={() => setSelectedWeaponIdx(i)} aria-label={`Select ${weapon.name}`}
+                    className={cn("shrink-0 px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-wider border transition-all",
+                      selectedWeaponIdx === i ? "bg-white text-stone-800 border-stone-300 shadow-md" : "bg-white/40 text-stone-400 border-stone-200/50"
+                    )}>{weapon.name?.split(' ').slice(0,2).join(' ')}</button>
+                ))}
               </div>
 
-              <button
-                onClick={() => setActiveTab('OVERVIEW')}
-                aria-label="Back to Overview"
-                className="absolute top-6 right-8 text-slate-500 hover:text-cyan-700 bg-white/50 hover:bg-white p-3 rounded-full backdrop-blur-md border border-cyan-100 transition-all z-40 shadow-sm"
-              >
-                <X size={24} />
-              </button>
+              {/* ═══════ Right Detail Panel ═══════ */}
+              <div className="flex-1 relative z-10 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-stone-300/40 scrollbar-track-transparent">
+                {content.weapons && content.weapons.length > 0 && (() => {
+                  const weapon = content.weapons[selectedWeaponIdx] || content.weapons[0];
+                  const isBis = weapon.isBis || selectedWeaponIdx === 0;
+                  const rankText = weapon.rank || (isBis ? 'S+' : (selectedWeaponIdx === 1 ? 'S' : (selectedWeaponIdx === 2 ? 'A' : 'B')));
+                  const ac: Record<string,{t:string,bg:string,light:string,border:string}> = {
+                    'S+': {t:'text-amber-700',bg:'bg-amber-500',light:'bg-amber-100',border:'border-amber-200'},
+                    'S':  {t:'text-rose-600',bg:'bg-rose-500',light:'bg-rose-100',border:'border-rose-200'},
+                    'A':  {t:'text-sky-600',bg:'bg-sky-500',light:'bg-sky-100',border:'border-sky-200'},
+                    'B':  {t:'text-stone-500',bg:'bg-stone-400',light:'bg-stone-100',border:'border-stone-200'},
+                  };
+                  const a = ac[rankText] || ac['B'];
+
+                  return (
+                    <motion.div key={weapon.name} initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:0.5,ease:[0.16,1,0.3,1]}} className="relative w-full min-h-full flex flex-col">
+
+                      {/* ── WEAPON SHOWCASE ── */}
+                      <div className="relative w-full h-[380px] lg:h-[440px] shrink-0 overflow-hidden flex items-center justify-center bg-gradient-to-b from-white/40 via-[#f7f4f0] to-[#f7f4f0]">
+                        {/* Warm glow */}
+                        <div className="absolute inset-0 pointer-events-none">
+                          <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[120px] opacity-50 mix-blend-multiply" style={{background:'radial-gradient(circle, rgba(245,215,180,0.6), transparent 65%)'}} />
+                          <div className="absolute bottom-[8%] left-1/2 -translate-x-1/2 w-[280px] h-[50px] rounded-full blur-[35px] bg-stone-300/25 mix-blend-multiply" />
+                          {/* Vertical light beam */}
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[45%] bg-gradient-to-b from-amber-300/20 to-transparent" />
+                        </div>
+
+                        {/* Elegant orbital rings */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div className="w-[320px] h-[320px] rounded-full border border-stone-200/30 animate-[spin_80s_linear_infinite]" />
+                          <div className="absolute w-[250px] h-[250px] rounded-full border border-dashed border-stone-200/20 animate-[spin_50s_linear_infinite_reverse]" />
+                          <div className={cn("absolute w-[180px] h-[180px] rounded-full border opacity-25 animate-[spin_35s_linear_infinite]", a.border)} />
+                          <div className="absolute w-[320px] h-[320px] animate-[spin_80s_linear_infinite]">
+                            <div className={cn("absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full shadow-sm", a.bg, "opacity-30")} />
+                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-stone-300/40" />
+                          </div>
+                        </div>
+
+                        {/* Weapon image */}
+                        <div className="relative z-10">
+                          {weapon.imageUrl ? (
+                            <motion.img
+                              initial={{opacity:0,scale:0.8,rotate:(weapon.imageRotate ?? -15)+10}}
+                              animate={{opacity:1,scale:1,rotate:weapon.imageRotate ?? -15}}
+                              transition={{duration:0.9,ease:"easeOut"}}
+                              src={weapon.imageUrl} alt={weapon.name}
+                              className="max-w-[320px] lg:max-w-[420px] max-h-[300px] lg:max-h-[370px] object-contain drop-shadow-[0_20px_40px_rgba(80,50,20,0.2)] hover:drop-shadow-[0_25px_50px_rgba(80,50,20,0.3)] transition-[filter] duration-700"
+                              style={{transform:`scale(${weapon.imageScale ?? 1}) translate(${weapon.imageX||0}px,${weapon.imageY||0}px)`}}
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center gap-3 opacity-20"><Sword size={72} strokeWidth={0.8} className="text-stone-400" /></div>
+                          )}
+                        </div>
+
+                        {/* Rank watermark */}
+                        <div className="absolute top-6 right-8 lg:top-8 lg:right-12 pointer-events-none">
+                          <span className={cn("text-[80px] lg:text-[110px] font-black italic leading-none tracking-tighter opacity-[0.05]", a.t)}>{rankText}</span>
+                        </div>
+
+                        {/* Bottom gradient + line */}
+                        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#f7f4f0] to-transparent" />
+                        <div className="absolute bottom-0 left-10 right-10 lg:left-12 lg:right-12 h-[1px] bg-gradient-to-r from-transparent via-stone-300/50 to-transparent" />
+                      </div>
+
+                      {/* ── CONTENT ── */}
+                      <div className="relative px-8 lg:px-12 pb-12 pt-6 z-10 flex flex-col gap-6">
+                        {/* Badges + Name */}
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            {weapon.isSignature && (
+                              <span className="px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-amber-800 bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-200 rounded-lg flex items-center gap-1.5 shadow-sm">
+                                <Sparkles size={11} /> SIGNATURE WEAPON
+                              </span>
+                            )}
+                            {weapon.isBis && (
+                              <span className="px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-800 bg-gradient-to-r from-emerald-100 to-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1.5 shadow-sm">
+                                <Star size={11} /> BEST IN SLOT
+                              </span>
+                            )}
+                          </div>
+                          <h2 className="font-black text-[36px] lg:text-[46px] text-stone-800 leading-[1.05] tracking-tight mb-4">{weapon.name}</h2>
+                          <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-2.5 px-4 py-2 bg-white/80 rounded-xl border border-stone-200 shadow-sm">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-stone-400">Rarity</span>
+                              {parseInt(weapon.rarity) === 5 || !weapon.rarity ? (
+                                <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1775453445/Icon_5_Stars_lczozu.webp" alt="5★" className="h-[14px] w-auto object-contain" />
+                              ) : parseInt(weapon.rarity) === 4 ? (
+                                <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777304405/Icon_4_Stars_vpjpiv.webp" alt="4★" className="h-[14px] w-auto object-contain" />
+                              ) : (
+                                [...Array(parseInt(weapon.rarity)||0)].map((_,i) => <Star key={i} size={12} className="text-stone-300 fill-stone-200" />)
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-stone-400">Rank</span>
+                              <span className={cn("font-black italic text-[28px] leading-none", a.t)}>{rankText}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Stat cards */}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="relative bg-white/70 backdrop-blur-md border border-stone-200/80 rounded-2xl p-6 overflow-hidden group/s hover:border-amber-300/60 hover:shadow-[0_8px_24px_-6px_rgba(180,140,60,0.1)] transition-all duration-500">
+                            <div className="absolute -top-6 -right-6 w-24 h-24 bg-amber-200/30 rounded-full blur-2xl group-hover/s:bg-amber-200/50 transition-all duration-700 pointer-events-none mix-blend-multiply" />
+                            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-amber-400/40 via-amber-300/15 to-transparent scale-x-0 group-hover/s:scale-x-100 origin-left transition-transform duration-500" />
+                            <div className="flex items-center gap-2.5 mb-3 relative z-10">
+                              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center border border-amber-200/80 shadow-sm"><Crosshair size={15} className="text-amber-600/70" /></div>
+                              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Base ATK</span>
+                            </div>
+                            <span className="text-[34px] font-black text-stone-800 font-mono tracking-tighter leading-none relative z-10">{weapon.baseAtk || '587'}</span>
+                          </div>
+                          <div className="relative bg-white/70 backdrop-blur-md border border-stone-200/80 rounded-2xl p-6 overflow-hidden group/s hover:border-sky-300/60 hover:shadow-[0_8px_24px_-6px_rgba(60,140,180,0.1)] transition-all duration-500">
+                            <div className="absolute -top-6 -right-6 w-24 h-24 bg-sky-200/30 rounded-full blur-2xl group-hover/s:bg-sky-200/50 transition-all duration-700 pointer-events-none mix-blend-multiply" />
+                            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-sky-400/40 via-sky-300/15 to-transparent scale-x-0 group-hover/s:scale-x-100 origin-left transition-transform duration-500" />
+                            <div className="flex items-center gap-2.5 mb-3 relative z-10">
+                              <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center border border-sky-200/80 shadow-sm"><Zap size={15} className="text-sky-600/70" /></div>
+                              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 truncate">{weapon.secondaryStat || 'CRIT Rate'}</span>
+                            </div>
+                            <span className="text-[34px] font-black text-stone-800 font-mono tracking-tighter leading-none relative z-10">{weapon.secondaryStatValue || '24.3%'}</span>
+                          </div>
+                        </div>
+
+                        {/* Passive */}
+                        <div className="relative bg-white/60 backdrop-blur-md border border-stone-200/80 rounded-2xl p-7 overflow-hidden group/p hover:border-stone-300 transition-colors duration-500">
+                          <div className="absolute top-0 left-0 w-[3px] h-full bg-gradient-to-b from-amber-400/40 via-amber-300/20 to-transparent rounded-r-full" />
+                          <div className="absolute top-0 left-0 w-[3px] h-0 group-hover/p:h-full bg-gradient-to-b from-amber-500 via-amber-400/60 to-amber-300/20 rounded-r-full transition-all duration-700 shadow-[2px_0_12px_rgba(245,158,11,0.2)]" />
+                          <div className="flex items-center gap-2.5 mb-4 pl-4">
+                            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-700/60">Weapon Passive</span>
+                            {weapon.passiveName && <><span className="text-stone-300">·</span><span className="text-[11px] font-medium text-stone-400 italic">{weapon.passiveName}</span></>}
+                          </div>
+                          <p className="text-[14px] text-stone-600 leading-[1.85] font-medium whitespace-pre-wrap pl-4">
+                            <RichText html={weapon.passiveDescription || weapon.description} />
+                          </p>
+                        </div>
+
+                        {/* Reasoning */}
+                        {weapon.reasoning && (
+                          <div className="relative bg-gradient-to-br from-amber-50/80 via-white/50 to-transparent border border-amber-200/50 rounded-2xl p-7 overflow-hidden">
+                            <div className="absolute top-4 right-4 opacity-[0.04]"><Info size={80} className="text-amber-700" /></div>
+                            <div className="flex items-center gap-2.5 mb-4">
+                              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center border border-amber-200/80 shadow-sm"><Info size={15} className="text-amber-600/70" /></div>
+                              <span className="font-black text-amber-700/60 uppercase tracking-[0.2em] text-[11px]">Why This Weapon?</span>
+                            </div>
+                            <p className="text-[14px] text-stone-500 font-medium leading-[1.85] pl-10 border-l-2 border-amber-200/50">
+                              <RichText html={weapon.reasoning} />
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })()}
+              </div>
+
+              {/* Close */}
+              <button onClick={() => setActiveTab('OVERVIEW')} aria-label="Back to Overview" className="absolute top-5 right-5 text-stone-400 hover:text-stone-600 bg-white/60 hover:bg-white p-2.5 rounded-xl border border-stone-200 transition-all z-40 shadow-sm"><X size={16} /></button>
             </div>
           </motion.div>
         )}
@@ -1644,7 +1707,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                           <Dna size={12} strokeWidth={2.5} /> Cost 4 Skill Effect
                         </h4>
                         <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">
-                          {activeSet.cost4Description}
+                          <RichText html={activeSet.cost4Description} />
                         </p>
                       </div>
                     )}
@@ -1673,7 +1736,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                             )}
                           </div>
                           <p className="text-xs font-medium text-slate-500">
-                            <span className={cn("font-bold", elementStyle.color)}>5-Piece:</span> {set.mainSetDescription}
+                            <span className={cn("font-bold", elementStyle.color)}>5-Piece:</span> <RichText html={set.mainSetDescription} />
                           </p>
                         </div>
                       ))}
@@ -1765,8 +1828,8 @@ export default function GuideClient({ guide }: { guide: any }) {
                         key={i}
                         onClick={() => setSelectedTeamIdx(i)}
                         className={`group relative h-[100px] rounded-2xl flex flex-col justify-center transition-all duration-500 cursor-pointer overflow-hidden border p-4 gap-2 ${isSelected
-                            ? 'border-emerald-300 bg-white shadow-[0_10px_25px_-5px_rgba(16,185,129,0.15)] scale-[1.02] z-10'
-                            : 'border-slate-200/50 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-sm hover:-translate-y-0.5'
+                          ? 'border-emerald-300 bg-white shadow-[0_10px_25px_-5px_rgba(16,185,129,0.15)] scale-[1.02] z-10'
+                          : 'border-slate-200/50 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-sm hover:-translate-y-0.5'
                           }`}
                       >
                         {isSelected && (
@@ -1851,7 +1914,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                               <span className="font-black text-emerald-700 uppercase tracking-widest text-xs">Synergy Analysis</span>
                             </div>
                             <p className="text-sm md:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">
-                              {team.description}
+                              <RichText html={team.description} />
                             </p>
                           </div>
                         )}
@@ -1916,7 +1979,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                         </div>
 
                         <p className="text-slate-500 leading-relaxed text-sm sm:text-base max-w-2xl whitespace-pre-wrap pl-1 sm:pl-0">
-                          {mech.description}
+                          <RichText html={mech.description} />
                         </p>
                       </div>
 
