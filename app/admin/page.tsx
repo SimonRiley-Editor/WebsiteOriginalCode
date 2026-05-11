@@ -662,8 +662,8 @@ export default function AdminDashboard() {
               key={item.id}
               onClick={() => item.id === 'list' ? setView('list') : setView('dashboard')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-all ${(item.id === 'dashboard' && view === 'dashboard') || (item.id === 'list' && (view === 'list' || view === 'edit'))
-                  ? 'bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]'
-                  : 'text-white/50 hover:text-white hover:bg-white/8'
+                ? 'bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]'
+                : 'text-white/50 hover:text-white hover:bg-white/8'
                 }`}
             >
               {item.icon}
@@ -968,8 +968,8 @@ export default function AdminDashboard() {
                       type="button"
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-4 py-2.5 text-[11px] font-medium whitespace-nowrap border-b-2 transition-all ${activeTab === tab.id
-                          ? "border-white/60 text-white"
-                          : "border-transparent text-white/30 hover:text-white/60"
+                        ? "border-white/60 text-white"
+                        : "border-transparent text-white/30 hover:text-white/60"
                         }`}
                     >
                       {tab.label}
