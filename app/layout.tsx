@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk, Syncopate, Orbitron, Rajdhani, Playfair_Display, Anton, Cinzel } from 'next/font/google';
+import { Inter, Space_Grotesk, Syncopate, Orbitron, Rajdhani, Playfair_Display, Anton, Cinzel, JetBrains_Mono } from 'next/font/google';
 import CustomCursor from '@/components/CustomCursor';
 import './globals.css';
 
@@ -47,6 +47,11 @@ const rajdhani = Rajdhani({
   variable: '--font-rajdhani',
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+});
+
 export const metadata: Metadata = {
   title: 'GrimVeil | Tactical Guide',
   description: 'Wuthering Waves Character Guide',
@@ -54,7 +59,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${anton.variable} ${spaceGrotesk.variable} ${syncopate.variable} ${orbitron.variable} ${rajdhani.variable} ${playfair.variable} ${cinzel.variable}`}>
+    <html lang="en" className={`${inter.variable} ${anton.variable} ${spaceGrotesk.variable} ${syncopate.variable} ${orbitron.variable} ${rajdhani.variable} ${playfair.variable} ${cinzel.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased bg-[var(--bg-primary)] text-[var(--text-primary)] cursor-default overflow-x-hidden" suppressHydrationWarning>
         <CustomCursor />
         {children}
