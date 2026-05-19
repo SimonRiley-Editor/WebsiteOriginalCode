@@ -60,7 +60,7 @@ const GrimVeilLogo = () => (
       <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
       {/* Glass Container */}
-      <div className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl md:rounded-3xl backdrop-blur-md bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+      <div className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl md:rounded-3xl md:backdrop-blur-md bg-black/60 md:bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]">
         
         {/* Inner Glare */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
@@ -176,7 +176,7 @@ const InteractiveNode = ({ title, active, onClick, isCenter, icon: Icon, locked 
             <div className={`absolute inset-0 border pointer-events-none scale-[1.3] border-dashed transition-all duration-700 animate-[spin_10s_linear_infinite] group-hover:animate-[spin_3s_linear_infinite] ${isCenter ? 'border-[#ef4444]/60' : locked ? 'border-red-500/30 group-hover:border-red-500/60' : 'border-white/20 group-hover:border-amber-400/60'}`}></div>
             
             {/* Inner fill */}
-            <div className={`absolute inset-0 flex flex-col items-center justify-center backdrop-blur-md transition-all duration-500 overflow-hidden ${isCenter ? 'bg-[#0a0a0a]/90 border-[2px] border-[#ef4444] shadow-[0_0_20px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.8)] group-hover:border-white group-hover:bg-[#2a0a0a]/80' : locked ? 'bg-red-950/40 border-[1px] border-red-500/40 group-hover:bg-red-950/80 group-hover:border-red-500 group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)]' : 'bg-[#0a0a0a]/60 border-[1px] border-white/40 group-hover:bg-amber-950/60 group-hover:border-amber-400 group-hover:shadow-[0_0_25px_rgba(251,191,36,0.6)]'}`}>
+            <div className={`absolute inset-0 flex flex-col items-center justify-center md:backdrop-blur-md transition-all duration-500 overflow-hidden ${isCenter ? 'bg-[#0a0a0a]/90 border-[2px] border-[#ef4444] shadow-[0_0_20px_rgba(239,68,68,0.4)] group-hover:shadow-[0_0_40px_rgba(239,68,68,0.8)] group-hover:border-white group-hover:bg-[#2a0a0a]/80' : locked ? 'bg-red-950/40 border-[1px] border-red-500/40 group-hover:bg-red-950/80 group-hover:border-red-500 group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)]' : 'bg-[#0a0a0a]/60 border-[1px] border-white/40 group-hover:bg-amber-950/60 group-hover:border-amber-400 group-hover:shadow-[0_0_25px_rgba(251,191,36,0.6)]'}`}>
                 
                 {/* Sonar Scanline effect on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-tr from-transparent ${locked ? 'via-red-500/40' : 'via-[#ef4444]/40'} to-transparent translate-x-[-150%] skew-x-[-45deg] group-hover:animate-[shimmer_1.2s_ease-in-out_infinite]`}></div>
@@ -297,8 +297,8 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
     <div ref={containerRef} className="w-full h-screen min-h-[800px] relative flex flex-col bg-[#0a0a0a] overflow-hidden font-sans text-white selection:bg-amber-500/30">
       
       {/* Background Video with Parallax */}
-      <motion.div style={{ x: bgX, y: bgY }} className="absolute -inset-10 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none mix-blend-screen z-10"></div>
+      <motion.div style={{ x: bgX, y: bgY }} className="absolute -inset-10 z-0 pointer-events-none transform-gpu will-change-transform">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none md:mix-blend-screen z-10"></div>
           {backgrounds.map((bg, idx) => (
              <video
                key={idx}
@@ -327,7 +327,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
       <div className="relative z-10 w-full h-full mx-auto flex-1 flex flex-col justify-between pt-8 md:pt-16 px-4 md:px-8 pointer-events-none">
           
           {/* Header Texts with Parallax */}
-          <motion.div style={{ x: fgX, y: fgY }} className="text-center w-full z-20 pb-4 relative mt-[-2vh] md:mt-[-4vh] pointer-events-auto flex flex-col items-center">
+          <motion.div style={{ x: fgX, y: fgY }} className="text-center w-full z-20 pb-4 relative mt-[-2vh] md:mt-[-4vh] pointer-events-auto flex flex-col items-center transform-gpu">
               
               {/* Decorative Tech Header */}
               <motion.div 
@@ -342,7 +342,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
                           <div className="w-1.5 h-1.5 md:w-2 md:h-2 rotate-45 bg-amber-400"></div>
                           <div className="w-1.5 h-1.5 md:w-2 md:h-2 rotate-45 border border-amber-400"></div>
                       </div>
-                      <span className="text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.5em] text-amber-300 font-bold uppercase bg-amber-400/20 px-3 py-1 border border-amber-400/30 backdrop-blur-md shadow-[0_0_10px_rgba(251,191,36,0.2)]">Guide Maker</span>
+                      <span className="text-[9px] md:text-[11px] tracking-[0.4em] md:tracking-[0.5em] text-amber-300 font-bold uppercase bg-amber-400/20 px-3 py-1 border border-amber-400/30 md:backdrop-blur-md shadow-[0_0_10px_rgba(251,191,36,0.2)]">Guide Maker</span>
                       <div className="flex gap-1.5">
                           <div className="w-1.5 h-1.5 md:w-2 md:h-2 rotate-45 border border-amber-400"></div>
                           <div className="w-1.5 h-1.5 md:w-2 md:h-2 rotate-45 bg-amber-400"></div>
@@ -362,7 +362,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">GRIM</span>
                         <span className="relative text-purple-400 font-bold" style={{ textShadow: '0 0 20px rgba(168,85,247,0.8), 0 0 40px rgba(168,85,247,0.4)', margin: '0 0.02em' }}>
                            V
-                           <span className="absolute inset-0 text-purple-300 blur-[4px] animate-[pulse_2s_ease-in-out_infinite] pointer-events-none select-none mix-blend-screen" style={{ textShadow: 'none' }}>V</span>
+                           <span className="absolute inset-0 text-purple-300 blur-[4px] animate-[pulse_2s_ease-in-out_infinite] pointer-events-none select-none md:mix-blend-screen hidden md:inline" style={{ textShadow: 'none' }}>V</span>
                         </span>
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">EIL</span>
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-purple-400 to-indigo-600 ml-2 text-[1.25rem] md:text-[2.25rem] lg:text-[3.25rem] leading-[0.8] mb-[2px] md:mb-[4px]">.GG</span>
@@ -394,7 +394,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
                          [
                      </motion.div>
                      
-                     <div className="relative overflow-hidden py-3 md:py-4 px-4 md:px-8 bg-gradient-to-b from-amber-900/40 to-[#0a0a0a]/80 border-y border-amber-400/40 backdrop-blur-xl shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                     <div className="relative overflow-hidden py-3 md:py-4 px-4 md:px-8 bg-gradient-to-b from-amber-900/40 to-[#0a0a0a]/80 border-y border-amber-400/40 md:backdrop-blur-xl shadow-[0_0_20px_rgba(0,0,0,0.8)]">
                          <motion.p 
                              initial={{ opacity: 0, filter: 'blur(5px)' }}
                              animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -448,7 +448,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
              transition={{ duration: 2, delay: 0.8 }}
-             className="relative w-full pointer-events-none flex-1 flex flex-col justify-end pb-[15vh] md:pb-[25vh]"
+             className="relative w-full pointer-events-none flex-1 flex flex-col justify-end pb-[15vh] md:pb-[25vh] transform-gpu"
           >
               {/* Vertical Laser Downward from central dot removed */}
               
@@ -523,7 +523,7 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
                           {/* Floating Hologram Data Card */}
                           <div className="relative flex flex-col items-center justify-center -mb-2 group-hover/soon:-translate-y-2 transition-transform duration-500 scale-90 md:scale-100">
                               
-                              <div className="relative px-5 py-2.5 border border-red-500/30 bg-[#0a0202]/80 backdrop-blur-xl rounded-sm overflow-hidden group-hover/soon:border-red-500/80 group-hover/soon:shadow-[0_0_25px_rgba(239,68,68,0.3)] transition-all">
+                              <div className="relative px-5 py-2.5 border border-red-500/30 bg-[#0a0202]/80 md:backdrop-blur-xl rounded-sm overflow-hidden group-hover/soon:border-red-500/80 group-hover/soon:shadow-[0_0_25px_rgba(239,68,68,0.3)] transition-all">
                                   {/* Corner accents */}
                                   <div className="absolute top-0 right-0 w-2 h-2 border-b border-l border-red-500/80"></div>
                                   <div className="absolute bottom-0 left-0 w-2 h-2 border-t border-r border-red-500/80"></div>
@@ -608,14 +608,14 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
       {/* The bottom UI slice */}
       <motion.div 
         style={{ x: planetX, y: planetY }} 
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[100vw] sm:w-[90vw] md:w-[70vw] lg:w-[60vw] max-w-[900px] h-[100px] md:h-[140px] hover:h-[350px] md:hover:h-[500px] translate-y-1/2 hover:translate-y-[5%] flex justify-center z-50 group cursor-pointer transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[100vw] sm:w-[90vw] md:w-[70vw] lg:w-[60vw] max-w-[900px] h-[100px] md:h-[140px] hover:h-[350px] md:hover:h-[500px] translate-y-1/2 hover:translate-y-[5%] flex justify-center z-50 group cursor-pointer transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu"
       >
           {/* Atmospheric Glow */}
-          <div className="absolute top-[-5px] left-1/2 -translate-x-1/2 w-[60%] h-[30px] rounded-[100%] bg-amber-400/20 group-hover:bg-[#ef4444]/20 blur-[20px] z-20 mix-blend-screen transition-colors duration-700"></div>
-          <div className="absolute top-[0px] left-1/2 -translate-x-1/2 w-[40%] h-[10px] rounded-[100%] bg-white/30 blur-[10px] z-30 mix-blend-screen group-hover:opacity-0 transition-opacity duration-700"></div>
+          <div className="absolute top-[-5px] left-1/2 -translate-x-1/2 w-[60%] h-[30px] rounded-[100%] bg-amber-400/20 group-hover:bg-[#ef4444]/20 blur-[20px] z-20 md:mix-blend-screen transition-colors duration-700"></div>
+          <div className="absolute top-[0px] left-1/2 -translate-x-1/2 w-[40%] h-[10px] rounded-[100%] bg-white/30 blur-[10px] z-30 md:mix-blend-screen group-hover:opacity-0 transition-opacity duration-700"></div>
           
           {/* Planet Body Curved Outline morphing to Screen */}
-          <div className="absolute inset-0 rounded-[100%] group-hover:rounded-[30px] overflow-hidden bg-[#0f0f0f]/95 group-hover:bg-[#181818]/95 backdrop-blur-xl border-t-[1.5px] border-amber-400/30 group-hover:border-[1px] group-hover:border-amber-500/40 shadow-[0_0_30px_rgba(251,191,36,0.1)] group-hover:shadow-[0_0_80px_rgba(251,191,36,0.15)] flex flex-col items-center pt-[15px] md:pt-[20px] transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-auto group-hover:border-b-0">
+          <div className="absolute inset-0 rounded-[100%] group-hover:rounded-[30px] overflow-hidden bg-[#0f0f0f]/95 group-hover:bg-[#181818]/95 md:backdrop-blur-xl border-t-[1.5px] border-amber-400/30 group-hover:border-[1px] group-hover:border-amber-500/40 shadow-[0_0_30px_rgba(251,191,36,0.1)] group-hover:shadow-[0_0_80px_rgba(251,191,36,0.15)] flex flex-col items-center pt-[15px] md:pt-[20px] transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-auto group-hover:border-b-0">
               
               {/* Highlight along the rim */}
               <div className="absolute w-[80%] h-1 bg-gradient-to-r from-transparent via-amber-300 group-hover:via-amber-400 to-transparent opacity-80 blur-[2px] top-[0px] left-1/2 -translate-x-1/2 transition-colors duration-700"></div>
@@ -653,9 +653,9 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
                       allowFullScreen
                   ></iframe>
                   {/* Subtle overlay so it looks sci-fi */}
-                  <div className="absolute inset-0 bg-neutral-950/10 mix-blend-overlay pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-neutral-950/10 md:mix-blend-overlay pointer-events-none"></div>
                   {/* Scanline overlay for video */}
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] pointer-events-none mix-blend-overlay opacity-50"></div>
+                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] pointer-events-none md:mix-blend-overlay opacity-50 hidden md:block"></div>
               </div>
               
               {/* Radar rings spreading on hover */}

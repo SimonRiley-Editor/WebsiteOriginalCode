@@ -1,3 +1,23 @@
+/** A single event block on the rotation timeline. */
+export interface TeamRotationEvent {
+  id: string;
+  characterSlot: 1 | 2 | 3;
+  characterName: string;
+  avatarUrl?: string;
+  type: 'intro' | 'skill' | 'ultimate' | 'outro' | 'echo';
+  startTime: number;   // seconds from 0
+  duration: number;     // seconds
+  color?: string;       // optional override for block color
+  label?: string;       // optional short label displayed on block
+}
+
+/** Configuration for the full rotation timeline. */
+export interface RotationConfig {
+  totalDuration: number; // seconds
+  events: TeamRotationEvent[];
+  slotNames?: [string, string, string]; // e.g. ["Hiyuki (Main)", "Zhezhi (Sub)", "Verina (Support)"]
+}
+
 export interface GuideContent {
   quote: string;
   description: string;
@@ -45,6 +65,7 @@ export interface GuideContent {
     cost1Name?: string;
     substats?: { stat: string; priority: string }[];
   }[];
+  rotation_timeline?: RotationConfig;
 }
 
 export interface Guide {

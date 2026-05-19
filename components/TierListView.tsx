@@ -29,7 +29,7 @@ export function TierListView() {
             
             <div className="flex items-center gap-3">
               <div className="flex rounded-md p-1 bg-[#151520] border border-white/5">
-                <button className="px-4 py-2 text-xs font-semibold rounded bg-[#3D2952] text-[#E0C2FF] transition-colors">
+                <button title="Action" className="px-4 py-2 text-xs font-semibold rounded bg-[#3D2952] text-[#E0C2FF] transition-colors">
                   TIER VIEW
                 </button>
                 <button className="px-4 py-2 text-xs font-semibold rounded hover:bg-white/5 text-[#8F8FA3] transition-colors">
@@ -74,10 +74,10 @@ export function TierListView() {
                 <div key={tierLine.id} className="flex flex-col lg:flex-row gap-6 lg:gap-8 pb-8 border-b border-white/5 last:border-0 last:pb-0">
                   {/* Tier Label */}
                   <div className="w-[140px] shrink-0">
-                    <h2 className="text-5xl font-display font-bold leading-none" style={{ color: tierLine.color }}>
+                    <h2 className="text-5xl font-display font-bold leading-none" style={ { color: tierLine.color } }>
                       {tierLine.id}
                     </h2>
-                    <h3 className="text-xs font-semibold tracking-wider uppercase mt-4 mb-2" style={{ color: tierLine.color }}>
+                    <h3 className="text-xs font-semibold tracking-wider uppercase mt-4 mb-2" style={ { color: tierLine.color } }>
                       {tierLine.title}
                     </h3>
                     <p className="text-[11px] text-[#8F8FA3] leading-relaxed pr-4">
@@ -99,12 +99,12 @@ export function TierListView() {
                               ? "border-2 border-[#E0C2FF] shadow-[0_0_15px_rgba(224,194,255,0.3)]" 
                               : "border border-transparent hover:border-white/20"
                           )}
-                          style={{ 
+                          style={ { 
                             width: "100px", 
                             height: "135px",
                             borderColor: isSelected ? '#E0C2FF' : `${tierLine.color}40`, // 40 is hex opacity
                             borderWidth: isSelected ? '2px' : '1px'
-                          }}
+                          } }
                         >
                           <div className="relative flex-1 w-full overflow-hidden">
                             <img 
@@ -117,7 +117,7 @@ export function TierListView() {
                             
                             {/* Element Badge (top left) */}
                             <div className="absolute top-1 left-1 w-5 h-5 rounded overflow-hidden flex items-center justify-center bg-black/50 backdrop-blur-md">
-                              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: tierLine.color }} />
+                              <div className="w-2 h-2 rounded-full" style={ { backgroundColor: tierLine.color } } />
                             </div>
                             
                             {/* Weapon Badge (top right, just an icon or small box) */}
@@ -133,7 +133,7 @@ export function TierListView() {
                             </span>
                             <div className="flex gap-[2px] mt-0.5">
                               {[...Array(char.stars)].map((_, i) => (
-                                <Star key={i} size={8} fill={tierLine.color} style={{ color: tierLine.color }} />
+                                <Star key={i} size={8} fill={tierLine.color} style={ { color: tierLine.color } } />
                               ))}
                             </div>
                           </div>

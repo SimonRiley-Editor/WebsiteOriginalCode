@@ -7,6 +7,7 @@ import { Users, Save, AlertCircle, CheckCircle2, Plus, Database, ExternalLink, L
 import { hiyukiSeedData } from "@/lib/seed-data";
 import Link from "next/link";
 import { compressImage } from "@/lib/imageHelper";
+import { RotationBuilder } from "@/components/admin/RotationBuilder";
 
 const ImageUploadInput = ({ value, onChange, placeholder = "https://...", className = "" }: { value: string, onChange: (val: string) => void, placeholder?: string, className?: string }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -146,7 +147,7 @@ const KeyValueEditor = ({ value, onChange }: { value: any, onChange: (val: any[]
               const newItems = [...items];
               newItems[idx] = { ...newItems[idx], label: e.target.value };
               onChange(newItems);
-            }}
+            } }
             className="w-1/2 bg-[#1e293b] border border-slate-700/50 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono"
           />
           <input
@@ -158,7 +159,7 @@ const KeyValueEditor = ({ value, onChange }: { value: any, onChange: (val: any[]
               const newItems = [...items];
               newItems[idx] = { ...newItems[idx], value: e.target.value };
               onChange(newItems);
-            }}
+            } }
             className="w-1/2 bg-[#1e293b] border border-slate-700/50 rounded-lg px-3 py-1.5 text-xs text-amber-400 focus:outline-none focus:border-amber-500/50 font-mono"
           />
           <button
@@ -168,7 +169,7 @@ const KeyValueEditor = ({ value, onChange }: { value: any, onChange: (val: any[]
               const newItems = [...items];
               newItems.splice(idx, 1);
               onChange(newItems);
-            }}
+            } }
             className="text-slate-500 hover:text-red-400 transition-colors p-1"
           >
             <X size={14} />
@@ -179,7 +180,7 @@ const KeyValueEditor = ({ value, onChange }: { value: any, onChange: (val: any[]
         type="button"
         onClick={() => {
           onChange([...items, { label: '', value: '' }]);
-        }}
+        } }
         className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-slate-400 hover:text-white transition-colors mt-2 bg-slate-800/50 hover:bg-slate-700 px-3 py-1.5 rounded-lg w-full justify-center border border-slate-700/50"
       >
         <Plus size={12} /> Add Row
@@ -231,7 +232,7 @@ const JsonEditor = ({ value, onChange }: { value: any, onChange: (val: any) => v
             const parsed = JSON.parse(e.target.value);
             setText(JSON.stringify(parsed, null, 2));
           } catch (e) { }
-        }}
+        } }
         spellCheck="false"
         title="JSON Content"
         className={'w-full h-32 bg-[#1e293b] border ' + (error ? 'border-red-500/50' : 'border-slate-700/50') + ' rounded-lg px-4 py-2 text-xs text-slate-400 focus:outline-none focus:border-amber-500/50 font-mono shadow-inner'}
@@ -321,26 +322,26 @@ const RichTextEditor = ({ value, onChange, placeholder = "", className = "", min
     <div className={className}>
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 bg-[#0c1322] border border-slate-700/50 border-b-0 rounded-t-lg px-2 py-1.5">
-        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('bold'); }} title="Bold" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm font-black">B</button>
-        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('italic'); }} title="Italic" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm italic font-semibold">I</button>
-        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('underline'); }} title="Underline" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm underline font-semibold">U</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('bold'); } } title="Bold" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm font-black">B</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('italic'); } } title="Italic" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm italic font-semibold">I</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('underline'); } } title="Underline" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all text-sm underline font-semibold">U</button>
 
         <div className="w-px h-5 bg-slate-700 mx-1" />
 
         {/* Color picker */}
         <div className="relative" ref={colorPickerRef}>
-          <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); setShowColorPicker(!showColorPicker); }} title="Text Color" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
-            <span className="text-sm font-bold" style={{ borderBottom: '2.5px solid #f43f5e' }}>A</span>
+          <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); setShowColorPicker(!showColorPicker); } } title="Text Color" className="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:text-white hover:bg-slate-700/60 transition-all">
+            <span className="text-sm font-bold" style={ { borderBottom: '2.5px solid #f43f5e' } }>A</span>
           </button>
           {showColorPicker && (
             <div className="absolute top-full left-0 mt-1 z-50 bg-[#0f172a] border border-slate-600/50 rounded-lg p-2 shadow-2xl shadow-black/50 min-w-[160px]">
               <div className="grid grid-cols-5 gap-1.5 mb-2">
                 {presetColors.map(color => (
-                  <button key={color} type="button" onMouseDown={(e) => { e.preventDefault(); execCmd('foreColor', color); setShowColorPicker(false); }} className="w-6 h-6 rounded-full border-2 border-slate-600 hover:border-white hover:scale-110 transition-all" style={{ backgroundColor: color }} />
+                  <button key={color} type="button" onMouseDown={(e) => { e.preventDefault(); execCmd('foreColor', color); setShowColorPicker(false); } } className="w-6 h-6 rounded-full border-2 border-slate-600 hover:border-white hover:scale-110 transition-all" style={ { backgroundColor: color } } />
                 ))}
               </div>
               <div className="flex items-center gap-2 pt-1 border-t border-slate-700/50">
-                <input type="color" title="Custom Color" onChange={(e) => { execCmd('foreColor', e.target.value); setShowColorPicker(false); }} className="w-6 h-6 cursor-pointer bg-transparent border-none rounded" />
+                <input type="color" title="Custom Color" onChange={(e) => { execCmd('foreColor', e.target.value); setShowColorPicker(false); } } className="w-6 h-6 cursor-pointer bg-transparent border-none rounded" />
                 <span className="text-[10px] text-slate-500 uppercase tracking-wider">Custom</span>
               </div>
             </div>
@@ -351,7 +352,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "", className = "", min
 
         {/* Font size */}
         <div className="relative">
-          <select title="Font Size" onChange={(e) => { if (e.target.value) applyFontSize(e.target.value); e.target.value = ''; }} defaultValue="" className="bg-transparent border border-slate-700/50 rounded text-[10px] text-slate-400 hover:text-slate-200 px-1.5 py-1 cursor-pointer focus:outline-none appearance-none uppercase tracking-wider font-bold w-[70px]">
+          <select title="Font Size" onChange={(e) => { if (e.target.value) applyFontSize(e.target.value); e.target.value = ''; } } defaultValue="" className="bg-transparent border border-slate-700/50 rounded text-[10px] text-slate-400 hover:text-slate-200 px-1.5 py-1 cursor-pointer focus:outline-none appearance-none uppercase tracking-wider font-bold w-[70px]">
             <option value="" disabled>Size</option>
             <option value="0.85em">Small</option>
             <option value="1em">Normal</option>
@@ -364,7 +365,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "", className = "", min
         <div className="w-px h-5 bg-slate-700 mx-1" />
 
         {/* Clear formatting */}
-        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('removeFormat'); }} title="Clear Formatting" className="w-7 h-7 flex items-center justify-center rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all">
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); saveSelection(); execCmd('removeFormat'); } } title="Clear Formatting" className="w-7 h-7 flex items-center justify-center rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all">
           <X size={14} />
         </button>
       </div>
@@ -380,7 +381,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "", className = "", min
         onKeyUp={saveSelection}
         data-placeholder={placeholder}
         className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-b-lg px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all text-sm leading-relaxed overflow-y-auto"
-        style={{ minHeight, maxHeight: '400px' }}
+        style={ { minHeight, maxHeight: '400px' } }
       />
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
@@ -626,7 +627,8 @@ export default function AdminDashboard() {
     { id: "abilities", label: "Abilities / Kit" },
     { id: "skills", label: "Skill Priority" },
     { id: "teams", label: "Teams" },
-    { id: "sequence", label: "Sequence" }
+    { id: "sequence", label: "Sequence" },
+    { id: "rotation", label: "Rotation" }
   ];
 
   return (
@@ -948,7 +950,7 @@ export default function AdminDashboard() {
                     type="button"
                     role="switch"
                     title="Publish toggle"
-                    aria-checked={contentData.is_published ? "true" : "false"}
+                    aria-checked={!!(contentData.is_published)}
                     onClick={() => handleContentChange("is_published", !(contentData.is_published || false))}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${contentData.is_published ? 'bg-emerald-500' : 'bg-white/10'
                       }`}
@@ -1151,7 +1153,7 @@ export default function AdminDashboard() {
                                 viewport: { padBottom: "15%", padTop: "15%" },
                                 offset: { x: 0, y: 0, scale: 1.1 }
                               });
-                            }}
+                            } }
                             className="text-[10px] uppercase tracking-wider font-bold bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-3 py-1.5 rounded transition-colors border border-cyan-500/20"
                           >
                             Fill Hiyuki Demos
@@ -1229,24 +1231,24 @@ export default function AdminDashboard() {
                                       const newTextures = [...(contentData.spine?.textures || [])];
                                       newTextures[idx] = { ...newTextures[idx], name: e.target.value };
                                       handleNestedContentChange("spine", "textures", newTextures);
-                                    }} className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-md px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 font-mono" />
+                                    } } className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-md px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 font-mono" />
                                     <input type="text" value={tex.url || ""} placeholder="https://..." onChange={(e) => {
                                       const newTextures = [...(contentData.spine?.textures || [])];
                                       newTextures[idx] = { ...newTextures[idx], url: e.target.value };
                                       handleNestedContentChange("spine", "textures", newTextures);
-                                    }} className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-md px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 font-mono" />
+                                    } } className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-md px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-cyan-500 font-mono" />
                                   </div>
                                   <button type="button" title="Remove texture" onClick={() => {
                                     const newTextures = [...(contentData.spine?.textures || [])];
                                     newTextures.splice(idx, 1);
                                     handleNestedContentChange("spine", "textures", newTextures);
-                                  }} className="text-slate-500 hover:text-red-400 p-1.5 transition-colors"><X size={16} /></button>
+                                  } } className="text-slate-500 hover:text-red-400 p-1.5 transition-colors"><X size={16} /></button>
                                 </div>
                               ))}
                               <button type="button" onClick={() => {
                                 const newTextures = [...(contentData.spine?.textures || []), { name: "", url: "" }];
                                 handleNestedContentChange("spine", "textures", newTextures);
-                              }} className="w-full py-2.5 mt-2 border border-dashed border-cyan-500/30 rounded-lg text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/60 hover:bg-cyan-500/5 transition-colors flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider"><Plus size={14} /> Add Texture</button>
+                              } } className="w-full py-2.5 mt-2 border border-dashed border-cyan-500/30 rounded-lg text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/60 hover:bg-cyan-500/5 transition-colors flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider"><Plus size={14} /> Add Texture</button>
                             </div>
                           </div>
                         </div>
@@ -1321,8 +1323,8 @@ export default function AdminDashboard() {
                           <div className="space-y-3">
                             {(contentData.pros || []).map((pro: string, idx: number) => (
                               <div key={idx} className="flex gap-3 group">
-                                <input type="text" value={pro} onChange={(e) => { const newPros = [...(contentData.pros || [])]; newPros[idx] = e.target.value; handleContentChange("pros", newPros); }} className="flex-1 bg-[#0f172a]/80 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500" placeholder="e.g. High AoE damage" />
-                                <button type="button" title="Remove pro" onClick={() => { const newPros = [...(contentData.pros || [])]; newPros.splice(idx, 1); handleContentChange("pros", newPros); }} className="text-slate-500 hover:text-red-400 p-2 opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-slate-800"><X size={16} /></button>
+                                <input type="text" value={pro} onChange={(e) => { const newPros = [...(contentData.pros || [])]; newPros[idx] = e.target.value; handleContentChange("pros", newPros); } } className="flex-1 bg-[#0f172a]/80 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-emerald-500" placeholder="e.g. High AoE damage" />
+                                <button type="button" title="Remove pro" onClick={() => { const newPros = [...(contentData.pros || [])]; newPros.splice(idx, 1); handleContentChange("pros", newPros); } } className="text-slate-500 hover:text-red-400 p-2 opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-slate-800"><X size={16} /></button>
                               </div>
                             ))}
                             <button type="button" onClick={() => handleContentChange("pros", [...(contentData.pros || []), ""])} className="w-full py-2.5 mt-2 border border-dashed border-emerald-500/30 rounded-lg text-emerald-400 hover:text-emerald-300 hover:border-emerald-500/60 hover:bg-emerald-500/5 transition-colors flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider"><Plus size={14} /> Add Pro</button>
@@ -1342,8 +1344,8 @@ export default function AdminDashboard() {
                           <div className="space-y-3">
                             {(contentData.cons || []).map((con: string, idx: number) => (
                               <div key={idx} className="flex gap-3 group">
-                                <input type="text" value={con} onChange={(e) => { const newCons = [...(contentData.cons || [])]; newCons[idx] = e.target.value; handleContentChange("cons", newCons); }} className="flex-1 bg-[#0f172a]/80 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-rose-500" placeholder="e.g. Energy hungry" />
-                                <button type="button" title="Remove con" onClick={() => { const newCons = [...(contentData.cons || [])]; newCons.splice(idx, 1); handleContentChange("cons", newCons); }} className="text-slate-500 hover:text-red-400 p-2 opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-slate-800"><X size={16} /></button>
+                                <input type="text" value={con} onChange={(e) => { const newCons = [...(contentData.cons || [])]; newCons[idx] = e.target.value; handleContentChange("cons", newCons); } } className="flex-1 bg-[#0f172a]/80 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none focus:border-rose-500" placeholder="e.g. Energy hungry" />
+                                <button type="button" title="Remove con" onClick={() => { const newCons = [...(contentData.cons || [])]; newCons.splice(idx, 1); handleContentChange("cons", newCons); } } className="text-slate-500 hover:text-red-400 p-2 opacity-0 group-hover:opacity-100 transition-all rounded hover:bg-slate-800"><X size={16} /></button>
                               </div>
                             ))}
                             <button type="button" onClick={() => handleContentChange("cons", [...(contentData.cons || []), ""])} className="w-full py-2.5 mt-2 border border-dashed border-rose-500/30 rounded-lg text-rose-400 hover:text-rose-300 hover:border-rose-500/60 hover:bg-rose-500/5 transition-colors flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider"><Plus size={14} /> Add Con</button>
@@ -1530,7 +1532,7 @@ export default function AdminDashboard() {
                                       const current = [...(contentData.weapons || [])];
                                       current[idx] = { ...current[idx], type: e.target.value, weaponType: e.target.value };
                                       handleContentChange("weapons", current);
-                                    }} className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-amber-500 appearance-none cursor-pointer text-sm font-bold uppercase tracking-wider">
+                                    } } className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-amber-500 appearance-none cursor-pointer text-sm font-bold uppercase tracking-wider">
                                       <option value="Broadblade">Broadblade</option>
                                       <option value="Sword">Sword</option>
                                       <option value="Pistols">Pistols</option>
@@ -1657,7 +1659,7 @@ export default function AdminDashboard() {
                             cost1: [], cost1Name: "",
                             substats: []
                           }]);
-                        }} className="py-1.5 px-3 bg-amber-500/10 text-amber-400 border border-amber-500/50 rounded hover:bg-amber-500/20 transition-all text-xs font-bold flex items-center gap-2">
+                        } } className="py-1.5 px-3 bg-amber-500/10 text-amber-400 border border-amber-500/50 rounded hover:bg-amber-500/20 transition-all text-xs font-bold flex items-center gap-2">
                           <Plus size={14} /> Add Set
                         </button>
                       </div>
@@ -1673,7 +1675,7 @@ export default function AdminDashboard() {
                                 const newSets = [...echoSets];
                                 newSets.splice(setIdx, 1);
                                 handleNestedContentChange("echoSets", null, newSets);
-                              }} className="absolute top-4 right-4 p-2 text-slate-500 hover:text-red-400 bg-slate-800/80 rounded-lg">
+                              } } className="absolute top-4 right-4 p-2 text-slate-500 hover:text-red-400 bg-slate-800/80 rounded-lg">
                                 <X size={16} />
                               </button>
                             )}
@@ -1684,7 +1686,7 @@ export default function AdminDashboard() {
                                   const newSets = [...echoSets];
                                   newSets[setIdx] = { ...newSets[setIdx], name: e.target.value };
                                   handleNestedContentChange("echoSets", null, newSets);
-                                }} placeholder="e.g., Best Option" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50" />
+                                } } placeholder="e.g., Best Option" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50" />
                               </div>
                               <div className="space-y-2">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Echo Layout Pattern</label>
@@ -1692,7 +1694,7 @@ export default function AdminDashboard() {
                                   const newSets = [...echoSets];
                                   newSets[setIdx] = { ...newSets[setIdx], pattern: e.target.value };
                                   handleNestedContentChange("echoSets", null, newSets);
-                                }} placeholder="e.g., 4-4-1-1-1" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50" />
+                                } } placeholder="e.g., 4-4-1-1-1" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50" />
                               </div>
 
                               <div className="space-y-2">
@@ -1701,7 +1703,7 @@ export default function AdminDashboard() {
                                   const newSets = [...echoSets];
                                   newSets[setIdx] = { ...newSets[setIdx], mainSet: e.target.value };
                                   handleNestedContentChange("echoSets", null, newSets);
-                                }} placeholder="e.g., Freezing Frost" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
+                                } } placeholder="e.g., Freezing Frost" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
                               </div>
                               <div className="space-y-2">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Set Description</label>
@@ -1709,7 +1711,7 @@ export default function AdminDashboard() {
                                   const newSets = [...echoSets];
                                   newSets[setIdx] = { ...newSets[setIdx], mainSetDescription: e.target.value };
                                   handleNestedContentChange("echoSets", null, newSets);
-                                }} placeholder="e.g., 5-Pc: Glacio DMG +10%..." className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
+                                } } placeholder="e.g., 5-Pc: Glacio DMG +10%..." className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
                               </div>
                               <div className="space-y-2 md:col-span-2">
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">ER Requirement (Optional)</label>
@@ -1717,7 +1719,7 @@ export default function AdminDashboard() {
                                   const newSets = [...echoSets];
                                   newSets[setIdx] = { ...newSets[setIdx], erRequirement: e.target.value };
                                   handleNestedContentChange("echoSets", null, newSets);
-                                }} placeholder="e.g., 120-130% Energy Regeneration" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
+                                } } placeholder="e.g., 120-130% Energy Regeneration" className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 font-mono" />
                               </div>
                             </div>
 
@@ -1731,7 +1733,7 @@ export default function AdminDashboard() {
                                       const newSets = [...echoSets];
                                       newSets[setIdx] = { ...newSets[setIdx], cost4Name: e.target.value };
                                       handleNestedContentChange("echoSets", null, newSets);
-                                    }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cost 4 Skill Description</label>
@@ -1739,11 +1741,11 @@ export default function AdminDashboard() {
                                       const newSets = [...echoSets];
                                       newSets[setIdx] = { ...newSets[setIdx], cost4Description: val };
                                       handleNestedContentChange("echoSets", null, newSets);
-                                    }} placeholder="Skill info..." minHeight="60px" />
+                                    } } placeholder="Skill info..." minHeight="60px" />
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cost 4 Priority (comma,sep)</label>
-                                    <CommaArrayInput value={set.cost4} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost4: val }; handleNestedContentChange("echoSets", null, newSets); }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    <CommaArrayInput value={set.cost4} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost4: val }; handleNestedContentChange("echoSets", null, newSets); } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                 </div>
                                 <div className="space-y-3">
@@ -1753,11 +1755,11 @@ export default function AdminDashboard() {
                                       const newSets = [...echoSets];
                                       newSets[setIdx] = { ...newSets[setIdx], cost3Name: e.target.value };
                                       handleNestedContentChange("echoSets", null, newSets);
-                                    }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cost 3 Priority</label>
-                                    <CommaArrayInput value={set.cost3} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost3: val }; handleNestedContentChange("echoSets", null, newSets); }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    <CommaArrayInput value={set.cost3} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost3: val }; handleNestedContentChange("echoSets", null, newSets); } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                 </div>
                                 <div className="space-y-3">
@@ -1767,11 +1769,11 @@ export default function AdminDashboard() {
                                       const newSets = [...echoSets];
                                       newSets[setIdx] = { ...newSets[setIdx], cost1Name: e.target.value };
                                       handleNestedContentChange("echoSets", null, newSets);
-                                    }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                   <div className="space-y-1">
                                     <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Cost 1 Priority</label>
-                                    <CommaArrayInput value={set.cost1} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost1: val }; handleNestedContentChange("echoSets", null, newSets); }} className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
+                                    <CommaArrayInput value={set.cost1} onChange={(val) => { const newSets = [...echoSets]; newSets[setIdx] = { ...newSets[setIdx], cost1: val }; handleNestedContentChange("echoSets", null, newSets); } } className="w-full bg-[#0f172a] border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-200" />
                                   </div>
                                 </div>
                               </div>
@@ -1787,14 +1789,14 @@ export default function AdminDashboard() {
                                     current[idx] = { ...current[idx], stat: e.target.value };
                                     newSets[setIdx] = { ...newSets[setIdx], substats: current };
                                     handleNestedContentChange("echoSets", null, newSets);
-                                  }} placeholder="Stat Name" className="flex-1 bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200" />
+                                  } } placeholder="Stat Name" className="flex-1 bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200" />
                                   <select value={sub.priority || "high"} title="Substat Priority" onChange={(e) => {
                                     const newSets = [...echoSets];
                                     const current = [...(set.substats || [])];
                                     current[idx] = { ...current[idx], priority: e.target.value };
                                     newSets[setIdx] = { ...newSets[setIdx], substats: current };
                                     handleNestedContentChange("echoSets", null, newSets);
-                                  }} className="w-32 bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200">
+                                  } } className="w-32 bg-[#0f172a] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200">
                                     <option value="high">High</option>
                                     <option value="medium">Medium</option>
                                     <option value="low">Low</option>
@@ -1805,7 +1807,7 @@ export default function AdminDashboard() {
                                     current.splice(idx, 1);
                                     newSets[setIdx] = { ...newSets[setIdx], substats: current };
                                     handleNestedContentChange("echoSets", null, newSets);
-                                  }} className="p-2 text-slate-500 hover:text-red-400">
+                                  } } className="p-2 text-slate-500 hover:text-red-400">
                                     <X size={20} />
                                   </button>
                                 </div>
@@ -1815,7 +1817,7 @@ export default function AdminDashboard() {
                                 const current = [...(set.substats || [])];
                                 newSets[setIdx] = { ...newSets[setIdx], substats: [...current, { stat: "", priority: "medium" }] };
                                 handleNestedContentChange("echoSets", null, newSets);
-                              }} className="py-2 px-4 border border-dashed border-slate-600 rounded-lg text-slate-400 hover:text-amber-400 flex items-center gap-2 text-sm">
+                              } } className="py-2 px-4 border border-dashed border-slate-600 rounded-lg text-slate-400 hover:text-amber-400 flex items-center gap-2 text-sm">
                                 <Plus size={16} /> Add Substat
                               </button>
                             </div>
@@ -1842,7 +1844,7 @@ export default function AdminDashboard() {
                                 <span className="text-slate-500">Priority (1-5):</span>
                                 <input type="number" min="1" max="5" title="Upgrade Priority" value={contentData.kit?.[skillType]?.upgradePriority || 1} onChange={(e) => {
                                   setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), upgradePriority: parseInt(e.target.value) } } }));
-                                }} className="w-16 bg-[#1e293b] border border-slate-700/50 rounded px-2 py-1 text-slate-200 focus:border-amber-500/50 outline-none" />
+                                } } className="w-16 bg-[#1e293b] border border-slate-700/50 rounded px-2 py-1 text-slate-200 focus:border-amber-500/50 outline-none" />
                               </div>
                             </h4>
 
@@ -1851,13 +1853,13 @@ export default function AdminDashboard() {
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Skill Name</label>
                                 <input type="text" value={contentData.kit?.[skillType]?.name || ""} onChange={(e) => {
                                   setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), name: e.target.value } } }));
-                                }} placeholder="e.g. Basic Attack" className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
+                                } } placeholder="e.g. Basic Attack" className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
                               </div>
                               <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Icon URL</label>
                                 <ImageUploadInput value={contentData.kit?.[skillType]?.icon || ""} onChange={(v) => {
                                   setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), icon: v } } }));
-                                }} placeholder="e.g. /icons/skill1.webp" className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
+                                } } placeholder="e.g. /icons/skill1.webp" className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
                               </div>
                             </div>
 
@@ -1869,19 +1871,19 @@ export default function AdminDashboard() {
                                 <div className="flex-1">
                                   <input type="text" value={contentData.kit?.[skillType]?.video || ""} onChange={(e) => {
                                     setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), video: e.target.value } } }));
-                                  }} placeholder="Video URL (WebM, MP4, YouTube)" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner" />
+                                  } } placeholder="Video URL (WebM, MP4, YouTube)" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner" />
                                 </div>
                                 <div className="flex gap-3 w-full sm:w-auto">
                                   <div className="relative w-1/2 sm:w-24">
                                     <input type="number" value={contentData.kit?.[skillType]?.videoStart || ""} onChange={(e) => {
                                       setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), videoStart: e.target.value } } }));
-                                    }} placeholder="Start" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner pr-6" />
+                                    } } placeholder="Start" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner pr-6" />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono pointer-events-none">s</span>
                                   </div>
                                   <div className="relative w-1/2 sm:w-24">
                                     <input type="number" value={contentData.kit?.[skillType]?.videoEnd || ""} onChange={(e) => {
                                       setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), videoEnd: e.target.value } } }));
-                                    }} placeholder="End" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner pr-6" />
+                                    } } placeholder="End" className="w-full bg-[#0f172a] border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30 transition-all font-mono shadow-inner pr-6" />
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-mono pointer-events-none">s</span>
                                   </div>
                                 </div>
@@ -1892,14 +1894,14 @@ export default function AdminDashboard() {
                               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Description</label>
                               <RichTextEditor value={contentData.kit?.[skillType]?.description || ""} onChange={(val) => {
                                 setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), description: val } } }));
-                              }} placeholder="Enter skill details..." minHeight="90px" />
+                              } } placeholder="Enter skill details..." minHeight="90px" />
                             </div>
 
                             <div className="space-y-1 mt-2">
                               <label className="text-[10px] font-bold text-amber-500 uppercase tracking-widest pl-1">Quick Tip</label>
                               <input type="text" value={contentData.kit?.[skillType]?.quickTip || ""} onChange={(e) => {
                                 setContentData((prev: any) => ({ ...prev, kit: { ...prev.kit, [skillType]: { ...(prev.kit?.[skillType] || {}), quickTip: e.target.value } } }));
-                              }} placeholder="Quick pointer..." className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
+                              } } placeholder="Quick pointer..." className="w-full bg-[#1e293b] border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono shadow-inner" />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
@@ -2091,7 +2093,7 @@ export default function AdminDashboard() {
                                       // Remove members if it existed to migrate cleanly
                                       delete currentTeams[idx].members;
                                       handleContentChange("teams", currentTeams);
-                                    }} placeholder="Character Name" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
+                                    } } placeholder="Character Name" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
                                     <input type="text" value={char.role || ""} onChange={(e) => {
                                       const currentTeams = [...(contentData.teams || [])];
                                       const currentChars = [...(currentTeams[idx].characters || currentTeams[idx].members || [])];
@@ -2099,7 +2101,7 @@ export default function AdminDashboard() {
                                       currentTeams[idx] = { ...currentTeams[idx], characters: currentChars };
                                       delete currentTeams[idx].members;
                                       handleContentChange("teams", currentTeams);
-                                    }} placeholder="Role (e.g., Sub DPS)" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
+                                    } } placeholder="Role (e.g., Sub DPS)" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
                                   </div>
                                   <ImageUploadInput value={char.imageUrl || char.image || ""} onChange={(v) => {
                                     const currentTeams = [...(contentData.teams || [])];
@@ -2108,7 +2110,7 @@ export default function AdminDashboard() {
                                     currentTeams[idx] = { ...currentTeams[idx], characters: currentChars };
                                     delete currentTeams[idx].members;
                                     handleContentChange("teams", currentTeams);
-                                  }} placeholder="Image URL (imageUrl)" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
+                                  } } placeholder="Image URL (imageUrl)" className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" />
                                 </div>
                                 <button type="button" title="Remove character" onClick={() => {
                                   const currentTeams = [...(contentData.teams || [])];
@@ -2117,7 +2119,7 @@ export default function AdminDashboard() {
                                   currentTeams[idx] = { ...currentTeams[idx], characters: currentChars };
                                   delete currentTeams[idx].members;
                                   handleContentChange("teams", currentTeams);
-                                }} className="p-2 text-slate-500 hover:text-red-400 transition-colors mt-1">
+                                } } className="p-2 text-slate-500 hover:text-red-400 transition-colors mt-1">
                                   <X size={18} />
                                 </button>
                               </div>
@@ -2128,7 +2130,7 @@ export default function AdminDashboard() {
                               currentTeams[idx] = { ...currentTeams[idx], characters: [...currentChars, { name: "", role: "", imageUrl: "" }] };
                               delete currentTeams[idx].members;
                               handleContentChange("teams", currentTeams);
-                            }} className="py-2 px-4 border border-dashed border-slate-600 rounded-lg text-slate-400 hover:text-amber-400 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all flex items-center gap-2 text-sm font-medium">
+                            } } className="py-2 px-4 border border-dashed border-slate-600 rounded-lg text-slate-400 hover:text-amber-400 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all flex items-center gap-2 text-sm font-medium">
                               <Plus size={16} /> Add Character
                             </button>
                           </div>
@@ -2169,7 +2171,7 @@ export default function AdminDashboard() {
                                     const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}`, name: "", description: "", icon: "" })))];
                                     currentSecs[idx] = { ...currentSecs[idx], name: e.target.value };
                                     handleContentChange("sequences", currentSecs);
-                                  }}
+                                  } }
                                   placeholder="Sequence Name"
                                   className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all font-mono"
                                 />
@@ -2181,7 +2183,7 @@ export default function AdminDashboard() {
                                     const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}`, name: "", description: "", icon: "" })))];
                                     currentSecs[idx] = { ...currentSecs[idx], icon: v };
                                     handleContentChange("sequences", currentSecs);
-                                  }}
+                                  } }
                                   placeholder="Image URL"
                                   className="w-full bg-[#1e293b] border border-slate-700/50 rounded flex-1 px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all font-mono"
                                 />
@@ -2195,7 +2197,7 @@ export default function AdminDashboard() {
                                     const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}` })))];
                                     currentSecs[idx] = { ...currentSecs[idx], offsetX: Number(e.target.value) };
                                     handleContentChange("sequences", currentSecs);
-                                  }}
+                                  } }
                                   className="w-full bg-[#1e293b] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all font-mono"
                                 />
                               </div>
@@ -2206,7 +2208,7 @@ export default function AdminDashboard() {
                                     const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}` })))];
                                     currentSecs[idx] = { ...currentSecs[idx], offsetY: Number(e.target.value) };
                                     handleContentChange("sequences", currentSecs);
-                                  }}
+                                  } }
                                   className="w-full bg-[#1e293b] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all font-mono"
                                 />
                               </div>
@@ -2217,7 +2219,7 @@ export default function AdminDashboard() {
                                     const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}` })))];
                                     currentSecs[idx] = { ...currentSecs[idx], iconScale: Number(e.target.value) };
                                     handleContentChange("sequences", currentSecs);
-                                  }}
+                                  } }
                                   className="w-full bg-[#1e293b] border border-slate-700/50 rounded px-4 py-2 text-sm text-slate-200 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 transition-all font-mono"
                                 />
                               </div>
@@ -2229,7 +2231,7 @@ export default function AdminDashboard() {
                                   const currentSecs = [...(contentData.sequences || Array.from({ length: 6 }, (_, i) => ({ node: `S${i + 1}`, name: "", description: "", icon: "" })))];
                                   currentSecs[idx] = { ...currentSecs[idx], description: val };
                                   handleContentChange("sequences", currentSecs);
-                                }}
+                                } }
                                 placeholder="Describe the effects of unlocking this sequence."
                                 minHeight="90px"
                               />
@@ -2238,6 +2240,13 @@ export default function AdminDashboard() {
                         </div>
                       ))}
                     </div>
+                  )}
+
+                  {activeTab === "rotation" && (
+                    <RotationBuilder 
+                      value={contentData.rotation_timeline} 
+                      onChange={(val) => handleContentChange("rotation_timeline", val)} 
+                    />
                   )}
                 </div>
 

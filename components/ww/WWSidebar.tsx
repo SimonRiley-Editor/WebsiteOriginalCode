@@ -13,7 +13,7 @@ interface SidebarProps {
 export const WWSidebar: React.FC<SidebarProps> = ({ selectedElement, setSelectedElement, setSelectedIndex }) => {
   return (
        <motion.div 
-            className="group/sidebar relative left-0 top-0 bg-[#FAFAFC]/95 backdrop-blur-xl text-gray-800 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-[#E2E4EB]/60 h-full flex flex-col overflow-hidden transition-[width,min-width] duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] w-[88px] min-w-[88px] hover:w-[260px] hover:min-w-[260px] shrink-0"
+            className="group/sidebar relative left-0 top-0 bg-[#FAFAFC] md:bg-[#FAFAFC]/95 md:backdrop-blur-xl text-gray-800 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-[#E2E4EB]/60 h-full flex flex-col overflow-hidden transition-[width,min-width] duration-400 ease-[cubic-bezier(0.25,1,0.5,1)] w-[88px] min-w-[88px] hover:w-[260px] hover:min-w-[260px] shrink-0"
        >
            <div className="w-[260px] min-w-[260px] h-full flex flex-col items-start relative pb-6 pointer-events-auto">
                
@@ -23,16 +23,16 @@ export const WWSidebar: React.FC<SidebarProps> = ({ selectedElement, setSelected
                             <img src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777200649/channels4_profile_whsfqf_igz3gu.png" alt="GrimVeil" className="w-full h-full object-cover" />
                         </div>
                         <div className="flex flex-col opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden pointer-events-none group-hover/sidebar:pointer-events-auto">
-                            <h1 className="font-black text-[22px] tracking-[0.2em] text-gray-900 leading-none" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.05)", fontFamily: 'var(--font-cinzel), serif' }}>GRIMVEIL</h1>
-                            <h2 className="font-bold text-[10px] tracking-[0.3em] text-gray-400 uppercase mt-1 pl-1" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Guide School</h2>
+                            <h1 className="font-black text-[22px] tracking-[0.2em] text-gray-900 leading-none" style={ { textShadow: "0 2px 10px rgba(0,0,0,0.05)", fontFamily: 'var(--font-cinzel), serif' } }>GRIMVEIL</h1>
+                            <h2 className="font-bold text-[10px] tracking-[0.3em] text-gray-400 uppercase mt-1 pl-1" style={ { fontFamily: 'var(--font-cinzel), serif' } }>Guide School</h2>
                         </div>
                     </div>
                 </div>
 
                <div className="flex-1 overflow-y-auto w-full no-scrollbar flex flex-col pt-8 px-4 gap-2">
                   <div className="flex flex-col mb-2">
-                      <button
-                         onClick={() => { setSelectedElement('all'); setSelectedIndex(0); }}
+                      <button title="Action"
+                         onClick={() => { setSelectedElement('all'); setSelectedIndex(0); } }
                          className={`w-full flex items-center justify-start pl-[20px] py-[14px] rounded-xl relative transition-all duration-300 group ${selectedElement === 'all' ? 'bg-[#1C1D24] shadow-lg border-transparent scale-100' : 'bg-transparent hover:bg-gray-100'}`}
                       >
                          <div className="flex items-center gap-[22px]">
@@ -46,11 +46,11 @@ export const WWSidebar: React.FC<SidebarProps> = ({ selectedElement, setSelected
                       {ELEMENTS.map(el => (
                          <button
                             key={el.id}
-                            onClick={() => { setSelectedElement(el.id); setSelectedIndex(0); }}
+                            onClick={() => { setSelectedElement(el.id); setSelectedIndex(0); } }
                             className={`w-full flex items-center justify-start pl-[20px] py-[14px] rounded-xl relative transition-all duration-300 group ${selectedElement === el.id ? 'bg-[#1C1D24] shadow-lg border-transparent scale-100' : 'bg-transparent hover:bg-gray-100'}`}
-                            style={{
+                            style={ {
                                boxShadow: selectedElement === el.id ? `0 8px 24px -8px ${el.color}60` : undefined,
-                            }}
+                            } }
                          >
                             <div className="flex items-center gap-[22px]">
                                 <img src={el.imgSrc || undefined} alt={el.name} className={`w-[18px] h-[18px] object-contain transition-all duration-300 ${selectedElement === el.id ? 'opacity-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] brightness-0 invert' : 'opacity-60 group-hover:opacity-80 grayscale group-hover:grayscale-0'}`} />

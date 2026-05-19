@@ -133,7 +133,7 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
                     id={`weapon-${w.id}`}
                     type="button"
                     role="option"
-                    aria-selected={isActive}
+                    aria-selected={!!(isActive)}
                     aria-label={`${w.name}, ${w.type}, rank ${w.rank}, rarity ${w.rarity} of 5${isActive ? ", currently selected" : ""}`}
                     onClick={() => setActiveId(w.id)}
                     onMouseEnter={() => setHoverId(w.id)}
@@ -189,7 +189,7 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
                       {Array.from({ length: 5 }).map((_, i) => (
                         <span
                           key={i}
-                          style={{ transitionDelay: `${i * 40}ms` }}
+                          style={ { transitionDelay: `${i * 40}ms` } }
                           className={[
                             "size-1.5 rotate-45 transition-all",
                             i < w.rarity ? "bg-weapons-accent" : "bg-weapons-border",
@@ -220,15 +220,15 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
           <div
             aria-hidden
             className="absolute inset-0 opacity-[0.06] pointer-events-none transition-opacity duration-500"
-            style={{
+            style={ {
               backgroundImage:
                 "repeating-linear-gradient(135deg, var(--color-weapons-bone) 0 2px, transparent 2px 14px)",
-            }}
+            } }
           />
           <div
             aria-hidden
             className="absolute -top-16 -right-16 size-[420px] rounded-full blur-[120px] pointer-events-none transition-colors duration-700"
-            style={{ backgroundColor: tier.glow, opacity: 0.25 }}
+            style={ { backgroundColor: tier.glow, opacity: 0.25 } }
           />
 
           {/* HERO ROW */}
@@ -290,7 +290,7 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
                     {Array.from({ length: 5 }).map((_, i) => (
                       <span
                         key={i}
-                        style={{ transitionDelay: `${i * 60}ms` }}
+                        style={ { transitionDelay: `${i * 60}ms` } }
                         className={[
                           "size-2 rotate-45 transition-transform",
                           i < active.rarity ? "bg-weapons-accent group-hover:scale-125" : "bg-weapons-border",
@@ -325,15 +325,19 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
 
 function WeaponHeroImage({ name, src }: { name: string; src: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
   const [hovering, setHovering] = useState(false);
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
     const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
+    if (!r || !imageWrapperRef.current) return;
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
-    setTilt({ x: py * -16, y: px * 20 });
+    requestAnimationFrame(() => {
+      if (imageWrapperRef.current) {
+        imageWrapperRef.current.style.transform = `rotateX(${py * -16}deg) rotateY(${px * 20}deg) scale(1.05)`;
+      }
+    });
   };
 
   return (
@@ -347,30 +351,36 @@ function WeaponHeroImage({ name, src }: { name: string; src: string }) {
       onFocus={() => setHovering(true)}
       onBlur={() => {
         setHovering(false);
-        setTilt({ x: 0, y: 0 });
-      }}
+        if (imageWrapperRef.current) {
+          imageWrapperRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+        }
+      } }
       onMouseLeave={() => {
         setHovering(false);
-        setTilt({ x: 0, y: 0 });
-      }}
+        if (imageWrapperRef.current) {
+          imageWrapperRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+        }
+      } }
       className="relative min-h-[320px] lg:min-h-[460px] grid place-items-center [perspective:1200px] cursor-grab active:cursor-grabbing rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-weapons-ring focus-visible:ring-offset-2 focus-visible:ring-offset-weapons-card"
     >
       <div
         aria-hidden
         className="absolute inset-0 m-auto size-[80%] rounded-full bg-weapons-primary/20 blur-3xl transition-all duration-500"
-        style={{ transform: hovering ? "scale(1.15)" : "scale(1)" }}
+        style={ { transform: hovering ? "scale(1.15)" : "scale(1)" } }
       />
       {src && (
-        <Image
-          src={src}
-          alt={name}
-          width={896}
-          height={1280}
-          className="relative z-10 h-full max-h-[520px] w-auto object-contain drop-shadow-[0_20px_40px_var(--color-weapons-blood)] transition-transform duration-200 ease-out animate-float will-change-transform"
-          style={{
-            transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(${hovering ? 1.05 : 1})`,
-          }}
-        />
+        <div 
+          ref={imageWrapperRef} 
+          className="relative z-10 h-full max-h-[520px] w-auto transition-transform duration-200 ease-out will-change-transform"
+        >
+          <Image
+            src={src}
+            alt={name}
+            width={896}
+            height={1280}
+            className="w-full h-full object-contain drop-shadow-[0_20px_40px_var(--color-weapons-blood)] animate-float pointer-events-none"
+          />
+        </div>
       )}
       <Corner className="top-0 left-0" />
       <Corner className="top-0 right-0 rotate-90" />
@@ -402,10 +412,10 @@ function StatCard({
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        style={{
+        style={ {
           backgroundImage:
             "repeating-linear-gradient(135deg, oklch(0.97 0.01 80 / 0.06) 0 1px, transparent 1px 8px)",
-        }}
+        } }
       />
       <div className="relative flex items-center gap-2 mb-2">
         <span className={`size-2 ${bar} transition-transform group-hover:scale-150`} />
@@ -447,7 +457,7 @@ function DetailBlock({
       <h4 className="relative font-display text-2xl uppercase tracking-tight mb-3 transition-transform group-hover:translate-x-1">
         {title}
       </h4>
-      <p className="relative text-sm leading-relaxed text-weapons-muted-foreground max-w-prose" dangerouslySetInnerHTML={{ __html: body || "" }}></p>
+      <p className="relative text-sm leading-relaxed text-weapons-muted-foreground max-w-prose" dangerouslySetInnerHTML={{ __html: body || "" } }></p>
     </div>
   );
 }

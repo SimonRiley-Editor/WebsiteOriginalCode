@@ -85,10 +85,10 @@ export default function HiyukiGuidePage() {
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className="relative rounded-2xl overflow-hidden bg-[var(--bg-secondary)]/20 border border-[var(--text-primary)]/10 mb-16 h-[400px] flex items-center perspective-1000"
-          style={{ perspective: 1000 }}
+          style={ { perspective: 1000 } }
         >
           <motion.div 
-            style={{ y: scrollY, x: bgX, scale: 1.1 }} 
+            style={ { y: scrollY, x: bgX, scale: 1.1 } } 
             className="absolute inset-0 w-full h-[120%] -top-[10%] z-0"
           >
             <img 
@@ -102,9 +102,9 @@ export default function HiyukiGuidePage() {
           
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 p-8 md:p-12 w-full pointer-events-none">
             <motion.div 
-              style={{ rotateX: cardRotateX, rotateY: cardRotateY, x: cardX, y: cardY }}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              style={ { rotateX: cardRotateX, rotateY: cardRotateY, x: cardX, y: cardY } }
+              initial={{ opacity: 0, scale: 0.9 } }
+              animate={{ opacity: 1, scale: 1 } }
               className="w-48 h-48 md:w-64 md:h-64 shrink-0 rounded-xl overflow-hidden border-2 border-[var(--accent-color)] pointer-events-auto cursor-pointer transition-all duration-300"
             >
               <img 
@@ -115,12 +115,12 @@ export default function HiyukiGuidePage() {
             </motion.div>
             
             <motion.div 
-              style={{ x: textX, y: textY }}
+              style={ { x: textX, y: textY } }
               className="flex-1 space-y-4 text-center md:text-left pointer-events-auto"
             >
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 } }
+                animate={{ opacity: 1, y: 0 } }
                 className="flex flex-wrap items-center justify-center md:justify-start gap-3"
               >
                 <span className="px-3 py-1 bg-[#60A5FA]/20 text-[#60A5FA] border border-[#60A5FA]/30 rounded-full text-xs font-bold tracking-widest flex items-center gap-1.5">
@@ -135,18 +135,18 @@ export default function HiyukiGuidePage() {
               </motion.div>
               
               <motion.h1 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+                initial={{ opacity: 0, y: 20 } }
+                animate={{ opacity: 1, y: 0 } }
+                transition={{ delay: 0.1 } }
                 className="text-5xl md:text-7xl font-akira font-bold tracking-tight text-[var(--text-primary)]"
               >
                 HIYUKI
               </motion.h1>
               
               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                initial={{ opacity: 0, y: 20 } }
+                animate={{ opacity: 1, y: 0 } }
+                transition={{ delay: 0.2 } }
                 className="text-lg text-[var(--text-primary)]/70 max-w-2xl leading-relaxed"
               >
                 A premium 5-star Glacio Resonator and a miko from Startorch Academy. She specializes in a unique Glacio Chafe mechanic to deliver massive burst damage.
@@ -191,10 +191,10 @@ export default function HiyukiGuidePage() {
                         <div key={i} className="h-1.5 flex-1 rounded-full bg-white/10 overflow-hidden">
                           <motion.div 
                             className="h-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
-                            initial={{ width: "0%" }}
-                            whileInView={{ width: "100%" }}
-                            transition={{ duration: 0.2, delay: i * 0.1 }}
-                            viewport={{ once: true }}
+                            initial={{ width: "0%" } }
+                            whileInView={{ width: "100%" } }
+                            transition={{ duration: 0.2, delay: i * 0.1 } }
+                            viewport={{ once: true } }
                           />
                         </div>
                       ))}
@@ -247,10 +247,10 @@ export default function HiyukiGuidePage() {
                           <div className="h-1 flex-1 rounded-full bg-white/10 overflow-hidden">
                             <motion.div 
                               className="h-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
-                              initial={{ width: "0%" }}
-                              whileInView={{ width: `${80 - i * 15}%` }}
-                              transition={{ duration: 1, delay: i * 0.2, ease: "easeOut" }}
-                              viewport={{ once: true }}
+                              initial={{ width: "0%" } }
+                              whileInView={{ width: `${80 - i * 15}%` } }
+                              transition={{ duration: 1, delay: i * 0.2, ease: "easeOut" } }
+                              viewport={{ once: true } }
                             />
                           </div>
                         </div>
@@ -304,7 +304,7 @@ export default function HiyukiGuidePage() {
                   
                   <div className="relative flex flex-col md:flex-row gap-4 items-center justify-between">
                     {/* SVG Connection Lines (Desktop only) */}
-                    <svg className="absolute top-1/2 left-0 w-full h-24 -translate-y-1/2 hidden md:block pointer-events-none z-0" style={{ overflow: 'visible' }}>
+                    <svg className="absolute top-1/2 left-0 w-full h-24 -translate-y-1/2 hidden md:block pointer-events-none z-0" style={ { overflow: 'visible' } }>
                       <path d="M 150 48 Q 250 48 350 48" fill="none" stroke="url(#cyan-gradient)" strokeWidth="2" strokeDasharray="6 6" className="animate-[dash_20s_linear_infinite]" />
                       <path d="M 450 48 Q 550 48 650 48" fill="none" stroke="url(#purple-gradient)" strokeWidth="2" strokeDasharray="6 6" className="animate-[dash_20s_linear_infinite]" />
                       <defs>

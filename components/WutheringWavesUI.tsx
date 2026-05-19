@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'motion/react';
 import { LayoutGrid, Compass } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { ELEMENTS, fallbackGuides, getSafeField } from '@/lib/data/wwData';
 import { WWSidebar } from '@/components/ww/WWSidebar';
 import { WWInfoPanel } from '@/components/ww/WWInfoPanel';
@@ -21,6 +23,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
   const [activeInsightTab, setActiveInsightTab] = useState<'assessment' | 'proscons'>('assessment');
   const [isProsConsModalOpen, setIsProsConsModalOpen] = useState(false);
   const [isRosterModalOpen, setIsRosterModalOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const safeGuides = guides?.length ? guides : fallbackGuides;
   
@@ -36,18 +39,18 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
       return (
           <div className="w-full h-svh bg-[#FAFAFC] relative flex flex-col items-center justify-center p-8 text-center text-gray-400 font-sans overflow-hidden">
                <div className="absolute inset-0 pointer-events-none z-0 opacity-20" 
-                    style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+                    style={ { backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' } } 
                />
                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative z-10 flex flex-col items-center bg-white/50 backdrop-blur-3xl border border-white/60 p-12 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)]"
+                    initial={{ opacity: 0, scale: 0.95 } }
+                    animate={{ opacity: 1, scale: 1 } }
+                    className="relative z-10 flex flex-col items-center bg-white/80 md:bg-white/50 md:backdrop-blur-3xl border border-white/60 p-12 rounded-3xl shadow-[0_4px_24px_rgb(0,0,0,0.02)]"
                >
                    <Compass size={48} strokeWidth={1} className="text-gray-300 mb-6 animate-[spin_10s_linear_infinite]" />
                    <h2 className="font-display font-black text-2xl text-gray-800 tracking-widest uppercase mb-2">No Signal Detected</h2>
                    <p className="text-sm text-gray-500 font-medium mb-8 max-w-[280px]">We couldn&apos;t locate any resonators matching this elemental resonance.</p>
                    
-                   <button 
+                   <button title="Action" 
                        onClick={() => setSelectedElement('all')}
                        className="group relative flex items-center gap-3 px-8 py-4 bg-gray-900 text-white text-[11px] font-black tracking-[0.2em] uppercase rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:-translate-y-0.5"
                    >
@@ -99,7 +102,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
     <div className="w-full h-svh bg-[#FAFAFC] relative overflow-hidden font-sans text-gray-800 flex">
        {/* Global Light Grid Overlay */}
        <div className="absolute inset-0 pointer-events-none z-0 opacity-20" 
-            style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+            style={ { backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' } } 
        />
 
        {/* Left Sidebar Menu */}
@@ -114,42 +117,45 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
            
            {/* Global Background Image */}
            <div className="absolute inset-0 z-0 pointer-events-none">
-               <img 
-                   src="https://res.cloudinary.com/ds6dwbk37/image/upload/v1777021473/Gemini_Generated_Image_1861z51861z51861_rljygl.png" 
-                   alt="Global Background" 
-                   className="w-full h-full object-cover opacity-60"
-               />
+                <Image 
+                    src="https://res.cloudinary.com/ds6dwbk37/image/upload/f_auto,q_auto/v1777021473/Gemini_Generated_Image_1861z51861z51861_rljygl.png" 
+                    alt="Global Background" 
+                    className="w-full h-full object-cover opacity-60"
+                    fill
+                    sizes="100vw"
+                    priority
+                />
                <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-[#F2F3F5]/90 pointer-events-none"></div>
            </div>
 
            {/* Background Clean Layout */}
            <AnimatePresence>
-               <motion.div 
-                   key={`glow-${activeGuide?.id}`}
-                   initial={{ opacity: 0 }}
-                   animate={{ opacity: 1 }}
-                   exit={{ opacity: 0 }}
-                   transition={{ duration: 1 }}
-                   className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
+                <motion.div 
+                    key={`glow-${activeGuide?.id}`}
+                    initial={{ opacity: 0 } }
+                    animate={{ opacity: 1 } }
+                    exit={{ opacity: 0 } }
+                    transition={{ duration: 1 } }
+                    className="absolute inset-0 z-0 pointer-events-none overflow-hidden transform-gpu"
                >
                    {/* Left gradient mask over image */}
-                   <div className="absolute top-0 left-0 bottom-0 w-full max-w-[800px] pointer-events-none" style={{
+                   <div className="absolute top-0 left-0 bottom-0 w-full max-w-[800px] pointer-events-none" style={ {
                         background: `linear-gradient(90deg, #FAFAFC 0%, transparent 100%)`,
-                   }} />
+                   } } />
                    
                    {/* Color tint based on element */}
-                   <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-20" style={{ backgroundColor: accentColor }} />
+                    <div className="absolute inset-0 pointer-events-none opacity-20 md:mix-blend-overlay" style={ { backgroundColor: accentColor } } />
 
                    {/* Giant Decorative Element Icon Behind Character */}
-                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] opacity-[0.03] pointer-events-none mix-blend-multiply scale-[1.5] blur-[4px]">
-                       <img src={currentElementObj?.imgSrc || undefined} alt="Element Background" className="w-[900px] h-auto object-contain" />
-                   </div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] opacity-[0.03] pointer-events-none md:mix-blend-multiply scale-[1.5] md:blur-[4px] hidden md:block">
+                        <img src={currentElementObj?.imgSrc || undefined} alt="Element Background" className="w-[900px] h-auto object-contain" />
+                    </div>
 
                    {/* A very soft glow near the character */}
-                   <div 
-                        className="absolute top-1/2 left-1/2 -translate-x-1/3 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[140px] opacity-15 pointer-events-none mix-blend-color"
-                        style={{ backgroundColor: accentColor }}
-                   />
+                    <div 
+                         className="absolute top-1/2 left-1/2 -translate-x-1/3 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[140px] opacity-15 pointer-events-none md:mix-blend-color hidden md:block"
+                         style={ { backgroundColor: accentColor } }
+                    />
                </motion.div>
            </AnimatePresence>
 
@@ -158,10 +164,10 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
               <AnimatePresence mode="wait">
                   <motion.h1 
                      key={`bg-text-${activeGuide?.id}`}
-                     initial={{ scale: 0.95, opacity: 0 }}
-                     animate={{ scale: 1, opacity: 0.02 }}
-                     exit={{ scale: 1.05, opacity: 0 }}
-                     transition={{ duration: 0.8 }}
+                     initial={{ scale: 0.95, opacity: 0 } }
+                     animate={{ scale: 1, opacity: 0.02 } }
+                     exit={{ scale: 1.05, opacity: 0 } }
+                     transition={{ duration: 0.8 } }
                      className="font-display font-black text-[12vw] sm:text-[14vw] md:text-[16vw] lg:text-[18vw] tracking-tighter text-gray-900 whitespace-nowrap leading-none"
                   >
                      {activeGuide?.name?.toUpperCase() || 'UNKNOWN'}
@@ -175,10 +181,10 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
                <div className="pointer-events-auto">
                     <button 
                         onClick={() => setIsRosterModalOpen(true)}
-                        className="group flex items-center gap-3 p-2 pr-5 bg-black/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/10 hover:border-white/30 transition-all duration-300 text-left"
+                         className="group flex items-center gap-3 p-2 pr-5 bg-black/90 md:bg-black/80 md:backdrop-blur-md rounded-2xl shadow-xl border border-white/10 hover:border-white/30 transition-all duration-300 text-left"
                     >
                         <div className="w-12 h-12 rounded-xl overflow-hidden relative">
-                            <img src={activeGuide?.content?.images?.avatar || activeGuide?.content?.cardImage || activeGuide?.content?.foregroundImage || activeGuide?.imageUrl || undefined} className="w-full h-full object-cover object-top" alt={activeGuide?.name} />
+                            <Image src={activeGuide?.content?.images?.avatar || activeGuide?.content?.cardImage || activeGuide?.content?.foregroundImage || activeGuide?.imageUrl || '/placeholder.png'} className="object-cover object-top" alt={activeGuide?.name || 'Avatar'} fill sizes="48px" unoptimized />
                         </div>
                         <div className="flex flex-col items-start leading-tight">
                             <p className="text-[9px] text-gray-400 font-bold tracking-[0.2em] uppercase mb-0.5">Current Roster</p>
@@ -206,56 +212,56 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
                    {activeGuide && (
                        <motion.div
                            key={`splash-wrap-${activeGuide.id}`}
-                           initial={{ opacity: 0, scale: 1.05, y: 20 }}
-                           animate={{ opacity: 1, scale: 1, y: 0 }}
-                           exit={{ opacity: 0, scale: 1.02, y: -20 }}
-                           transition={{ duration: 0.6, ease: "easeOut" }}
-                           className="h-[85%] lg:h-[95%] w-full flex justify-center items-end"
+                           initial={{ opacity: 0, scale: 1.05, y: 20 } }
+                           animate={{ opacity: 1, scale: 1, y: 0 } }
+                           exit={{ opacity: 0, scale: 1.02, y: -20 } }
+                           transition={{ duration: 0.6, ease: "easeOut" } }
+                           className="h-[85%] lg:h-[95%] w-full flex justify-center items-end transform-gpu will-change-transform"
                        >
                            <div className="relative h-full transition-transform duration-500 ease-out group/char cursor-pointer pointer-events-auto flex justify-center w-full">
-                                {activeGuide?.content?.spine ? (
+                                {activeGuide?.content?.spine && !isMobile ? (
                                   <>
-                                    <div 
-                                        className="h-full transition-all duration-700 ease-out origin-bottom group-hover/char:-translate-y-2 group-hover/char:scale-[1.02] pointer-events-auto relative block w-full flex justify-center"
-                                        style={{ 
-                                            maskImage: 'linear-gradient(to top, transparent 2%, black 25%)',
-                                            transform: `translate(${activeGuide.content?.spine?.offset?.x || 0}%, ${activeGuide.content?.spine?.offset?.y || 0}%) scale(${activeGuide.content?.spine?.offset?.scale || 1.1})`,
-                                            width: '800px',
-                                            paddingBottom: '0',
-                                            display: showAnimation ? 'flex' : 'none'
-                                        }}
-                                    >
-                                        {showAnimation && (
-                                            <HiyukiSpinePlayer 
-                                                skelUrl={activeGuide.content?.spine?.skelUrl}
-                                                atlasUrl={activeGuide.content?.spine?.atlasUrl}
-                                                textures={activeGuide.content?.spine?.textures}
-                                                animation={activeGuide.content?.spine?.animation}
-                                                skin={activeGuide.content?.spine?.skin}
-                                                viewport={activeGuide.content?.spine?.viewport}
-                                            />
-                                        )}
-                                    </div>
-                                    <img
-                                        src={activeGuide.content?.foregroundImage || activeGuide.content?.cardImage || activeGuide.imageUrl || undefined}
-                                        alt={activeGuide.name}
-                                        className={`h-full w-auto max-w-[none] object-contain object-bottom transition-all duration-700 ease-out origin-bottom group-hover/char:drop-shadow-[0_15px_35px_rgba(255,255,255,0.4)] group-hover/char:-translate-y-2 group-hover/char:scale-[1.02] pointer-events-auto cursor-pointer`}
-                                        style={{ 
-                                            maskImage: 'linear-gradient(to top, transparent 2%, black 25%)',
-                                            transform: `translate(${activeGuide.content?.imageOffset?.x || 0}%, ${activeGuide.content?.imageOffset?.y || 0}%) scale(${activeGuide.content?.imageOffset?.scale || 1})`,
-                                            display: showAnimation ? 'none' : 'block'
-                                        }}
-                                    />
+                                    {showAnimation && (
+                                      <div 
+                                          className="h-full transition-all duration-700 ease-out origin-bottom group-hover/char:-translate-y-2 group-hover/char:scale-[1.02] pointer-events-auto relative w-full flex justify-center transform-gpu"
+                                          style={ { 
+                                              maskImage: 'linear-gradient(to top, transparent 2%, black 25%)',
+                                              transform: `translate(${activeGuide.content?.spine?.offset?.x || 0}%, ${activeGuide.content?.spine?.offset?.y || 0}%) scale(${activeGuide.content?.spine?.offset?.scale || 1.1})`,
+                                              width: '800px',
+                                              paddingBottom: '0',
+                                          } }
+                                      >
+                                          <HiyukiSpinePlayer 
+                                              skelUrl={activeGuide.content?.spine?.skelUrl}
+                                              atlasUrl={activeGuide.content?.spine?.atlasUrl}
+                                              textures={activeGuide.content?.spine?.textures}
+                                              animation={activeGuide.content?.spine?.animation}
+                                              skin={activeGuide.content?.spine?.skin}
+                                              viewport={activeGuide.content?.spine?.viewport}
+                                          />
+                                      </div>
+                                    )}
+                                    {!showAnimation && (
+                                      <img
+                                          src={activeGuide.content?.foregroundImage || activeGuide.content?.cardImage || activeGuide.imageUrl || undefined}
+                                          alt={activeGuide.name}
+                                          className={`h-full w-auto max-w-[none] object-contain object-bottom transition-all duration-700 ease-out origin-bottom group-hover/char:drop-shadow-[0_15px_35px_rgba(255,255,255,0.4)] group-hover/char:-translate-y-2 group-hover/char:scale-[1.02] pointer-events-auto cursor-pointer`}
+                                          style={ { 
+                                              maskImage: 'linear-gradient(to top, transparent 2%, black 25%)',
+                                              transform: `translate(${activeGuide.content?.imageOffset?.x || 0}%, ${activeGuide.content?.imageOffset?.y || 0}%) scale(${activeGuide.content?.imageOffset?.scale || 1})`,
+                                          } }
+                                      />
+                                    )}
                                   </>
                                 ) : (
                                     <img
                                         src={activeGuide.content?.foregroundImage || activeGuide.content?.cardImage || activeGuide.imageUrl || undefined}
                                         alt={activeGuide.name}
                                         className={`h-full w-auto max-w-[none] object-contain object-bottom transition-all duration-700 ease-out origin-bottom group-hover/char:drop-shadow-[0_15px_35px_rgba(255,255,255,0.4)] group-hover/char:-translate-y-2 group-hover/char:scale-[1.02] ${activeGuide.content?.foregroundImage ? 'pointer-events-auto cursor-pointer' : 'pointer-events-none'}`}
-                                        style={{ 
+                                        style={ { 
                                             maskImage: 'linear-gradient(to top, transparent 2%, black 25%)',
                                             transform: `translate(${activeGuide.content?.imageOffset?.x || 0}%, ${activeGuide.content?.imageOffset?.y || 0}%) scale(${activeGuide.content?.imageOffset?.scale || 1})`
-                                        }}
+                                        } }
                                     />
                                 )}
                             </div>
@@ -274,6 +280,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
                  accentColor={accentColor}
                  faction={faction}
                  description={description}
+                 isMobile={isMobile}
                />
 
                {/* RIGHT TACTICAL PROFILE MODULE */}

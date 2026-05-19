@@ -151,7 +151,7 @@ const AliveBackground = ({ activeColor, isDropped, mouseX, mouseY }: { activeCol
   const backgroundGradient = useMotionTemplate`radial-gradient(circle at ${spotlightX} ${spotlightY}, ${activeColor} 0%, transparent 50%)`;
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none mix-blend-screen transition-all duration-1000 bg-[#020202]">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none md:mix-blend-screen transition-all duration-1000 bg-[#020202]">
        
        <motion.div 
          className="absolute -inset-[100%] opacity-40"
@@ -162,12 +162,12 @@ const AliveBackground = ({ activeColor, isDropped, mouseX, mouseY }: { activeCol
          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
        />
        
-       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay" />
+       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] md:mix-blend-overlay hidden md:block" />
        
        {[...Array(10)].map((_, i) => (
          <motion.div
            key={i}
-           className="absolute rounded-full filter blur-[50px] mix-blend-screen"
+           className="absolute rounded-full filter blur-[50px] md:mix-blend-screen hidden md:block"
            style={{
              background: activeColor,
              width: pseudoRandom(i) * 400 + 200,
@@ -507,7 +507,7 @@ export const BeginnerGuide = () => {
                          {(isHovered || isActive) && [...Array(8)].map((_, layerIdx) => (
                            <motion.div 
                               key={`ext-${layerIdx}`}
-                              className="absolute w-16 h-16 pointer-events-none backdrop-blur-sm"
+                              className="absolute w-16 h-16 pointer-events-none md:backdrop-blur-sm"
                               style={{ 
                                 backgroundColor: layerIdx === 0 ? cat.color : `${cat.color}10`,
                                 border: `1px solid ${cat.color}40`,
@@ -539,7 +539,7 @@ export const BeginnerGuide = () => {
                          
                          {/* Centered glowing icon floating above the geometric shape */}
                          <motion.div 
-                           className="relative rounded-full bg-black/50 p-2 border backdrop-blur-md"
+                           className="relative rounded-full bg-black/50 p-2 border md:backdrop-blur-md"
                            style={{ 
                              color: cat.color, 
                              borderColor: `${cat.color}50`,
@@ -569,7 +569,7 @@ export const BeginnerGuide = () => {
                          transition={{ duration: 0.5, type: "spring" }}
                       >
                          <span className="text-[9px] mb-1 font-bold" style={{ color: cat.color }}>{cat.frequency}</span>
-                         <div className="bg-[#050505]/90 backdrop-blur-md border px-3 py-1 rounded-sm" style={{ borderColor: `${cat.color}80`, boxShadow: `0 4px 20px ${cat.color}40` }}>
+                         <div className="bg-[#050505]/90 md:backdrop-blur-md border px-3 py-1 rounded-sm" style={{ borderColor: `${cat.color}80`, boxShadow: `0 4px 20px ${cat.color}40` }}>
                             <span className="text-sm font-bold tracking-widest" style={{ color: cat.color, textShadow: `0 0 10px ${cat.color}80` }}>{cat.shortName}</span>
                          </div>
                       </motion.div>
@@ -602,7 +602,7 @@ export const BeginnerGuide = () => {
             >
                {/* Site Building Background Effect */}
                <motion.div 
-                 className="absolute inset-0 bg-[#050505]/90 backdrop-blur-2xl border flex"
+                 className="absolute inset-0 bg-[#050505]/95 md:bg-[#050505]/90 md:backdrop-blur-2xl border flex"
                  style={{ borderColor: `${selectedCategory.color}50`, boxShadow: `0 0 80px ${selectedCategory.color}20` }}
                  initial={{ clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)" }}
                  animate={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)" }}
@@ -644,16 +644,16 @@ export const BeginnerGuide = () => {
                      <motion.img 
                        src={selectedCategory.image} 
                        alt="" 
-                       className="w-full h-full object-cover filter grayscale contrast-125 mix-blend-screen opacity-50 transition-transform duration-1000" 
+                       className="w-full h-full object-cover filter grayscale contrast-125 md:mix-blend-screen opacity-50 transition-transform duration-1000" 
                        whileHover={{ scale: 1.05 }}
                      />
-                     <div className="absolute inset-0 mix-blend-color opacity-50" style={{ backgroundColor: selectedCategory.color }} />
+                     <div className="absolute inset-0 md:mix-blend-color opacity-50 hidden md:block" style={{ backgroundColor: selectedCategory.color }} />
                      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent/20" />
                      
                      <div className="absolute top-4 left-4 z-30">
                         <button 
                            onClick={() => setSelectedId(null)}
-                           className="flex items-center gap-2 text-[10px] font-bold tracking-widest hover:text-white transition-colors bg-black/60 px-4 py-2 border backdrop-blur-md overflow-hidden relative group"
+                           className="flex items-center gap-2 text-[10px] font-bold tracking-widest hover:text-white transition-colors bg-black/60 px-4 py-2 border md:backdrop-blur-md overflow-hidden relative group"
                            style={{ color: selectedCategory.color, borderColor: `${selectedCategory.color}50` }}
                         >
                            <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity" style={{ backgroundColor: selectedCategory.color }}/>
@@ -785,7 +785,7 @@ export const BeginnerGuide = () => {
       </AnimatePresence>
 
       {/* Main HUD overlay */}
-      <div className="absolute z-40 inset-0 pointer-events-none flex flex-col justify-between p-6 md:p-8 mix-blend-screen">
+      <div className="absolute z-40 inset-0 pointer-events-none flex flex-col justify-between p-6 md:p-8 md:mix-blend-screen">
          <div className="flex justify-between items-start">
             <div className="flex flex-col border-l-2 pl-3 transition-colors duration-1000" style={{ borderColor: activeColor }}>
                <h2 className="text-xl font-bold tracking-[0.3em] text-white leading-none">ARCHIVE.SYS</h2>
@@ -799,7 +799,7 @@ export const BeginnerGuide = () => {
 
          <div className="flex justify-between items-end w-full">
             <div className="flex gap-12">
-               <div className="flex flex-col p-3 backdrop-blur-md border transition-colors duration-1000 relative overflow-hidden" style={{ borderColor: `${activeColor}30`, backgroundColor: `${activeColor}10` }}>
+               <div className="flex flex-col p-3 md:backdrop-blur-md border transition-colors duration-1000 relative overflow-hidden" style={{ borderColor: `${activeColor}30`, backgroundColor: `${activeColor}10` }}>
                   <motion.div 
                     className="absolute inset-0 opacity-10"
                     style={{ background: `repeating-linear-gradient(45deg, transparent, transparent 10px, ${activeColor} 10px, ${activeColor} 20px)` }}
@@ -815,7 +815,7 @@ export const BeginnerGuide = () => {
               className="hidden md:flex items-center gap-3"
               animate={{ opacity: isDropped ? 0 : 0.6 }}
             >
-               <span className="text-[10px] tracking-widest text-zinc-400 border border-zinc-800 px-3 py-1 bg-black/50 backdrop-blur">PAN & ZOOM ENABLED [3D MODE]</span>
+               <span className="text-[10px] tracking-widest text-zinc-400 border border-zinc-800 px-3 py-1 bg-black/50 md:backdrop-blur">PAN & ZOOM ENABLED [3D MODE]</span>
             </motion.div>
          </div>
       </div>

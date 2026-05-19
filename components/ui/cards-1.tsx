@@ -63,17 +63,23 @@ const ElementIcon = ({ element, className }: { element: ElementType; className?:
   );
 };
 
-const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
-  ({ className, imageUrl, title, category, element = "Electro", rarity = 5, href, onSave, ...props }, ref) => {
-    const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
-    const [isHovered, setIsHovered] = React.useState(false);
+  const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
+    ({ className, imageUrl, title, category, element = "Electro", rarity = 5, href, onSave, ...props }, ref) => {
+      const parallaxRef = React.useRef<HTMLDivElement>(null);
+      const isHoveredRef = React.useRef(false);
+      const [isHovered, setIsHovered] = React.useState(false);
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      setMousePos({ x, y });
-    };
+      const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isHoveredRef.current || !parallaxRef.current) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        requestAnimationFrame(() => {
+          if (parallaxRef.current && isHoveredRef.current) {
+            parallaxRef.current.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+          }
+        });
+      };
 
     const handleSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -95,10 +101,14 @@ const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
           "group relative block aspect-[4/5] bg-transparent transition-all duration-500 hover:scale-[1.02] hover:z-10 cursor-pointer",
           className
         )}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          isHoveredRef.current = true;
+        }}
         onMouseLeave={() => {
           setIsHovered(false);
-          setMousePos({ x: 0, y: 0 });
+          isHoveredRef.current = false;
+          if (parallaxRef.current) parallaxRef.current.style.transform = 'translate(0px, 0px)';
         }}
         onMouseMove={handleMouseMove}
         {...props}
@@ -140,9 +150,10 @@ const ProductCard = React.forwardRef<HTMLDivElement, ProductCardProps>(
 
             {/* Parallax Image Wrapper */}
             <div 
+              ref={parallaxRef}
               className="absolute inset-[-20px] z-0"
               style={{
-                transform: isHovered ? `translate(${mousePos.x * -20}px, ${mousePos.y * -20}px)` : 'translate(0px, 0px)',
+                transform: 'translate(0px, 0px)',
                 transition: isHovered ? 'transform 0.1s ease-out' : 'transform 0.7s ease-out'
               }}
             >

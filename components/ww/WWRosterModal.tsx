@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 import { ELEMENTS } from '@/lib/data/wwData';
 
 interface RosterModalProps {
@@ -23,7 +24,7 @@ export const WWRosterModal: React.FC<RosterModalProps> = ({
                     animate={{ opacity: 1 }} 
                     exit={{ opacity: 0 }} 
                     transition={{ duration: 0.3 }}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                    className="absolute inset-0 bg-black/80 md:bg-black/60 md:backdrop-blur-md"
                     onClick={() => setIsRosterModalOpen(false)}
                 />
                 <motion.div 
@@ -63,7 +64,7 @@ export const WWRosterModal: React.FC<RosterModalProps> = ({
                                     }}
                                     className={`group relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-300 ${activeGuide?.id === g.id ? 'ring-2 ring-white scale-105 shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'hover:scale-105 hover:ring-2 hover:ring-white/50 opacity-70 hover:opacity-100 grayscale hover:grayscale-0'}`}
                                 >
-                                    <img src={g.content?.images?.avatar || g.content?.cardImage || g.content?.foregroundImage || g.imageUrl || undefined} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={g.name} />
+                                    <Image src={g.content?.images?.avatar || g.content?.cardImage || g.content?.foregroundImage || g.imageUrl || '/placeholder.png'} className="object-cover transition-transform duration-500 group-hover:scale-110" alt={g.name || 'Character'} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw" unoptimized />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent flex flex-col justify-end p-3 sm:p-4">
                                         <p className="text-[10px] sm:text-xs text-left text-white font-black tracking-widest uppercase truncate">{g.name}</p>
                                         <div className="w-4 h-0.5 mt-1 rounded-full group-hover:w-full transition-all duration-300" style={{ backgroundColor: ELEMENTS.find(e => e.id === g.element?.toLowerCase())?.color || '#F87171' }} />
