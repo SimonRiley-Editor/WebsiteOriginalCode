@@ -14,7 +14,7 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
   }, [onComplete]);
 
   useEffect(() => {
-    // Prevent re-running if the effect already started (e.g. parent re-renders)
+    // Prevent re-running if the efjfect already started (e.g. parent re-renders)
     if (hasStarted.current) return;
     hasStarted.current = true;
 
@@ -26,11 +26,11 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
         clearInterval(interval);
         setProgress(100);
         setPhase("complete");
-        
+
         timeouts.push(setTimeout(() => {
           setPhase("fade-text");
         }, 500));
-        
+
         timeouts.push(setTimeout(() => {
           setPhase("shrinking");
         }, 1100));
@@ -45,7 +45,7 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
       } else {
         setProgress(p);
       }
-    }, 20); 
+    }, 20);
     return () => {
       clearInterval(interval);
       timeouts.forEach(t => clearTimeout(t));
@@ -65,27 +65,27 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center overflow-hidden">
-      
+
       {/* Top half background with glowing shutter edge */}
       <motion.div
         className="absolute top-0 left-0 right-0 h-[50.5vh] bg-[#030108] border-b border-purple-500/0 shadow-[0_0_0_rgba(168,85,247,0)]"
-        animate={{ 
+        animate={{
           y: bgSplit ? "-100%" : "0%",
           borderColor: bgSplit ? "rgba(168,85,247,0.5)" : "rgba(168,85,247,0)",
           boxShadow: bgSplit ? "0 10px 40px rgba(168,85,247,0.4)" : "0 0px 0px rgba(168,85,247,0)"
-        } }
-        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] } }
+        }}
+        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
       />
-      
+
       {/* Bottom half background with glowing shutter edge */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-[50.5vh] bg-[#030108] border-t border-cyan-500/0 shadow-[0_0_0_rgba(6,182,212,0)]"
-        animate={{ 
+        animate={{
           y: bgSplit ? "100%" : "0%",
           borderColor: bgSplit ? "rgba(6,182,212,0.5)" : "rgba(6,182,212,0)",
           boxShadow: bgSplit ? "0 -10px 40px rgba(6,182,212,0.4)" : "0 0px 0px rgba(6,182,212,0)"
-        } }
-        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] } }
+        }}
+        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
       />
 
       <div className="relative z-10 flex flex-col items-center justify-center">
@@ -94,8 +94,8 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
           animate={{
             scale: circleScale,
             opacity: bgSplit ? 0 : 1
-          } }
-          transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
+          }}
+          transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
           className="relative flex items-center justify-center w-[300px] h-[300px]"
         >
           {/* Outer Dashed Rotating Ring */}
@@ -103,8 +103,8 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
             height={radius * 2 + 40}
             width={radius * 2 + 40}
             className="absolute"
-            animate={{ rotate: 360 } }
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" } }
+            animate={{ rotate: 360 }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
           >
             <circle
               stroke="rgba(168, 85, 247, 0.3)" // purple
@@ -122,8 +122,8 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
             height={radius * 2 - 30}
             width={radius * 2 - 30}
             className="absolute"
-            animate={{ rotate: -360 } }
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" } }
+            animate={{ rotate: -360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
           >
             <circle
               stroke="rgba(34, 211, 238, 0.3)" // cyan
@@ -157,11 +157,11 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
               cy={radius}
             />
             <circle
-              stroke="url(#progressGlow)" 
+              stroke="url(#progressGlow)"
               fill="transparent"
               strokeWidth={stroke}
               strokeDasharray={circumference + ' ' + circumference}
-              style={ { strokeDashoffset } }
+              style={{ strokeDashoffset }}
               strokeLinecap="round"
               r={normalizedRadius}
               cx={radius}
@@ -174,14 +174,14 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
           <AnimatePresence>
             {showText && (
               <motion.span
-                initial={{ opacity: 1, filter: 'blur(0px)' } }
-                exit={{ opacity: 0, filter: 'blur(12px)', scale: 1.1 } }
-                transition={{ duration: 0.5, ease: "easeOut" } }
+                initial={{ opacity: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, filter: 'blur(12px)', scale: 1.1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 className="text-7xl md:text-[5.5rem] text-white font-bold tracking-wider"
-                style={ { 
+                style={{
                   fontFamily: 'var(--font-cinzel)',
                   textShadow: '0 0 20px rgba(168,85,247,0.6), 0 0 40px rgba(34,211,238,0.4)'
-                } }
+                }}
               >
                 {progress.toString().padStart(2, '0')}
               </motion.span>
@@ -193,18 +193,18 @@ export const GlitchIntro = ({ onComplete }: { onComplete: () => void }) => {
         <AnimatePresence>
           {showText && (
             <motion.div
-              initial={{ opacity: 1 } }
-              exit={{ opacity: 0, y: 10 } }
-              transition={{ duration: 0.4 } }
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.4 }}
               className="absolute -bottom-24 flex flex-col items-center gap-1"
             >
               <p className="text-[10px] text-cyan-400/80 tracking-[0.3em] font-medium font-mono uppercase">
                 Establishing Resonance...
               </p>
-              <motion.div 
+              <motion.div
                 className="w-12 h-[1px] bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"
-                animate={{ width: ["20px", "60px", "20px"], opacity: [0.3, 1, 0.3] } }
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" } }
+                animate={{ width: ["20px", "60px", "20px"], opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
             </motion.div>
           )}
