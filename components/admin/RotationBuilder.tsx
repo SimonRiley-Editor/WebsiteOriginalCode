@@ -68,7 +68,7 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
         <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
           <Clock size={16} className="text-amber-400" /> Timeline Configuration
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Total Duration (s)</label>
@@ -79,14 +79,14 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
               className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
             />
           </div>
-          
+
           {[0, 1, 2].map((slotIdx) => (
             <div key={slotIdx}>
               <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Slot {slotIdx + 1} Name</label>
               <input
                 type="text"
                 value={slotNames[slotIdx]}
-                onChange={(e) => updateSlotName(slotIdx as 0|1|2, e.target.value)}
+                onChange={(e) => updateSlotName(slotIdx as 0 | 1 | 2, e.target.value)}
                 placeholder={`e.g. Slot ${slotIdx + 1}`}
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
               />
@@ -96,7 +96,7 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
       </div>
 
       {/* Live Preview */}
-      <div className="bg-[#0f172a] p-1 rounded-[2.25rem] border border-slate-700/50 shadow-2xl overflow-hidden" style={ { height: '320px' } }>
+      <div className="bg-[#0f172a] p-1 rounded-[2.25rem] border border-slate-700/50 shadow-2xl overflow-hidden" style={{ height: '480px' }}>
         <TeamRotationTimeline config={config} elementColor="#f59e0b" />
       </div>
 
@@ -125,7 +125,7 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
                   <label className="block text-[10px] uppercase text-slate-500 mb-1">Slot</label>
                   <select
                     value={evt.characterSlot}
-                    onChange={(e) => updateEvent(idx, { characterSlot: Number(e.target.value) as 1|2|3 })}
+                    onChange={(e) => updateEvent(idx, { characterSlot: Number(e.target.value) as 1 | 2 | 3 })}
                     className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
                   >
                     <option value={1}>1 (Main)</option>
@@ -158,7 +158,7 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
                 </div>
 
                 {/* Timing */}
-                <div className="col-span-12 sm:col-span-3 space-y-2">
+                <div className="col-span-12 sm:col-span-2 space-y-2">
                   <div>
                     <label className="block text-[10px] uppercase text-slate-500 mb-1">Start (s)</label>
                     <input
@@ -181,16 +181,28 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
                   </div>
                 </div>
 
-                {/* Avatar URL */}
-                <div className="col-span-12 sm:col-span-3">
-                  <label className="block text-[10px] uppercase text-slate-500 mb-1 flex items-center gap-1"><ImageIcon size={10} /> Avatar URL</label>
-                  <input
-                    type="text"
-                    value={evt.avatarUrl || ""}
-                    onChange={(e) => updateEvent(idx, { avatarUrl: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
-                  />
+                {/* Avatar URL & Character Name */}
+                <div className="col-span-12 sm:col-span-4 space-y-2">
+                  <div>
+                    <label className="block text-[10px] uppercase text-slate-500 mb-1 flex items-center gap-1"><ImageIcon size={10} /> Avatar URL</label>
+                    <input
+                      type="text"
+                      value={evt.avatarUrl || ""}
+                      onChange={(e) => updateEvent(idx, { avatarUrl: e.target.value })}
+                      placeholder="https://..."
+                      className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase text-slate-500 mb-1">Character Name</label>
+                    <input
+                      type="text"
+                      value={evt.characterName || ""}
+                      onChange={(e) => updateEvent(idx, { characterName: e.target.value })}
+                      placeholder="e.g. Resonator"
+                      className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                    />
+                  </div>
                 </div>
 
                 {/* Delete */}
@@ -202,6 +214,40 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
                   >
                     <Trash2 size={16} />
                   </button>
+                </div>
+
+                {/* ─── Tactical Details Row ─── */}
+                <div className="col-span-12 grid grid-cols-12 gap-3 border-t border-slate-700/30 pt-2 mt-1">
+                  <div className="col-span-12 sm:col-span-4">
+                    <label className="block text-[10px] uppercase text-slate-500 mb-1">Skill Name</label>
+                    <input
+                      type="text"
+                      value={evt.skillName || ""}
+                      onChange={(e) => updateEvent(idx, { skillName: e.target.value })}
+                      placeholder="e.g. Resonance Skill"
+                      className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div className="col-span-12 sm:col-span-4">
+                    <label className="block text-[10px] uppercase text-slate-500 mb-1">Combo Inputs</label>
+                    <input
+                      type="text"
+                      value={evt.comboInputs || ""}
+                      onChange={(e) => updateEvent(idx, { comboInputs: e.target.value })}
+                      placeholder="e.g. E -> Hold LMB"
+                      className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                    />
+                  </div>
+                  <div className="col-span-12 sm:col-span-4">
+                    <label className="block text-[10px] uppercase text-slate-500 mb-1">Notes</label>
+                    <input
+                      type="text"
+                      value={evt.notes || ""}
+                      onChange={(e) => updateEvent(idx, { notes: e.target.value })}
+                      placeholder="e.g. Cancel animation with dash"
+                      className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
+                    />
+                  </div>
                 </div>
               </div>
             ))}

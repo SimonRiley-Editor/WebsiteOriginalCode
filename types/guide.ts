@@ -9,6 +9,9 @@ export interface TeamRotationEvent {
   duration: number;     // seconds
   color?: string;       // optional override for block color
   label?: string;       // optional short label displayed on block
+  skillName?: string;       // e.g. "Resonance Liberation"
+  comboInputs?: string;     // e.g. "E -> Hold LMB"
+  notes?: string;           // e.g. "Cancel animation with dash"
 }
 
 /** Configuration for the full rotation timeline. */

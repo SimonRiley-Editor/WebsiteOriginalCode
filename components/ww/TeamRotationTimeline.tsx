@@ -10,16 +10,16 @@ const EVENT_STYLES: Record<
   TeamRotationEvent["type"],
   { bg: string; border: string; glow: string; icon: React.ReactNode; label: string }
 > = {
-  intro:    { bg: "bg-blue-500/80",    border: "border-blue-400",   glow: "shadow-[0_0_18px_rgba(59,130,246,0.55)]",  icon: <LogIn   size={12} />, label: "Intro" },
-  skill:    { bg: "bg-amber-500/80",   border: "border-amber-400",  glow: "shadow-[0_0_18px_rgba(245,158,11,0.55)]",  icon: <Swords  size={12} />, label: "Skill" },
-  ultimate: { bg: "bg-rose-500/80",    border: "border-rose-400",   glow: "shadow-[0_0_18px_rgba(239,68,68,0.55)]",   icon: <Star    size={12} />, label: "Ultimate" },
-  outro:    { bg: "bg-violet-500/80",  border: "border-violet-400", glow: "shadow-[0_0_18px_rgba(139,92,246,0.55)]",  icon: <LogOut  size={12} />, label: "Outro" },
-  echo:     { bg: "bg-emerald-500/80", border: "border-emerald-400",glow: "shadow-[0_0_18px_rgba(16,185,129,0.55)]",  icon: <Waves   size={12} />, label: "Echo" },
+  intro: { bg: "bg-blue-500/80", border: "border-blue-400", glow: "shadow-[0_0_18px_rgba(59,130,246,0.55)]", icon: <LogIn size={12} />, label: "Intro" },
+  skill: { bg: "bg-amber-500/80", border: "border-amber-400", glow: "shadow-[0_0_18px_rgba(245,158,11,0.55)]", icon: <Swords size={12} />, label: "Skill" },
+  ultimate: { bg: "bg-rose-500/80", border: "border-rose-400", glow: "shadow-[0_0_18px_rgba(239,68,68,0.55)]", icon: <Star size={12} />, label: "Ultimate" },
+  outro: { bg: "bg-violet-500/80", border: "border-violet-400", glow: "shadow-[0_0_18px_rgba(139,92,246,0.55)]", icon: <LogOut size={12} />, label: "Outro" },
+  echo: { bg: "bg-emerald-500/80", border: "border-emerald-400", glow: "shadow-[0_0_18px_rgba(16,185,129,0.55)]", icon: <Waves size={12} />, label: "Echo" },
 };
 
 const SLOT_COLORS = [
-  { track: "from-blue-500/10 to-blue-500/5",   accent: "bg-blue-500",   text: "text-blue-400",   ring: "ring-blue-500/30" },
-  { track: "from-amber-500/10 to-amber-500/5",  accent: "bg-amber-500",  text: "text-amber-400",  ring: "ring-amber-500/30" },
+  { track: "from-blue-500/10 to-blue-500/5", accent: "bg-blue-500", text: "text-blue-400", ring: "ring-blue-500/30" },
+  { track: "from-amber-500/10 to-amber-500/5", accent: "bg-amber-500", text: "text-amber-400", ring: "ring-amber-500/30" },
   { track: "from-emerald-500/10 to-emerald-500/5", accent: "bg-emerald-500", text: "text-emerald-400", ring: "ring-emerald-500/30" },
 ];
 
@@ -61,6 +61,9 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
   /* ── Playback state ── */
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+
+  /* ── Tooltip state ── */
+  const [hoveredEvent, setHoveredEvent] = useState<TeamRotationEvent | null>(null);
   const rafRef = useRef<number>(0);
   const lastFrameRef = useRef<number>(0);
   const timeRef = useRef(0); // avoid stale closures
@@ -199,15 +202,15 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
 
       {/* ─── Background Decorations ─── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-20" style={ { backgroundColor: elementColor } } />
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full blur-[120px] opacity-20" style={{ backgroundColor: elementColor }} />
         <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-violet-500/10 rounded-full blur-[100px]" />
-        <div className="absolute inset-0 opacity-[0.03]" style={ { backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize: "40px 40px" } } />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
       </div>
 
       {/* ═══ HEADER ═══ */}
       <div className="relative z-10 flex items-center justify-between px-6 md:px-10 pt-8 pb-5 border-b border-white/5">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/5" style={ { color: elementColor } }>
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/5" style={{ color: elementColor }}>
             <Clock size={20} />
           </div>
           <div>
@@ -239,7 +242,7 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
             title={isPlaying ? "Pause" : "Play"}
             onClick={togglePlay}
             className="w-11 h-11 rounded-full flex items-center justify-center text-white transition-all active:scale-90 shadow-lg"
-            style={ { backgroundColor: elementColor, boxShadow: `0 4px 20px ${elementColor}60` } }
+            style={{ backgroundColor: elementColor, boxShadow: `0 4px 20px ${elementColor}60` }}
           >
             {isPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
           </button>
@@ -297,11 +300,12 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                           ${style.bg} ${style.border}
                           ${active ? `scale-[1.04] brightness-125 z-20 ${style.glow}` : "scale-100 opacity-80 z-10 shadow-md"}
                         `}
-                        style={ {
+                        style={{
                           left: `${leftPct}%`,
                           width: `${widthPct}%`,
-                        } }
-                        title={`${evt.characterName}: ${evt.label || style.label} (${evt.startTime}s – ${evt.startTime + evt.duration}s)`}
+                        }}
+                        onPointerEnter={() => setHoveredEvent(evt)}
+                        onPointerLeave={() => setHoveredEvent(null)}
                       >
                         {/* Mini avatar on block */}
                         {evt.avatarUrl && (
@@ -339,7 +343,7 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                 onDragStart={handleDragStart}
                 onDrag={handleDrag}
                 onDragEnd={handleDragEnd}
-                style={ { x: playheadX } }
+                style={{ x: playheadX }}
                 onPointerDown={(e) => e.stopPropagation()}
                 className="absolute top-0 bottom-0 w-px bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.4)] pointer-events-auto cursor-ew-resize active:cursor-grabbing"
               >
@@ -369,7 +373,7 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
               {/* Filled progress */}
               <div
                 className="absolute top-0 left-0 bottom-0 opacity-10 pointer-events-none transition-none"
-                style={ { width: `${playheadPct}%`, backgroundColor: elementColor } }
+                style={{ width: `${playheadPct}%`, backgroundColor: elementColor }}
               />
 
               {/* Tick marks */}
@@ -381,7 +385,7 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                     <div
                       key={t}
                       className="absolute top-0 bottom-0 flex flex-col items-center justify-end pointer-events-none"
-                      style={ { left: `${pct}%` } }
+                      style={{ left: `${pct}%` }}
                     >
                       <div className={`w-px ${isMajor ? "h-3 bg-white/30" : "h-2 bg-white/10"}`} />
                       {isMajor && (
@@ -394,12 +398,96 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                 {/* Playhead marker on ruler */}
                 <div
                   className="absolute top-0 bottom-0 w-0.5 bg-white/80 pointer-events-none transform-gpu z-20"
-                  style={ { left: `${playheadPct}%` } }
+                  style={{ left: `${playheadPct}%` }}
                 />
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ═══ TACTICAL INFO BOARD ═══ */}
+      <div className="relative z-10 border-t border-white/5 bg-black/40 min-h-[90px] px-6 py-4 flex flex-col justify-center">
+        <AnimatePresence mode="wait">
+          {hoveredEvent ? (
+            <motion.div
+              key="event-details"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 w-full"
+            >
+              {(() => {
+                const hs = EVENT_STYLES[hoveredEvent.type];
+                return (
+                  <>
+                    {/* Left: Character Info & Timing */}
+                    <div className="flex flex-col gap-1.5 shrink-0 w-[200px]">
+                      <div className="flex items-center gap-2">
+                        {hoveredEvent.avatarUrl && (
+                          <img src={hoveredEvent.avatarUrl} alt="" className="w-6 h-6 rounded-md ring-1 ring-white/20" />
+                        )}
+                        <span className="text-sm font-black text-white uppercase tracking-wider truncate">
+                          {hoveredEvent.characterName}
+                        </span>
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded ${hs.bg} ${hs.border} border`}>
+                          {hs.label}
+                        </span>
+                      </div>
+                      <p className="text-xs text-white/40 font-mono">
+                        {hoveredEvent.startTime}s – {hoveredEvent.startTime + hoveredEvent.duration}s ({hoveredEvent.duration}s)
+                      </p>
+                    </div>
+
+                    {/* Middle: Tactical Details */}
+                    <div className="flex-1 flex flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-white/10 pt-3 mt-1 md:pt-0 md:mt-0 md:pl-8">
+                      {hoveredEvent.skillName && (
+                        <p className="text-sm font-semibold text-white/90">{hoveredEvent.skillName}</p>
+                      )}
+
+                      <div className="flex flex-wrap gap-4">
+                        {/* Combo */}
+                        {hoveredEvent.comboInputs && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] uppercase text-white/30 font-bold tracking-widest">Input:</span>
+                            <div className="flex items-center gap-1">
+                              {hoveredEvent.comboInputs.split(/\s*->\s*/).map((key, i, arr) => (
+                                <React.Fragment key={i}>
+                                  <kbd className="text-xs bg-white/10 border border-white/20 rounded px-1.5 py-0.5 text-white/80 font-mono">{key.trim()}</kbd>
+                                  {i < arr.length - 1 && <span className="text-white/30 text-xs">→</span>}
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Notes */}
+                        {hoveredEvent.notes && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] uppercase text-amber-500/50 font-bold tracking-widest">Note:</span>
+                            <p className="text-xs text-amber-400/80 italic">{hoveredEvent.notes}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="empty-state"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-center w-full h-full text-white/30 text-sm font-medium tracking-wide"
+            >
+              Hover over a skill block on the timeline to view tactical details
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ═══ FOOTER LEGEND ═══ */}
@@ -413,12 +501,13 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
       </div>
 
       {/* Shimmer keyframe */}
-      <style dangerouslySetInnerHTML={ { __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes shimmer {
           0% { transform: translateX(-200%); }
           100% { transform: translateX(200%); }
         }
-      ` } } />
+      ` }} />
     </div>
   );
 };
@@ -430,13 +519,13 @@ export const RotationEmptyState: React.FC<{ elementColor?: string }> = ({ elemen
   <div className="w-full h-full bg-white rounded-[2rem] border border-slate-100/50 shadow-2xl flex flex-col items-center justify-center p-8 relative overflow-hidden">
     {/* Decorative */}
     <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute inset-0 opacity-[0.02]" style={ { backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)", backgroundSize: "32px 32px" } } />
+      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
     </div>
 
     <div className="relative z-10 flex flex-col items-center text-center max-w-md">
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border shadow-lg"
-        style={ { backgroundColor: `${elementColor}15`, borderColor: `${elementColor}30`, color: elementColor } }
+        style={{ backgroundColor: `${elementColor}15`, borderColor: `${elementColor}30`, color: elementColor }}
       >
         <Clock size={28} strokeWidth={1.5} />
       </div>
