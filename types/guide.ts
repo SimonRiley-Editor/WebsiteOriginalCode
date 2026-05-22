@@ -1,10 +1,18 @@
+/** A single buff applied by a rotation event. */
+export interface BuffEntry {
+  id: string;            // unique ID for React keys
+  label: string;         // e.g. "15% ATK Boost"
+  duration: number;      // buff length in seconds (measured from parent event's startTime)
+  color?: string;        // optional custom hex color override (e.g. "#22d3ee")
+}
+
 /** A single event block on the rotation timeline. */
 export interface TeamRotationEvent {
   id: string;
   characterSlot: 1 | 2 | 3;
   characterName: string;
   avatarUrl?: string;
-  type: 'intro' | 'skill' | 'ultimate' | 'outro' | 'echo';
+  type: 'intro' | 'skill' | 'ultimate' | 'outro' | 'echo' | 'forte' | 'basic';
   startTime: number;   // seconds from 0
   duration: number;     // seconds
   color?: string;       // optional override for block color
@@ -12,6 +20,7 @@ export interface TeamRotationEvent {
   skillName?: string;       // e.g. "Resonance Liberation"
   comboInputs?: string;     // e.g. "E -> Hold LMB"
   notes?: string;           // e.g. "Cancel animation with dash"
+  buffs?: BuffEntry[];      // all buffs this event applies
 }
 
 /** Configuration for the full rotation timeline. */
@@ -52,6 +61,12 @@ export interface GuideContent {
     weaponType?: string;
     isSignature?: boolean;
     specialNote?: string;
+    // Damage bucket data for comparison visualization
+    atkPercent?: number;          // ATK% contribution bucket (e.g. 40)
+    dmgBonusPercent?: number;     // DMG Bonus% contribution bucket (e.g. 28)
+    critScalingPercent?: number;  // Crit scaling contribution bucket (e.g. 55)
+    totalDamageIndex?: number;    // Normalized total damage output (100 = baseline)
+    passiveBuffPercent?: number;  // % total damage increase when passive is active
   }[];
   echoes?: any;
   echoSets?: {

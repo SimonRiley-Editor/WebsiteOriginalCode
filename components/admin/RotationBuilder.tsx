@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Trash2, Clock, Image as ImageIcon } from "lucide-react";
-import type { RotationConfig, TeamRotationEvent } from "@/types/guide";
+import { Plus, Trash2, Clock, Image as ImageIcon, Zap } from "lucide-react";
+import type { RotationConfig, TeamRotationEvent, BuffEntry } from "@/types/guide";
 import { TeamRotationTimeline } from "@/components/ww/TeamRotationTimeline";
 
 interface RotationBuilderProps {
@@ -16,7 +16,7 @@ const DEFAULT_CONFIG: RotationConfig = {
   events: [],
 };
 
-const EVENT_TYPES = ['intro', 'skill', 'ultimate', 'outro', 'echo'] as const;
+const EVENT_TYPES = ['intro', 'skill', 'ultimate', 'outro', 'echo', 'forte', 'basic'] as const;
 
 export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChange }) => {
   const config = value || DEFAULT_CONFIG;
@@ -59,6 +59,34 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
 
   const removeEvent = (id: string) => {
     updateConfig({ events: events.filter(e => e.id !== id) });
+  };
+
+  /* ── Buff helpers ── */
+  const addBuff = (eventIndex: number) => {
+    const newBuff: BuffEntry = {
+      id: Math.random().toString(36).substr(2, 9),
+      label: "",
+      duration: 5,
+    };
+    const newEvents = [...events];
+    const existing = newEvents[eventIndex].buffs || [];
+    newEvents[eventIndex] = { ...newEvents[eventIndex], buffs: [...existing, newBuff] };
+    updateConfig({ events: newEvents });
+  };
+
+  const updateBuff = (eventIndex: number, buffIndex: number, updates: Partial<BuffEntry>) => {
+    const newEvents = [...events];
+    const buffs = [...(newEvents[eventIndex].buffs || [])];
+    buffs[buffIndex] = { ...buffs[buffIndex], ...updates };
+    newEvents[eventIndex] = { ...newEvents[eventIndex], buffs };
+    updateConfig({ events: newEvents });
+  };
+
+  const removeBuff = (eventIndex: number, buffId: string) => {
+    const newEvents = [...events];
+    const buffs = (newEvents[eventIndex].buffs || []).filter(b => b.id !== buffId);
+    newEvents[eventIndex] = { ...newEvents[eventIndex], buffs };
+    updateConfig({ events: newEvents });
   };
 
   return (
@@ -248,6 +276,73 @@ export const RotationBuilder: React.FC<RotationBuilderProps> = ({ value, onChang
                       className="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white"
                     />
                   </div>
+                </div>
+
+                {/* ─── Buffs Sub-Section ─── */}
+                <div className="col-span-12 border-t border-slate-700/30 pt-2 mt-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[10px] uppercase text-slate-500 font-bold tracking-wider flex items-center gap-1.5">
+                      <Zap size={10} className="text-cyan-400" /> Buffs Applied
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => addBuff(idx)}
+                      className="flex items-center gap-1 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors border border-cyan-500/20"
+                    >
+                      <Plus size={10} /> Add Buff
+                    </button>
+                  </div>
+
+                  {(!evt.buffs || evt.buffs.length === 0) ? (
+                    <p className="text-[10px] text-slate-600 italic">No buffs — click "Add Buff" to define buff uptimes for this event.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {evt.buffs.map((buff, buffIdx) => (
+                        <div key={buff.id} className="grid grid-cols-12 gap-2 bg-slate-800/50 rounded-lg p-2 border border-slate-700/30 items-end">
+                          <div className="col-span-12 sm:col-span-5">
+                            <label className="block text-[10px] uppercase text-slate-500 mb-1">Buff Label</label>
+                            <input
+                              type="text"
+                              value={buff.label}
+                              onChange={(e) => updateBuff(idx, buffIdx, { label: e.target.value })}
+                              placeholder="e.g. 15% ATK Boost"
+                              className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white"
+                            />
+                          </div>
+                          <div className="col-span-6 sm:col-span-3">
+                            <label className="block text-[10px] uppercase text-slate-500 mb-1">Duration (s)</label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={buff.duration}
+                              onChange={(e) => updateBuff(idx, buffIdx, { duration: Number(e.target.value) || 1 })}
+                              className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white"
+                            />
+                          </div>
+                          <div className="col-span-4 sm:col-span-3">
+                            <label className="block text-[10px] uppercase text-slate-500 mb-1">Color (hex)</label>
+                            <input
+                              type="text"
+                              value={buff.color || ""}
+                              onChange={(e) => updateBuff(idx, buffIdx, { color: e.target.value || undefined })}
+                              placeholder="Auto"
+                              className="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white"
+                            />
+                          </div>
+                          <div className="col-span-2 sm:col-span-1 flex items-end justify-end">
+                            <button
+                              type="button"
+                              onClick={() => removeBuff(idx, buff.id)}
+                              className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+                              title="Remove Buff"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

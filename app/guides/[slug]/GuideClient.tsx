@@ -51,7 +51,8 @@ import {
   ListFilter,
   PieChart,
   Dna,
-  AudioWaveform
+  AudioWaveform,
+  Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -591,6 +592,7 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
 
 export default function GuideClient({ guide }: { guide: any }) {
   const [activeTab, setActiveTab] = useState('OVERVIEW');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedWeaponIdx, setSelectedWeaponIdx] = useState(0);
   const [selectedTeamIdx, setSelectedTeamIdx] = useState(0);
@@ -673,13 +675,95 @@ export default function GuideClient({ guide }: { guide: any }) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <Link href="/?section=characters" className="absolute top-6 left-4 md:left-8 z-50 flex items-center group bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full px-4 py-2 md:px-5 md:py-2.5 border border-white/10 transition-all duration-300">
-        <ChevronLeft size={18} className="text-white group-hover:-translate-x-1 transition-transform duration-300" />
-        <span className="ml-1 md:ml-2 text-white font-bold uppercase tracking-widest text-[10px] md:text-xs">RETURN</span>
-      </Link>
+      {!isMenuOpen && (
+        <Link href="/?section=characters" className="absolute top-6 left-4 md:left-8 z-50 flex items-center group bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full px-4 py-2 md:px-5 md:py-2.5 border border-white/10 transition-all duration-300">
+          <ChevronLeft size={18} className="text-white group-hover:-translate-x-1 transition-transform duration-300" />
+          <span className="ml-1 md:ml-2 text-white font-bold uppercase tracking-widest text-[10px] md:text-xs">RETURN</span>
+        </Link>
+      )}
+
+      {/* Hamburger Menu Toggle Button */}
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="absolute top-6 right-4 z-50 md:hidden flex items-center justify-center bg-black/60 hover:bg-black/80 backdrop-blur-md rounded-full p-2.5 border border-white/10 transition-all duration-300 text-white shadow-lg focus:outline-none"
+        title="Toggle Navigation Menu"
+      >
+        {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Burger Menu Overlay Drawer */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed inset-0 z-40 md:hidden bg-black/95 backdrop-blur-3xl flex flex-col justify-center items-center p-6"
+          >
+            {/* Background elements */}
+            <div className="absolute inset-0 opacity-[0.05] bg-[radial-gradient(#fff_2px,transparent_2px)] bg-[length:24px_24px] pointer-events-none" />
+            <div className={cn("absolute w-[300px] h-[300px] rounded-full blur-[100px] opacity-[0.15] mix-blend-screen pointer-events-none", elementStyle.bg)} />
+
+            {/* Menu Header with Character Info */}
+            <div className="mb-10 text-center flex flex-col items-center">
+              <span className="text-[9px] font-mono tracking-[0.45em] text-white/40 uppercase mb-2">SYS.DATABANK</span>
+              <h2 className="text-4xl font-black tracking-tight text-white uppercase">{guide.name}</h2>
+              <div className="flex gap-2 mt-3">
+                <span className={cn("text-[9px] font-black tracking-widest px-3 py-1 text-white rounded flex items-center gap-1.5 uppercase", elementStyle.bg)}>
+                  {elementStyle.icon} {guide.element}
+                </span>
+                <span className="text-[9px] font-black tracking-widest px-3 py-1 bg-white/10 text-white/90 rounded border border-white/10 uppercase">
+                  {guide.role}
+                </span>
+              </div>
+            </div>
+
+            {/* Menu Options */}
+            <div className="flex flex-col gap-3.5 w-full max-w-xs relative z-10">
+              {tabs.map((tab, idx) => {
+                const isActive = activeTab === tab;
+                return (
+                  <motion.button
+                    key={tab}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.04, ease: "easeOut" }}
+                    onClick={() => {
+                      handleTabChange(tab);
+                      setIsMenuOpen(false);
+                    }}
+                    className={cn(
+                      "w-full py-3.5 px-6 rounded-2xl font-black text-center tracking-[0.2em] text-xs uppercase transition-all duration-300 flex items-center justify-between border",
+                      isActive
+                        ? "text-black bg-white border-white shadow-[0_0_25px_rgba(255,255,255,0.3)]"
+                        : "text-white/60 hover:text-white bg-white/5 border-white/5 hover:border-white/10"
+                    )}
+                  >
+                    <span>{tab}</span>
+                    {isActive ? (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-black"></span>
+                      </span>
+                    ) : (
+                      <span className="text-white/20 font-mono text-[9px] tracking-normal">{String(idx + 1).padStart(2, '0')}</span>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Bottom stamp */}
+            <div className="absolute bottom-8 font-mono text-[8px] tracking-[0.4em] text-white/20 uppercase">
+              WUTHERING WAVES DATA BANK // V.1.04
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className={cn(
-        "absolute top-6 left-1/2 -translate-x-1/2 w-[85%] md:w-auto max-w-[95%] h-14 md:h-16 bg-black/80 backdrop-blur-2xl rounded-full z-50 flex items-center justify-start md:justify-center px-2 md:px-4 border border-white/10 shadow-2xl overflow-hidden overflow-x-auto no-scrollbar pointer-events-auto transition-all duration-500",
+        "absolute top-6 left-1/2 -translate-x-1/2 w-[85%] md:w-auto max-w-[95%] h-14 md:h-16 bg-black/80 backdrop-blur-2xl rounded-full z-50 hidden md:flex items-center justify-start md:justify-center px-2 md:px-4 border border-white/10 shadow-2xl overflow-hidden overflow-x-auto no-scrollbar pointer-events-auto transition-all duration-500",
         activeTab === 'SEQUENCE' ? "opacity-20 hover:opacity-100" : "opacity-100"
       )}>
         <div className="flex items-center gap-1 sm:gap-2 no-scrollbar w-full h-full px-2">
@@ -1360,7 +1444,13 @@ export default function GuideClient({ guide }: { guide: any }) {
                     tagline: w.description && !w.passiveDescription ? w.description.substring(0, 50) + "..." : '',
                     imageUrl: w.imageUrl || undefined,
                     isSignature: isSignature,
-                    isBis: isBis
+                    isBis: isBis,
+                    // Damage comparison data (optional — falls back to auto-generated defaults)
+                    atkPercent: w.atkPercent != null ? parseFloat(w.atkPercent) : undefined,
+                    dmgBonusPercent: w.dmgBonusPercent != null ? parseFloat(w.dmgBonusPercent) : undefined,
+                    critScalingPercent: w.critScalingPercent != null ? parseFloat(w.critScalingPercent) : undefined,
+                    totalDamageIndex: w.totalDamageIndex != null ? parseFloat(w.totalDamageIndex) : undefined,
+                    passiveBuffPercent: w.passiveBuffPercent != null ? parseFloat(w.passiveBuffPercent) : undefined,
                   };
                 });
                 return <WeaponsPanel weapons={mappedWeapons} />;
@@ -1386,9 +1476,15 @@ export default function GuideClient({ guide }: { guide: any }) {
 
               if (echoSets.length === 0) {
                 return (
-                  <div className="w-full h-full bg-[#fdfafb] rounded-[2rem] border border-rose-100 shadow-2xl flex flex-col items-center justify-center font-sans text-slate-800">
-                    <Radar className="w-12 h-12 text-slate-300 mb-4" strokeWidth={1.5} />
-                    <h2 className="text-xl font-bold text-slate-500">No Echo Data Available</h2>
+                  <div className="w-full h-full bg-[#fafbfc] rounded-[2rem] border border-slate-200/60 shadow-2xl flex flex-col items-center justify-center font-sans text-slate-800 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(148,163,184,0.08)_0%,transparent_70%)]" />
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="w-20 h-20 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-6 shadow-sm">
+                        <Radar className="w-8 h-8 text-slate-300" strokeWidth={1.5} />
+                      </div>
+                      <h2 className="text-xl font-bold text-slate-400 mb-2">No Echo Data Available</h2>
+                      <p className="text-sm text-slate-400 max-w-xs text-center">Echo loadout configuration hasn&apos;t been set up for this resonator yet.</p>
+                    </div>
                   </div>
                 );
               }
@@ -1403,208 +1499,367 @@ export default function GuideClient({ guide }: { guide: any }) {
               const values3 = Array.isArray(activeSet.cost3) ? activeSet.cost3 : (activeSet.cost3 ? [activeSet.cost3] : []);
               const values1 = Array.isArray(activeSet.cost1) ? activeSet.cost1 : (activeSet.cost1 ? [activeSet.cost1] : []);
 
+              const costColorMap: Record<number, { bg: string; border: string; text: string; shadow: string }> = {
+                4: { bg: elementStyle.bg, border: elementStyle.color.replace("text-", "border-"), text: elementStyle.color, shadow: `shadow-lg` },
+                3: { bg: 'bg-violet-500', border: 'border-violet-300', text: 'text-violet-600', shadow: 'shadow-md' },
+                1: { bg: 'bg-slate-400', border: 'border-slate-300', text: 'text-slate-500', shadow: 'shadow-sm' },
+              };
+
+              const getMainStatForCost = (cost: number) => {
+                if (cost === 4) return values4.join(' / ') || '—';
+                if (cost === 3) return values3.join(' / ') || '—';
+                if (cost === 1) return values1.join(' / ') || '—';
+                return '—';
+              };
+
+              const getEchoNameForCost = (cost: number) => {
+                if (cost === 4) return activeSet.cost4Name || 'Overlord';
+                if (cost === 3) return activeSet.cost3Name || 'Elite';
+                if (cost === 1) return activeSet.cost1Name || 'Common';
+                return 'Echo';
+              };
+
+              // Group costs to identify which slot index this is within its cost group
+              const costCounters: Record<number, number> = {};
+
+              const substats = activeSet.substats || activeSet.subStats || [];
+              const maxSubstatBars = substats.length || 4;
+
               return (
-                <div className="w-full h-full bg-[#f8f9fa] rounded-[2rem] border border-slate-200 shadow-2xl flex flex-col xl:flex-row overflow-hidden relative font-sans text-slate-800">
-                  <div className={cn("absolute top-[-10%] right-[-5%] w-[800px] h-[800px] rounded-full blur-[120px] opacity-20 pointer-events-none mix-blend-multiply transition-colors duration-1000", elementStyle.bg)} />
-                  <div className={cn("absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[100px] opacity-20 pointer-events-none -translate-x-1/4 translate-y-1/4 mix-blend-multiply transition-colors duration-1000", elementStyle.bg)} />
+                <div className="w-full h-full bg-[#fafbfc] rounded-[2rem] border border-slate-200/60 shadow-2xl flex flex-col overflow-hidden relative font-sans text-slate-800">
+                  {/* Background blobs */}
+                  <div className={cn("absolute top-[-15%] right-[-10%] w-[600px] h-[600px] rounded-full blur-[140px] opacity-[0.12] pointer-events-none mix-blend-multiply transition-colors duration-1000", elementStyle.bg)} />
+                  <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full blur-[120px] opacity-[0.08] pointer-events-none bg-violet-300 mix-blend-multiply" />
 
-                  <div className="w-full xl:w-[60%] border-b xl:border-b-0 xl:border-r border-slate-200/50 p-8 flex flex-col relative z-10 backdrop-blur-3xl overflow-hidden">
-                    <h2 className="text-2xl font-black uppercase tracking-tighter text-slate-800 drop-shadow-sm flex items-center gap-4">
-                      <div className={cn("p-2.5 rounded-xl bg-slate-50 border shadow-sm", elementStyle.color.replace("text-", "border-"))}>
-                        <Fingerprint className={elementStyle.color} strokeWidth={2} size={24} />
-                      </div>
-                      Echo Loadout
-                      <span className={cn("text-[10px] sm:text-xs font-mono font-black tracking-[0.2em] px-4 py-1.5 rounded-full border bg-white/40 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.05)] ml-auto flex items-center gap-2", elementStyle.color, elementStyle.color.replace("text-", "border-"))}>
-                        <span className={cn("w-2 h-2 rounded-full animate-pulse", elementStyle.bg)}></span>
-                        COST {totalCost}/{limitCost}
-                      </span>
-                    </h2>
+                  {/* Scrollable content */}
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                    <div className="p-6 sm:p-8 lg:p-10 relative z-10">
 
-                    <div className="flex-1 min-h-[450px] xl:min-h-0 relative flex items-center justify-center mt-8 [perspective:1000px]">
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.8)_0%,rgba(255,255,255,0)_70%)]" />
-                        <div className="w-[320px] sm:w-[480px] h-[320px] sm:h-[480px] rounded-full border-[1px] border-slate-200 absolute animate-[spin_100s_linear_infinite]" />
-                        <div className="w-[300px] sm:w-[450px] h-[300px] sm:h-[450px] rounded-full border-[2px] border-slate-200/60 border-dashed absolute animate-[spin_60s_linear_infinite]" />
-                        <div className={cn("w-[200px] sm:w-[300px] h-[200px] sm:h-[300px] rounded-full border absolute animate-[spin_40s_linear_infinite_reverse] opacity-30", elementStyle.color.replace("text-", "border-"))} />
-                        <div className="w-[100px] sm:w-[150px] h-[100px] sm:h-[150px] rounded-full border-[1px] border-slate-200 absolute opacity-50" />
-
-                        {pattern.map((cost: any, i: any) => {
-                          const angle = i * (360 / pattern.length);
-                          return (
-                            <div key={i} className="absolute origin-bottom -translate-y-1/2 flex flex-col items-center" style={ { height: '300px', transform: `translateY(-50%) rotate(${angle}deg)` } }>
-                              <div className={cn("w-[2px] h-full bg-gradient-to-t from-transparent", i === 0 ? `${elementStyle.bg} to-white opacity-80` : "via-slate-200 to-transparent opacity-40")} />
-                            </div>
-                          )
-                        })}
-                      </div>
-
-                      {pattern.map((cost: any, idx: any) => {
-                        const angle = idx * (360 / pattern.length);
-                        const rad = (angle - 90) * (Math.PI / 180);
-                        const radius = 100;
-                        const smRadius = 160;
-
-                        let nodeSizeClass = "w-14 h-14 sm:w-20 sm:h-20 rounded-2xl";
-                        let iconSizeClass = "text-sm sm:text-base";
-                        let lblClass = "text-[8px] sm:text-[9px]";
-                        if (cost === 4) {
-                          nodeSizeClass = "w-24 h-24 sm:w-32 sm:h-32 rounded-3xl border-2";
-                          iconSizeClass = "text-xl sm:text-3xl";
-                          lblClass = "text-[10px] sm:text-xs uppercase font-black";
-                        } else if (cost === 3) {
-                          nodeSizeClass = "w-16 h-16 sm:w-24 sm:h-24 rounded-2xl";
-                          iconSizeClass = "text-base sm:text-lg";
-                          lblClass = "text-[9px] sm:text-[10px]";
-                        }
-
-                        const renderNodeLabel = () => {
-                          if (cost === 4) return values4.length > 0 ? values4[0]?.split(' ')[0] : '?';
-                          if (cost === 3) return values3[0] || '?';
-                          if (cost === 1) return values1[0] || '?';
-                          return '?';
-                        };
-
-                        const NodeInner = ({ isSmall }: { isSmall: boolean }) => (
-                          <>
-                            <div className={cn(
-                              "bg-white/70 backdrop-blur-md shadow-[0_8px_32px_rgba(30,41,59,0.08)] flex flex-col items-center justify-center border z-20 group transition-all duration-300 hover:scale-110 hover:shadow-[0_16px_48px_rgba(30,41,59,0.12)] hover:bg-white relative overflow-hidden",
-                              nodeSizeClass,
-                              cost === 4 ? `${elementStyle.color.replace("text-", "border-")} shadow-${elementStyle.color}/10` : "border-white/60"
-                            )}>
-                              <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-transparent pointer-events-none rounded-[inherit]" />
-
-                              <span className={cn("font-black text-slate-800 text-center leading-tight relative z-10 px-2 drop-shadow-sm", iconSizeClass, cost === 4 ? elementStyle.color : "")}>
-                                {renderNodeLabel()}
-                              </span>
-                              <span className={cn("font-mono font-bold mt-1 tracking-widest relative z-10", lblClass, cost === 4 ? elementStyle.color : "text-slate-400")}>
-                                Cost {cost}
-                              </span>
-                            </div>
-
-                            {cost === 4 && (
-                              <div className={cn(
-                                "mt-4 break-words text-center font-bold px-4 py-1.5 rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-md border drop-shadow-sm absolute top-full z-30 transition-all group-hover:-translate-y-1",
-                                isSmall ? "text-[10px] w-28" : "text-xs w-40",
-                                "bg-white/80 border-white/50 text-slate-700"
-                              )}>
-                                {activeSet.cost4Name || 'Overlord'}
-                              </div>
-                            )}
-                          </>
-                        );
-
-                        return (
-                          <div key={idx} className="absolute flex flex-col items-center z-20" style={ { left: `calc(50% + ${Math.cos(rad) * radius}px)`, top: `calc(50% + ${Math.sin(rad) * radius}px)` } }>
-                            <div className="hidden sm:flex absolute flex-col items-center group" style={ { left: `calc(50% + ${Math.cos(rad) * smRadius}px)`, top: `calc(50% + ${Math.sin(rad) * smRadius}px)`, transform: 'translate(-50%, -50%)' } }>
-                              <NodeInner isSmall={false} />
-                            </div>
-                            <div className="flex sm:hidden absolute flex-col items-center group" style={ { transform: 'translate(-50%, -50%)' } }>
-                              <NodeInner isSmall={true} />
-                            </div>
+                      {/* ===== HEADER ===== */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                        <div className="flex items-center gap-4">
+                          <div className={cn("p-3 rounded-2xl bg-white border shadow-sm", elementStyle.color.replace("text-", "border-"))}>
+                            <Fingerprint className={elementStyle.color} strokeWidth={2} size={26} />
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="w-full xl:w-[40%] bg-white/40 p-6 lg:p-8 relative z-10 flex flex-col overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent border-l border-white/60">
-
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2">
-                      <AudioWaveform size={14} className={elementStyle.color} strokeWidth={2.5} /> Recommended Sets
-                    </h3>
-
-                    {activeSet.cost4Description && (
-                      <div className={cn("mb-6 p-4 rounded-2xl border bg-white/60 backdrop-blur-sm shadow-sm", elementStyle.color.replace("text-", "border-"))}>
-                        <h4 className={cn("text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-2", elementStyle.color)}>
-                          <Dna size={12} strokeWidth={2.5} /> Cost 4 Skill Effect
-                        </h4>
-                        <p className="text-sm font-medium text-slate-600 leading-relaxed whitespace-pre-wrap">
-                          <RichText html={activeSet.cost4Description} />
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="flex flex-col gap-3 mb-8">
-                      {echoSets.map((set: any, idx: number) => (
-                        <div
-                          key={idx}
-                          onClick={() => setActiveEchoSetIdx(idx)}
-                          className={cn(
-                            "rounded-2xl p-4 border transition-all cursor-pointer shadow-sm relative overflow-hidden group",
-                            activeEchoSetIdx === idx
-                              ? `bg-white ${elementStyle.color.replace("text-", "border-")} ring-2 ring-inset ${elementStyle.color.replace("text-", "ring-") || 'ring-indigo-100'} shadow-md`
-                              : "bg-slate-50 border-slate-200 hover:border-slate-300 hover:bg-white"
-                          )}
-                        >
-                          {activeEchoSetIdx === idx && (
-                            <div className={cn("absolute right-0 top-0 bottom-0 w-2", elementStyle.bg)} />
-                          )}
-                          <div className="flex justify-between items-start mb-2 pr-4">
-                            <h4 className="font-black text-slate-800 tracking-tight text-lg leading-none">{set.name || set.mainSet || 'Standard Set'}</h4>
-                            {idx === 0 && (
-                              <span className={cn("text-[8px] uppercase tracking-widest font-black px-2 py-0.5 rounded text-white shadow-sm", elementStyle.bg)}>
-                                Best Overall
-                              </span>
-                            )}
+                          <div>
+                            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-800">Echo Loadout</h2>
+                            <p className="text-xs text-slate-400 font-medium mt-0.5">Recommended echo configuration</p>
                           </div>
-                          <p className="text-xs font-medium text-slate-500">
-                            <span className={cn("font-bold", elementStyle.color)}>5-Piece:</span> <RichText html={set.mainSetDescription} />
-                          </p>
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-auto">
-                      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2 flex items-center gap-1.5"><ListFilter size={12} /> Main Stat Priority</h4>
-                        <ul className="flex flex-col gap-3 flex-1">
-                          <li className="flex items-center gap-2">
-                            <span className={cn("w-4 h-4 rounded px-[0.2rem] py-0.5 text-[8px] font-black text-white flex items-center justify-center", elementStyle.bg)}>4</span>
-                            <span className="text-xs font-bold text-slate-700 leading-tight">{values4.join(' / ')}</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="w-4 h-4 bg-slate-200 rounded px-[0.2rem] py-0.5 text-[8px] font-black text-slate-600 flex items-center justify-center">3</span>
-                            <span className="text-xs font-bold text-slate-700 leading-tight">{values3.join(' / ')}</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="w-4 h-4 bg-slate-200 rounded px-[0.2rem] py-0.5 text-[8px] font-black text-slate-600 flex items-center justify-center">1</span>
-                            <span className="text-xs font-bold text-slate-700 leading-tight">{values1.join(' / ')}</span>
-                          </li>
-                        </ul>
+                        <div className={cn("flex items-center gap-2.5 px-4 py-2 rounded-full border bg-white/80 backdrop-blur-md shadow-sm self-start sm:self-auto", elementStyle.color.replace("text-", "border-"))}>
+                          <span className={cn("w-2 h-2 rounded-full animate-echo-pulse", elementStyle.bg)} />
+                          <span className={cn("text-xs font-mono font-black tracking-[0.15em]", elementStyle.color)}>
+                            COST {totalCost}/{limitCost}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 pb-2 flex items-center gap-1.5"><PieChart size={12} /> Sub Stat Priority</h4>
-                        <ul className="flex flex-col gap-2">
-                          {(activeSet.substats || activeSet.subStats || []).length > 0 ? (
-                            (activeSet.substats || activeSet.subStats).map((st: any, i: number) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <Focus size={12} className={cn("shrink-0 mt-0.5", i < 2 ? elementStyle.color : "text-slate-400")} />
-                                <span className={cn("text-xs leading-tight font-medium", i < 2 ? "text-slate-800 font-bold" : "text-slate-600")}>{st.stat || st.name}</span>
-                              </li>
-                            ))
-                          ) : (
-                            <li className="text-xs text-slate-500 italic">No substats provided.</li>
-                          )}
-                        </ul>
-                        {activeSet.erRequirement && (
-                          <div className="mt-auto pt-3 flex items-center gap-2 border-t border-slate-100">
-                            <Activity size={12} className="text-amber-500 shrink-0" />
-                            <span className="text-[10px] font-bold text-slate-600 leading-tight">{activeSet.erRequirement}</span>
+                      {/* ===== SET SELECTOR PILLS ===== */}
+                      {echoSets.length > 1 && (
+                        <div className="mb-8">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 flex items-center gap-2">
+                            <AudioWaveform size={12} className={elementStyle.color} strokeWidth={2.5} /> Echo Set Options
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                            {echoSets.map((set: any, idx: number) => (
+                              <button
+                                key={idx}
+                                onClick={() => setActiveEchoSetIdx(idx)}
+                                className={cn(
+                                  "relative px-5 py-2.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 border flex items-center gap-2 outline-none",
+                                  activeEchoSetIdx === idx
+                                    ? `text-white ${elementStyle.bg} ${elementStyle.color.replace("text-", "border-")} shadow-lg scale-[1.02]`
+                                    : "text-slate-600 bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+                                )}
+                              >
+                                {idx === 0 && activeEchoSetIdx === idx && (
+                                  <Star size={12} className="fill-white/80 text-white/80" />
+                                )}
+                                {idx === 0 && activeEchoSetIdx !== idx && (
+                                  <Star size={12} className={cn("fill-current", elementStyle.color)} />
+                                )}
+                                {set.name || set.mainSet || `Set ${idx + 1}`}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* ===== SET BONUS DESCRIPTION ===== */}
+                      <motion.div
+                        key={`set-desc-${activeEchoSetIdx}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={cn("mb-8 p-5 rounded-2xl border-l-4 bg-white/80 backdrop-blur-sm shadow-sm border border-slate-100", elementStyle.color.replace("text-", "border-l-"))}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Dna size={14} className={elementStyle.color} strokeWidth={2.5} />
+                              <h4 className={cn("text-xs font-black uppercase tracking-widest", elementStyle.color)}>
+                                {activeSet.name || activeSet.mainSet || 'Standard Set'}
+                              </h4>
+                              {activeEchoSetIdx === 0 && (
+                                <span className={cn("text-[8px] uppercase tracking-widest font-black px-2 py-0.5 rounded-full text-white ml-2", elementStyle.bg)}>
+                                  Best
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                              <RichText html={activeSet.mainSetDescription} />
+                            </p>
+                          </div>
+                        </div>
+                        {activeSet.cost4Description && (
+                          <div className="mt-4 pt-4 border-t border-slate-100">
+                            <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                              <span className={cn("font-bold", elementStyle.color)}>Echo Skill: </span>
+                              <RichText html={activeSet.cost4Description} />
+                            </p>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
+
+                      {/* ===== ECHO CARDS GRID ===== */}
+                      <motion.div
+                        key={`cards-${activeEchoSetIdx}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                        className="mb-10"
+                      >
+                        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2">
+                          <Layers size={12} className={elementStyle.color} strokeWidth={2.5} /> Echo Slots
+                          <span className="text-[9px] text-slate-300 ml-auto font-mono">{pattern.join(' - ')}</span>
+                        </h3>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                          {pattern.map((cost: number, idx: number) => {
+                            if (!costCounters[cost]) costCounters[cost] = 0;
+                            costCounters[cost]++;
+                            const slotNum = costCounters[cost];
+                            const colors = costColorMap[cost] || costColorMap[1];
+                            const isMajor = cost === 4;
+                            const mainStat = getMainStatForCost(cost);
+                            const echoName = getEchoNameForCost(cost);
+
+                            return (
+                              <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 16, scale: 0.97 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ duration: 0.4, delay: idx * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                                className={cn(
+                                  "group relative rounded-2xl border bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1",
+                                  isMajor
+                                    ? `${colors.border} col-span-2 sm:col-span-1 hover:shadow-xl ring-1 ring-inset ${elementStyle.color.replace("text-", "ring-")}/20`
+                                    : "border-slate-200 hover:border-slate-300 hover:shadow-lg"
+                                )}
+                              >
+                                {/* Cost badge */}
+                                <div className={cn(
+                                  "absolute top-3 right-3 w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black text-white z-10 shadow-sm",
+                                  colors.bg
+                                )}>
+                                  {cost}
+                                </div>
+
+                                {/* Card body */}
+                                <div className={cn("p-4 sm:p-5", isMajor ? "pb-5" : "pb-4")}>
+                                  {/* Slot number */}
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <span className="text-[9px] font-mono text-slate-300 tracking-widest">SLOT {String(idx + 1).padStart(2, '0')}</span>
+                                  </div>
+
+                                  {/* Big cost number visual */}
+                                  <div className={cn(
+                                    "w-full aspect-square rounded-xl flex flex-col items-center justify-center mb-4 relative overflow-hidden transition-all duration-500",
+                                    isMajor
+                                      ? "bg-gradient-to-br from-slate-50 to-slate-100 group-hover:from-slate-100 group-hover:to-white"
+                                      : "bg-slate-50 group-hover:bg-slate-100"
+                                  )}>
+                                    {/* Decorative ring */}
+                                    <div className={cn(
+                                      "absolute inset-2 rounded-lg border-2 border-dashed opacity-[0.15] transition-opacity duration-500 group-hover:opacity-30",
+                                      colors.border
+                                    )} />
+                                    <span className={cn(
+                                      "font-black leading-none relative z-10 transition-transform duration-300 group-hover:scale-110",
+                                      isMajor ? "text-5xl sm:text-6xl" : "text-3xl sm:text-4xl",
+                                      colors.text
+                                    )}>
+                                      {cost}
+                                    </span>
+                                    <span className={cn(
+                                      "text-[8px] font-bold uppercase tracking-[0.3em] mt-1.5 relative z-10",
+                                      isMajor ? colors.text : "text-slate-400"
+                                    )}>
+                                      COST
+                                    </span>
+                                  </div>
+
+                                  {/* Echo name */}
+                                  <h4 className={cn(
+                                    "font-bold tracking-tight leading-tight mb-1.5 truncate",
+                                    isMajor ? "text-sm text-slate-800" : "text-xs text-slate-600"
+                                  )}>
+                                    {echoName}{slotNum > 1 ? ` #${slotNum}` : ''}
+                                  </h4>
+
+                                  {/* Main stat chip */}
+                                  <div className={cn(
+                                    "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-bold transition-colors duration-300",
+                                    isMajor
+                                      ? `${elementStyle.color} bg-slate-50 ${elementStyle.color.replace("text-", "border-")}/30 group-hover:bg-white`
+                                      : "text-slate-500 bg-slate-50 border-slate-200 group-hover:bg-white"
+                                  )}>
+                                    <Target size={10} />
+                                    {mainStat}
+                                  </div>
+                                </div>
+
+                                {/* Hover glow line at bottom */}
+                                <div className={cn(
+                                  "h-0.5 w-0 group-hover:w-full transition-all duration-500 ease-out",
+                                  colors.bg
+                                )} />
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+
+                      {/* ===== STATS DASHBOARD ===== */}
+                      <motion.div
+                        key={`stats-${activeEchoSetIdx}`}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.15 }}
+                        className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+                      >
+                        {/* Main Stat Priority */}
+                        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm relative overflow-hidden group/stats hover:shadow-md transition-shadow">
+                          <div className={cn("absolute -top-16 -right-16 w-40 h-40 rounded-full blur-[50px] opacity-[0.06] group-hover/stats:opacity-[0.12] transition-opacity duration-700", elementStyle.bg)} />
+                          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-2 relative z-10">
+                            <ListFilter size={13} className={elementStyle.color} /> Main Stat Priority
+                          </h4>
+                          <div className="space-y-3 relative z-10">
+                            {[
+                              { cost: 4, values: values4, colors: costColorMap[4] },
+                              { cost: 3, values: values3, colors: costColorMap[3] },
+                              { cost: 1, values: values1, colors: costColorMap[1] },
+                            ].map(({ cost, values, colors }) => (
+                              <div key={cost} className="flex items-center gap-3 group/row">
+                                <div className={cn(
+                                  "w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black text-white shrink-0 shadow-sm transition-transform duration-200 group-hover/row:scale-110",
+                                  colors.bg
+                                )}>
+                                  {cost}
+                                </div>
+                                <div className="flex-1 flex flex-wrap gap-1.5">
+                                  {values.length > 0 ? values.map((v: string, vi: number) => (
+                                    <React.Fragment key={vi}>
+                                      <span className={cn(
+                                        "px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all duration-200 group-hover/row:shadow-sm",
+                                        cost === 4
+                                          ? `bg-slate-50 ${elementStyle.color} ${elementStyle.color.replace("text-", "border-")}/30`
+                                          : "bg-slate-50 text-slate-700 border-slate-200"
+                                      )}>
+                                        {v}
+                                      </span>
+                                      {vi < values.length - 1 && (
+                                        <span className="text-[9px] text-slate-300 font-bold self-center">or</span>
+                                      )}
+                                    </React.Fragment>
+                                  )) : (
+                                    <span className="text-xs text-slate-400 italic">—</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {activeSet.erRequirement && (
+                            <div className="mt-5 pt-4 border-t border-slate-100 flex items-center gap-2.5">
+                              <div className="w-6 h-6 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center">
+                                <Activity size={12} className="text-amber-500" />
+                              </div>
+                              <span className="text-xs font-bold text-slate-600">{activeSet.erRequirement}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Sub Stat Priority */}
+                        <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm relative overflow-hidden group/sub hover:shadow-md transition-shadow">
+                          <div className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full blur-[50px] opacity-[0.06] group-hover/sub:opacity-[0.12] transition-opacity duration-700 bg-violet-400" />
+                          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-2 relative z-10">
+                            <PieChart size={13} className="text-violet-500" /> Sub Stat Priority
+                          </h4>
+                          <div className="space-y-3 relative z-10">
+                            {substats.length > 0 ? (
+                              substats.map((st: any, i: number) => {
+                                const barWidth = Math.max(30, 100 - (i * (60 / maxSubstatBars)));
+                                const isTop = i < 2;
+                                return (
+                                  <div key={i} className="group/bar">
+                                    <div className="flex items-center justify-between mb-1.5">
+                                      <div className="flex items-center gap-2">
+                                        <span className={cn(
+                                          "w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-black text-white shadow-sm",
+                                          isTop ? elementStyle.bg : "bg-slate-300"
+                                        )}>
+                                          {i + 1}
+                                        </span>
+                                        <span className={cn(
+                                          "text-xs font-bold",
+                                          isTop ? "text-slate-800" : "text-slate-500"
+                                        )}>
+                                          {st.stat || st.name}
+                                        </span>
+                                      </div>
+                                      {st.priority && (
+                                        <span className={cn(
+                                          "text-[9px] font-bold uppercase tracking-wider",
+                                          isTop ? elementStyle.color : "text-slate-400"
+                                        )}>
+                                          {st.priority}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                      <motion.div
+                                        className={cn(
+                                          "h-full rounded-full transition-colors duration-300",
+                                          isTop ? elementStyle.bg : "bg-slate-300"
+                                        )}
+                                        initial={{ width: "0%" }}
+                                        animate={{ width: `${barWidth}%` }}
+                                        transition={{ duration: 0.6, delay: i * 0.1, ease: "easeOut" }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="text-sm text-slate-400 italic py-4 text-center">No substats configured</div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+
                     </div>
                   </div>
                 </div>
               );
             })()}
 
-            <button onClick={() => setActiveTab('OVERVIEW')} aria-label="Back to Overview" className="absolute top-6 right-8 text-slate-400 hover:text-slate-700 bg-white/50 hover:bg-white p-3 rounded-full backdrop-blur-md border border-slate-200 transition-all z-40 shadow-sm">
-              <X size={24} />
+            <button onClick={() => setActiveTab('OVERVIEW')} aria-label="Back to Overview" className="absolute top-6 right-8 text-slate-400 hover:text-slate-700 bg-white/80 hover:bg-white p-3 rounded-full backdrop-blur-md border border-slate-200 transition-all z-40 shadow-sm hover:shadow-md hover:scale-105 active:scale-95">
+              <X size={20} />
             </button>
           </motion.div>
         )}
+
 
         {activeTab === 'TEAMS' && (
           <motion.div
@@ -1633,7 +1888,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                 <div className="flex-1 flex flex-col space-y-4 pb-6 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-transparent">
                   {(content.teams || []).map((team: any, i: number) => {
                     const isSelected = selectedTeamIdx === i;
-                    const isOptimal = team.isOptimal || team.name.toLowerCase().includes('optimal') || team.name.toLowerCase().includes('premium');
+                    const isOptimal = !!team.isOptimal;
 
                     return (
                       <div
@@ -1669,7 +1924,7 @@ export default function GuideClient({ guide }: { guide: any }) {
                 {content.teams && content.teams.length > 0 && (
                   (() => {
                     const team = content.teams[selectedTeamIdx] || content.teams[0];
-                    const isOptimal = team.isOptimal || team.name.toLowerCase().includes('optimal') || team.name.toLowerCase().includes('premium');
+                    const isOptimal = !!team.isOptimal;
 
                     return (
                       <motion.div

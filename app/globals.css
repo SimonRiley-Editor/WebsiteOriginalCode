@@ -58,6 +58,14 @@
   --animate-slash-in: slash-in 0.7s var(--ease-out-expo) both;
   --animate-marquee: marquee 24s linear infinite;
   --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+
+  /* Damage comparison tokens */
+  --color-weapons-delta-up: oklch(0.75 0.25 145);
+  --color-weapons-delta-down: oklch(0.65 0.25 25);
+  --color-weapons-delta-neutral: oklch(0.78 0.18 65);
+  --color-weapons-bar-atk: oklch(0.55 0.22 25);
+  --color-weapons-bar-dmg: oklch(0.72 0.18 65);
+  --color-weapons-bar-crit: oklch(0.65 0.16 220);
 }
 
 @keyframes float {
@@ -75,6 +83,23 @@
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 0 0 oklch(0.62 0.24 25 / 0.5); }
   50% { box-shadow: 0 0 0 14px oklch(0.62 0.24 25 / 0); }
+}
+@keyframes bar-extend {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes toggle-snap {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(0.92); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes number-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
 }
 
 :root {
@@ -348,5 +373,23 @@ body {
 @keyframes slide-reverse {
   0% { transform: translateX(0); }
   100% { transform: translateX(-24px); }
+}
+
+@keyframes echo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 0.6; }
+  50% { box-shadow: 0 0 0 8px transparent; opacity: 1; }
+}
+
+@keyframes echo-card-enter {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-echo-pulse {
+  animation: echo-pulse 2.4s ease-in-out infinite;
+}
+
+.animate-echo-card-enter {
+  animation: echo-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 

@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue } from "motion/react";
-import { Play, Pause, RotateCcw, Clock, Zap, Swords, Star, LogIn, LogOut, Waves } from "lucide-react";
-import type { RotationConfig, TeamRotationEvent } from "@/types/guide";
+import { Play, Pause, RotateCcw, Clock, Zap, Swords, Star, LogIn, LogOut, Waves, Sword } from "lucide-react";
+import type { RotationConfig, TeamRotationEvent, BuffEntry } from "@/types/guide";
 
 /* ─── colour + icon map per event type ─── */
 const EVENT_STYLES: Record<
@@ -15,6 +15,31 @@ const EVENT_STYLES: Record<
   ultimate: { bg: "bg-rose-500/80", border: "border-rose-400", glow: "shadow-[0_0_18px_rgba(239,68,68,0.55)]", icon: <Star size={12} />, label: "Ultimate" },
   outro: { bg: "bg-violet-500/80", border: "border-violet-400", glow: "shadow-[0_0_18px_rgba(139,92,246,0.55)]", icon: <LogOut size={12} />, label: "Outro" },
   echo: { bg: "bg-emerald-500/80", border: "border-emerald-400", glow: "shadow-[0_0_18px_rgba(16,185,129,0.55)]", icon: <Waves size={12} />, label: "Echo" },
+  forte: { bg: "bg-cyan-500/80", border: "border-cyan-400", glow: "shadow-[0_0_18px_rgba(6,182,212,0.55)]", icon: <Zap size={12} />, label: "Forte" },
+  basic: { bg: "bg-slate-500/80", border: "border-slate-400", glow: "shadow-[0_0_18px_rgba(148,163,184,0.55)]", icon: <Sword size={12} />, label: "Basic" },
+};
+
+/* ─── Raw RGB per event type — for inline rgba() on buff bars ─── */
+const BUFF_COLORS: Record<TeamRotationEvent["type"], string> = {
+  intro:    "59,130,246",
+  skill:    "245,158,11",
+  ultimate: "239,68,68",
+  outro:    "139,92,246",
+  echo:     "16,185,129",
+  forte:    "6,182,212",
+  basic:    "148,163,184",
+};
+
+/** Resolve a buff's display color as an RGB triplet string */
+const resolveBuffColor = (buff: BuffEntry, eventType: TeamRotationEvent["type"]): string => {
+  if (buff.color) {
+    const hex = buff.color.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return `${r},${g},${b}`;
+  }
+  return BUFF_COLORS[eventType];
 };
 
 const SLOT_COLORS = [
@@ -181,6 +206,10 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
   const isBlockActive = (evt: TeamRotationEvent) =>
     currentTime >= evt.startTime && currentTime < evt.startTime + evt.duration;
 
+  /* ── Buff intersection check ── */
+  const isBuffActive = (evt: TeamRotationEvent, buff: BuffEntry) =>
+    currentTime >= evt.startTime && currentTime <= evt.startTime + buff.duration;
+
   /* ── Per-slot events ── */
   const slotEvents: [TeamRotationEvent[], TeamRotationEvent[], TeamRotationEvent[]] = [
     events.filter((e) => e.characterSlot === 1),
@@ -287,6 +316,48 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                   className="flex-1 relative cursor-pointer"
                   onPointerDown={handleTrackPointerDown}
                 >
+                  {/* Buff duration bars — rendered as siblings, behind skill blocks */}
+                  {slotEvents[slotIdx]
+                    .filter((evt) => evt.buffs && evt.buffs.length > 0)
+                    .flatMap((evt) =>
+                      evt.buffs!.map((buff, buffIdx) => {
+                        const buffLeft = (evt.startTime / totalDuration) * 100;
+                        const buffWidth = (buff.duration / totalDuration) * 100;
+                        const rgb = resolveBuffColor(buff, evt.type);
+                        const active = isBuffActive(evt, buff);
+                        const bottomOffset = 4 + buffIdx * 8;
+
+                        return (
+                          <div
+                            key={`buff-${evt.id}-${buff.id}`}
+                            className="absolute h-1.5 rounded-full pointer-events-none z-[5] transition-all duration-200"
+                            style={{
+                              left: `${buffLeft}%`,
+                              width: `${buffWidth}%`,
+                              bottom: `${bottomOffset}px`,
+                              background: active
+                                ? `repeating-linear-gradient(90deg, rgba(${rgb},0.6) 0px, rgba(${rgb},0.35) 4px, rgba(${rgb},0.6) 8px)`
+                                : `repeating-linear-gradient(90deg, rgba(${rgb},0.25) 0px, rgba(${rgb},0.12) 4px, rgba(${rgb},0.25) 8px)`,
+                              boxShadow: active
+                                ? `0 0 10px rgba(${rgb},0.6), 0 0 20px rgba(${rgb},0.3)`
+                                : `0 0 4px rgba(${rgb},0.15)`,
+                              animation: active ? 'buffPulse 2s ease-in-out infinite' : 'none',
+                            }}
+                          >
+                            {buff.label && (
+                              <span
+                                className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-black/70 border border-white/10 opacity-0 group-hover/lane:opacity-100 transition-opacity pointer-events-none"
+                                style={{ color: `rgba(${rgb},1)` }}
+                              >
+                                {buff.label}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+
+                  {/* Skill event blocks */}
                   {slotEvents[slotIdx].map((evt) => {
                     const style = EVENT_STYLES[evt.type];
                     const active = isBlockActive(evt);
@@ -469,6 +540,18 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
                             <p className="text-xs text-amber-400/80 italic">{hoveredEvent.notes}</p>
                           </div>
                         )}
+
+                        {/* Buff Info */}
+                        {hoveredEvent.buffs && hoveredEvent.buffs.length > 0 && (
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-[10px] uppercase text-cyan-500/50 font-bold tracking-widest">Buffs:</span>
+                            {hoveredEvent.buffs.map((buff) => (
+                              <span key={buff.id} className="text-xs text-cyan-400/80 bg-cyan-500/10 border border-cyan-500/20 rounded px-1.5 py-0.5">
+                                {buff.label || "Buff"} ({buff.duration}s)
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
@@ -506,6 +589,10 @@ export const TeamRotationTimeline: React.FC<TeamRotationTimelineProps> = ({ conf
         @keyframes shimmer {
           0% { transform: translateX(-200%); }
           100% { transform: translateX(200%); }
+        }
+        @keyframes buffPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
         }
       ` }} />
     </div>

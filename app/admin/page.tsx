@@ -1596,7 +1596,11 @@ export default function AdminDashboard() {
                             {/* Desc Col */}
                             <div className="space-y-6">
                               <div className="space-y-2 relative">
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Passive Ability</label>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Passive Name</label>
+                                <input type="text" value={weapon.passiveName || ""} onChange={(e) => updateItem("weapons", idx, "passiveName", e.target.value)} placeholder="e.g. Crimson Moon's Semblance" className="w-full bg-[#0f172a]/80 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-amber-500 text-sm" />
+                              </div>
+                              <div className="space-y-2 relative">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Passive Description</label>
                                 <RichTextEditor value={weapon.passiveDescription || ""} onChange={(val) => updateItem("weapons", idx, "passiveDescription", val)} placeholder="Enter weapon passive effect..." minHeight="90px" />
                               </div>
                               <div className="space-y-2 relative">
@@ -1630,6 +1634,52 @@ export default function AdminDashboard() {
                                 <div className="space-y-1.5">
                                   <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block text-center">Scale</label>
                                   <input type="number" step="0.1" title="Weapon Scale" value={weapon.imageScale || 1} onChange={(e) => updateItem("weapons", idx, "imageScale", e.target.value ? parseFloat(e.target.value) : 1)} className="w-full bg-[#1e293b] border border-slate-700 rounded text-center py-2 text-sm text-slate-200 focus:outline-none focus:border-white font-mono" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* ═══ DAMAGE COMPARISON DATA ═══ */}
+                          <div className="mt-8 pt-6 border-t border-amber-500/20 space-y-4">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/15 border border-amber-500/25">
+                                <Zap size={13} className="text-amber-400" />
+                              </div>
+                              <div>
+                                <h4 className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Damage Comparison Data</h4>
+                                <p className="text-[10px] text-slate-500 mt-0.5">Used for the stacked bar charts &amp; delta metric. Leave blank to use auto-generated defaults.</p>
+                              </div>
+                            </div>
+
+                            <div className="bg-slate-900/50 p-5 rounded-lg border border-slate-800 space-y-4">
+                              <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">ATK% Bucket</label>
+                                  <input type="number" step="0.1" title="ATK% contribution" value={weapon.atkPercent ?? ""} onChange={(e) => updateItem("weapons", idx, "atkPercent", e.target.value ? parseFloat(e.target.value) : undefined)} placeholder="auto" className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500 font-mono placeholder:text-slate-600" />
+                                  <p className="text-[9px] text-slate-600">ATK% contribution weight</p>
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">DMG Bonus% Bucket</label>
+                                  <input type="number" step="0.1" title="DMG Bonus% contribution" value={weapon.dmgBonusPercent ?? ""} onChange={(e) => updateItem("weapons", idx, "dmgBonusPercent", e.target.value ? parseFloat(e.target.value) : undefined)} placeholder="auto" className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500 font-mono placeholder:text-slate-600" />
+                                  <p className="text-[9px] text-slate-600">DMG Bonus contribution weight</p>
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Crit Scaling Bucket</label>
+                                  <input type="number" step="0.1" title="Crit scaling contribution" value={weapon.critScalingPercent ?? ""} onChange={(e) => updateItem("weapons", idx, "critScalingPercent", e.target.value ? parseFloat(e.target.value) : undefined)} placeholder="auto" className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500 font-mono placeholder:text-slate-600" />
+                                  <p className="text-[9px] text-slate-600">Crit scaling contribution weight</p>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total Damage Index</label>
+                                  <input type="number" step="0.1" title="Total damage index" value={weapon.totalDamageIndex ?? ""} onChange={(e) => updateItem("weapons", idx, "totalDamageIndex", e.target.value ? parseFloat(e.target.value) : undefined)} placeholder="auto" className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500 font-mono placeholder:text-slate-600" />
+                                  <p className="text-[9px] text-slate-600">100 = baseline (S+ signature). Lower = weaker.</p>
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Passive Buff %</label>
+                                  <input type="number" step="0.1" title="Passive buff percentage" value={weapon.passiveBuffPercent ?? ""} onChange={(e) => updateItem("weapons", idx, "passiveBuffPercent", e.target.value ? parseFloat(e.target.value) : undefined)} placeholder="auto" className="w-full bg-[#1e293b] border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500 font-mono placeholder:text-slate-600" />
+                                  <p className="text-[9px] text-slate-600">% damage increase when passive is toggled ON</p>
                                 </div>
                               </div>
                             </div>
