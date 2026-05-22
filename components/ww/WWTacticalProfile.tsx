@@ -31,7 +31,7 @@ export const WWTacticalProfile: React.FC<TacticalContentProps> = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-[340px] flex flex-col gap-2 mt-0 lg:-mt-8 relative z-20 scale-[0.75] md:scale-[0.80] origin-top-right xl:scale-[0.85] 2xl:scale-95 transform-gpu"
+                className="w-full lg:max-w-[340px] flex flex-col gap-2 mt-0 lg:-mt-8 relative z-20 scale-100 md:scale-100 lg:scale-[0.80] origin-top-right xl:scale-[0.85] 2xl:scale-95 transform-gpu"
             >
                 {/* Role Card / System Header */}
                 <div className="bg-white md:bg-white/80 md:backdrop-blur-2xl rounded-2xl p-5 lg:p-6 border border-gray-100 shadow-[0_4px_24px_rgb(0,0,0,0.04)] relative overflow-hidden group">

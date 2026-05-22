@@ -26,13 +26,13 @@ export const WWInsightBar: React.FC<InsightBarProps> = ({
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' } }
             exit={{ opacity: 0, y: -20, filter: 'blur(10px)' } }
             transition={{ duration: 0.5, delay: 0.2 } }
-            className="w-full bg-white/90 md:bg-white/40 md:backdrop-blur-3xl border border-white/60 rounded-3xl p-6 relative flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-stretch group/insight hover:-translate-y-1 transition-all duration-500 overflow-visible transform-gpu will-change-transform" style={ { boxShadow: `0 0 50px -10px ${accentColor}40, inset 0 2px 20px rgba(255,255,255,0.8)` } }
+            className="w-full bg-white/90 lg:bg-white/40 lg:backdrop-blur-3xl border border-white/60 rounded-3xl p-6 relative flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-stretch group/insight hover:-translate-y-1 transition-all duration-500 overflow-visible transform-gpu will-change-transform" style={ { boxShadow: `0 0 50px -10px ${accentColor}40, inset 0 2px 20px rgba(255,255,255,0.8)` } }
         >
             {/* Top Glow Edge */}
             <div className="absolute top-0 left-0 right-0 h-[2px] opacity-100 z-20 overflow-hidden rounded-t-3xl">
                 <div className="w-full h-full" style={ { background: `linear-gradient(90deg, transparent, ${accentColor}, white, ${accentColor}, transparent)` } }></div>
             </div>
-            <div className="absolute top-0 left-[15%] w-32 h-[4px] blur-[4px] opacity-100 z-20 pointer-events-none md:mix-blend-screen hidden md:block" style={ { backgroundColor: accentColor } }></div>
+            <div className="absolute top-0 left-[15%] w-32 h-[4px] blur-[4px] opacity-100 z-20 pointer-events-none lg:mix-blend-screen hidden lg:block" style={ { backgroundColor: accentColor } }></div>
             <div className="absolute top-0 left-[15%] w-16 h-[2px] blur-[1px] opacity-100 z-20 pointer-events-none bg-white"></div>
             <div className="absolute top-0 right-[25%] w-48 h-[6px] blur-[6px] opacity-80 z-20 pointer-events-none md:mix-blend-screen hidden md:block" style={ { backgroundColor: accentColor } }></div>
             <div className="absolute top-0 right-[25%] w-20 h-[2px] blur-[1px] opacity-100 z-20 pointer-events-none bg-white"></div>
@@ -46,7 +46,7 @@ export const WWInsightBar: React.FC<InsightBarProps> = ({
             <div className="absolute top-0 -inset-full h-full w-[250%] z-0 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover/insight:opacity-100 group-hover/insight:translate-x-[100%] transition-all duration-1000 ease-in-out" />
 
             {/* Tab Switcher */}
-            <div className="absolute -top-[1px] left-[10%] flex gap-8 z-30 pointer-events-auto">
+            <div className="absolute -top-[1px] left-4 lg:left-[10%] flex gap-4 lg:gap-8 z-30 pointer-events-auto">
                 <button 
                     onClick={() => setActiveInsightTab('assessment')}
                     className={`pt-3 pb-2 text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-300 border-t-[3px] ${activeInsightTab === 'assessment' ? 'text-gray-900 border-gray-900 drop-shadow-sm' : 'text-gray-400 border-transparent hover:text-gray-600'}`}
@@ -91,10 +91,10 @@ export const WWInsightBar: React.FC<InsightBarProps> = ({
                     </>
                 )}
                 {activeInsightTab === 'proscons' && (
-                    <div className="flex w-full cursor-pointer group/modal relative" onClick={() => setIsProsConsModalOpen(true)} title="Click to expand Pros & Cons">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 w-full cursor-pointer group/modal relative" onClick={() => setIsProsConsModalOpen(true)} title="Click to expand Pros & Cons">
                         <div className="absolute inset-0 -mx-4 -my-2 bg-black/5 rounded-xl opacity-0 group-hover/modal:opacity-100 transition-opacity z-0 pointer-events-none" />
                         {/* Pros Column */}
-                        <div className="hidden md:flex flex-col items-center justify-center mx-2 shrink-0">
+                        <div className="hidden lg:flex flex-col items-center justify-center mx-2 shrink-0">
                             <div className="w-px h-10" style={ { background: `linear-gradient(to bottom, transparent, ${accentColor}40)` } }></div>
                             <div className="w-1.5 h-1.5 rotate-45 my-2" style={ { border: `1px solid ${accentColor}80` } }></div>
                             <div className="w-px h-10" style={ { background: `linear-gradient(to top, transparent, ${accentColor}40)` } }></div>
@@ -119,7 +119,7 @@ export const WWInsightBar: React.FC<InsightBarProps> = ({
                             <div className="w-1.5 h-1.5 rotate-45 my-2" style={ { border: `1px solid ${accentColor}80` } }></div>
                             <div className="w-px h-10" style={ { background: `linear-gradient(to top, transparent, ${accentColor}40)` } }></div>
                         </div>
-                        <div className="flex-1 flex flex-col justify-center relative z-10 min-w-[140px] group/cons pl-0 md:pl-4">
+                        <div className="flex-1 flex flex-col justify-center relative z-10 min-w-[140px] group/cons pl-0 lg:pl-4">
                             <p className="text-[10px] font-black tracking-[0.2em] text-red-500 uppercase mb-3 flex items-center gap-1.5 transition-transform duration-300 group-hover/cons:translate-x-1 drop-shadow-sm">
                                 <Minus size={12} className="transition-transform duration-300 group-hover/cons:scale-125" /> <span className="font-light text-red-500">KNOWN</span> <span className="text-red-500">LIABILITIES</span>
                             </p>

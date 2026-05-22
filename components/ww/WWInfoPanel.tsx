@@ -22,7 +22,7 @@ export const WWInfoPanel: React.FC<InfoPanelProps> = ({ activeGuide, showAnimati
             animate={{ opacity: 1, x: 0 } }
             exit={{ opacity: 0, x: -20 } }
             transition={{ duration: 0.5 } }
-            className="w-full max-w-[420px] flex flex-col pt-2 scale-[0.75] md:scale-[0.80] origin-top-left xl:scale-[0.85] 2xl:scale-95 pointer-events-auto transform-gpu"
+            className="w-full lg:max-w-[420px] flex flex-col pt-2 scale-100 md:scale-100 lg:scale-[0.80] origin-top-left xl:scale-[0.85] 2xl:scale-95 pointer-events-auto transform-gpu"
         >
             {/* Animation Toggle */}
             {activeGuide?.content?.spine && !isMobile && (
@@ -38,7 +38,7 @@ export const WWInfoPanel: React.FC<InfoPanelProps> = ({ activeGuide, showAnimati
                 {faction}
             </span>
             <div className="flex items-end gap-3 mb-4">
-                <h2 className="text-6xl lg:text-7xl font-display font-black text-gray-900 tracking-tight uppercase leading-[0.85] drop-shadow-sm">
+                <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display font-black text-gray-900 tracking-tight uppercase leading-[0.85] drop-shadow-sm">
                     {activeGuide?.name}
                 </h2>
                 <div className="text-3xl mb-1" style={ { color: accentColor } }>
@@ -56,7 +56,7 @@ export const WWInfoPanel: React.FC<InfoPanelProps> = ({ activeGuide, showAnimati
                 {description}
             </p>
 
-            <div className="flex flex-col gap-3 max-w-[320px] mb-8">
+            <div className="flex flex-col gap-3 w-full sm:max-w-[320px] mb-8">
                 <Link 
                      href={`/guides/${activeGuide.slug || activeGuide.id}`}
                      className="group relative w-full flex items-center justify-between px-6 py-4 rounded-xl text-white text-sm font-bold tracking-wider shadow-lg transition-all duration-300 hover:scale-[1.03] outline-none overflow-visible" 

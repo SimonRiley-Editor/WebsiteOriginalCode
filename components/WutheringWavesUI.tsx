@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutGrid, Compass } from 'lucide-react';
+import { LayoutGrid, Compass, Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { ELEMENTS, fallbackGuides, getSafeField } from '@/lib/data/wwData';
@@ -23,6 +23,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
   const [activeInsightTab, setActiveInsightTab] = useState<'assessment' | 'proscons'>('assessment');
   const [isProsConsModalOpen, setIsProsConsModalOpen] = useState(false);
   const [isRosterModalOpen, setIsRosterModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const safeGuides = guides?.length ? guides : fallbackGuides;
@@ -99,9 +100,9 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
   }
 
   return (
-    <div className="w-full h-svh bg-[#FAFAFC] relative overflow-hidden font-sans text-gray-800 flex">
+    <div className="w-full h-[100dvh] bg-[#FAFAFC] relative overflow-hidden font-sans text-gray-800 flex flex-col lg:flex-row">
        {/* Global Light Grid Overlay */}
-       <div className="absolute inset-0 pointer-events-none z-0 opacity-20" 
+       <div className="fixed inset-0 pointer-events-none z-0 opacity-20" 
             style={ { backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)', backgroundSize: '40px 40px' } } 
        />
 
@@ -110,13 +111,15 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
          selectedElement={selectedElement} 
          setSelectedElement={setSelectedElement} 
          setSelectedIndex={setSelectedIndex} 
+         isMobileMenuOpen={isMobileMenuOpen}
+         setIsMobileMenuOpen={setIsMobileMenuOpen}
        />
 
        {/* Main Content Area */}
-       <div className="w-[calc(100vw-88px)] min-w-[calc(100vw-88px)] shrink-0 relative flex flex-col overflow-hidden h-full">
+       <div className="w-full lg:w-[calc(100vw-88px)] lg:min-w-[calc(100vw-88px)] shrink-0 relative flex flex-col overflow-y-auto overflow-x-hidden lg:overflow-hidden h-full pb-0">
            
            {/* Global Background Image */}
-           <div className="absolute inset-0 z-0 pointer-events-none">
+           <div className="fixed inset-0 z-0 pointer-events-none">
                 <Image 
                     src="https://res.cloudinary.com/ds6dwbk37/image/upload/f_auto,q_auto/v1777021473/Gemini_Generated_Image_1861z51861z51861_rljygl.png" 
                     alt="Global Background" 
@@ -160,7 +163,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
            </AnimatePresence>
 
            {/* Giant Background Typography */}
-           <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none overflow-hidden select-none pb-[5%]">
+           <div className="fixed inset-0 lg:absolute lg:inset-0 flex items-center justify-center z-0 pointer-events-none overflow-hidden select-none pb-[5%]">
               <AnimatePresence mode="wait">
                   <motion.h1 
                      key={`bg-text-${activeGuide?.id}`}
@@ -168,7 +171,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
                      animate={{ scale: 1, opacity: 0.02 } }
                      exit={{ scale: 1.05, opacity: 0 } }
                      transition={{ duration: 0.8 } }
-                     className="font-display font-black text-[12vw] sm:text-[14vw] md:text-[16vw] lg:text-[18vw] tracking-tighter text-gray-900 whitespace-nowrap leading-none"
+                     className="font-display font-black text-[12vw] sm:text-[14vw] lg:text-[18vw] tracking-tighter text-gray-900 whitespace-nowrap leading-none"
                   >
                      {activeGuide?.name?.toUpperCase() || 'UNKNOWN'}
                   </motion.h1>
@@ -176,7 +179,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
            </div>
 
            {/* Top Info Header */}
-           <div className="w-full px-8 py-8 flex justify-between items-start z-20 relative pointer-events-none">
+           <div className="w-full px-4 sm:px-8 py-6 sm:py-8 flex justify-between items-start z-20 relative pointer-events-none shrink-0">
                {/* Character Roster Selector */}
                <div className="pointer-events-auto">
                     <button 
@@ -200,14 +203,20 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
                        <p className="text-[10px] tracking-widest text-gray-500 uppercase font-black">{faction}</p>
                        <p className="text-2xl font-display font-black tracking-widest text-gray-800 uppercase">{activeGuide?.name}</p>
                    </div>
-                   <div className="w-12 h-12 border-2 border-gray-300 rounded-full flex items-center justify-center opacity-60 bg-white shadow-sm">
+                   <button 
+                       onClick={() => setIsMobileMenuOpen(true)}
+                       className="w-12 h-12 border-2 border-gray-300 rounded-full flex items-center justify-center opacity-80 hover:opacity-100 bg-white shadow-sm lg:hidden transition-all"
+                   >
+                       <Menu size={24} className="text-gray-800" />
+                   </button>
+                   <div className="hidden lg:flex w-12 h-12 border-2 border-gray-300 rounded-full items-center justify-center opacity-60 bg-white shadow-sm">
                        <LayoutGrid size={24} className="text-gray-800" />
                    </div>
                </div>
            </div>
 
            {/* Central Character Splashes */}
-           <div className="absolute inset-0 z-10 pointer-events-none flex justify-center pb-[10px] lg:pb-[20px] h-full items-end">
+           <div className="relative h-[55vh] sm:h-[65vh] lg:absolute lg:inset-0 z-10 pointer-events-none flex justify-center pb-[10px] lg:pb-[20px] lg:h-full items-end mt-0">
                <AnimatePresence mode="wait">
                    {activeGuide && (
                        <motion.div
@@ -271,7 +280,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
            </div>
 
            {/* Mid Section Layout (Left Info, Right Module) */}
-           <div className="flex-1 flex w-full justify-between items-start px-8 lg:px-12 relative z-20 pb-2 mt-2 min-h-0 pointer-events-none">
+           <div className="flex-none lg:flex-1 flex flex-col lg:flex-row w-full justify-start lg:justify-between items-center lg:items-start px-4 sm:px-8 lg:px-12 relative z-20 pb-2 mt-4 lg:mt-2 min-h-0 pointer-events-none gap-6 lg:gap-0 shrink-0">
                {/* LEFT INFO PANEL */}
                <WWInfoPanel 
                  activeGuide={activeGuide}
@@ -303,7 +312,7 @@ export const WutheringWavesUI = ({ guides, loading }: { guides: any[], loading: 
            </div>
 
            {/* BOTTOM SECTION */}
-           <div className="w-full px-8 lg:px-12 relative z-30 pb-4 lg:pb-8 flex flex-col gap-6 mt-auto scale-[0.75] pt-0 md:scale-[0.80] origin-bottom xl:scale-[0.85] 2xl:scale-95">
+           <div className="w-full px-4 sm:px-8 lg:px-12 relative z-30 pb-4 lg:pb-8 flex flex-col gap-6 mt-8 lg:mt-auto pt-0 transform-gpu lg:scale-[0.80] origin-bottom xl:scale-[0.85] 2xl:scale-95 shrink-0">
                {/* 2. COMBAT INSIGHT BAR */}
                <WWInsightBar
                  activeGuide={activeGuide}

@@ -2005,57 +2005,168 @@ export default function GuideClient({ guide }: { guide: any }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-7xl mx-auto w-full h-full"
+            className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-[1400px] mx-auto w-full h-full z-30"
           >
-            <div className="h-full bg-white rounded-[2rem] p-6 sm:p-10 shadow-2xl border border-slate-100/50 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent relative group/mech-container">
-              <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-100">
-                <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter flex items-center gap-4 text-slate-800">
-                  <div className={`p-3 rounded-2xl bg-slate-50 border border-slate-100/80 shadow-sm ${elementStyle.color}`}>
-                    <Workflow strokeWidth={2.5} size={28} />
-                  </div>
-                  MECHANICS
-                </h2>
-
-                <button
-                  onClick={() => setActiveTab('OVERVIEW')}
-                  aria-label="Back to Overview"
-                  className="text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 p-3 rounded-full border border-slate-200/60 transition-all shadow-sm"
-                >
-                  <X size={20} />
-                </button>
+            <div className="h-full bg-[#fafbfc] rounded-[2rem] border border-slate-200/60 shadow-2xl overflow-hidden relative font-sans text-slate-800 flex flex-col">
+              {/* Background decorations */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+                <div className={cn("absolute top-[-15%] right-[-8%] w-[550px] h-[550px] rounded-full blur-[140px] opacity-[0.12] mix-blend-multiply transition-colors duration-1000", elementStyle.bg)} />
+                <div className={cn("absolute bottom-[-10%] left-[-5%] w-[450px] h-[450px] rounded-full blur-[120px] opacity-[0.08] mix-blend-multiply", elementStyle.bg)} />
+                <div className="absolute top-1/3 right-1/4 w-[700px] h-[700px] rounded-full border border-slate-200/40 -translate-y-1/2" />
+                <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full border border-slate-200/30 -translate-y-1/2" />
               </div>
 
-              <div className="grid grid-cols-1 gap-8 relative z-0">
-                {content.combatMechanics?.map((mech: any, i: number) => {
-                  const mType = (mech.type || '').toLowerCase();
-                  const Icon = mType === 'combo' ? Swords : mType === 'utility' ? Zap : mType === 'core' ? Hexagon : Target;
-
-                  return (
-                    <div key={i} className="bg-white border text-left border-slate-100 p-6 sm:p-8 rounded-[1.5rem] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 group overflow-hidden relative flex flex-col lg:flex-row gap-8 items-start">
-                      <div className={`absolute left-0 top-0 w-1.5 h-full ${elementStyle.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-l-[1.5rem]`} />
-
-                      <div className="flex-1 w-full space-y-5 relative z-10">
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 group-hover:${elementStyle.bg} group-hover:border-transparent group-hover:text-white text-slate-400 flex items-center justify-center transition-all duration-500 shadow-sm`}>
-                            <Icon size={22} strokeWidth={2.5} />
-                          </div>
-                          <div>
-                            <p className={`text-[10px] uppercase tracking-[0.2em] font-bold mb-1 ${elementStyle.color}`}>{mech.type || "CORE MECHANIC"}</p>
-                            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-800 group-hover:text-slate-900 transition-colors">{mech.title}</h3>
-                          </div>
-                        </div>
-
-                        <p className="text-slate-500 leading-relaxed text-sm sm:text-base max-w-2xl whitespace-pre-wrap pl-1 sm:pl-0">
-                          <RichText html={mech.description} />
-                        </p>
-                      </div>
-
-                      <div className={`w-full lg:w-[400px] overflow-hidden rounded-2xl bg-slate-900 border border-slate-800 shrink-0 relative transition-all duration-700 h-[220px] lg:h-[160px] lg:group-hover:h-[240px] flex items-center justify-center group-hover:shadow-2xl group-hover:ring-4 ${elementStyle.color.replace('text-', 'ring-').replace('500', '500/20')}`}>
-                        <MechanicVideoFeed mechanic={mech} />
-                      </div>
+              {/* ═══ HEADER ═══ */}
+              <div className="relative z-10 px-6 sm:px-10 pt-8 pb-6 border-b border-slate-100 shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={cn("p-3 rounded-2xl bg-white border shadow-sm", elementStyle.color.replace("text-", "border-"))}>
+                      <Workflow className={elementStyle.color} strokeWidth={2.5} size={26} />
                     </div>
-                  );
-                })}
+                    <div>
+                      <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-800">
+                        Combat Mechanics
+                      </h2>
+                      <p className="text-xs text-slate-400 font-medium mt-0.5">
+                        Core gameplay systems & interaction patterns
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className={cn("flex items-center gap-2 px-3.5 py-1.5 rounded-full border bg-white/80 backdrop-blur-md shadow-sm text-xs font-mono font-black tracking-[0.1em]", elementStyle.color.replace("text-", "border-"), elementStyle.color)}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", elementStyle.bg)} />
+                      {content.combatMechanics?.length || 0} MODULES
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('OVERVIEW')}
+                      aria-label="Back to Overview"
+                      className="text-slate-400 hover:text-slate-700 bg-white hover:bg-slate-50 p-2.5 rounded-full border border-slate-200/60 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* ═══ SCROLLABLE CONTENT ═══ */}
+              <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                <div className="px-6 sm:px-10 py-8 relative z-10">
+                  {content.combatMechanics && content.combatMechanics.length > 0 ? (
+                    <div className="space-y-6">
+                      {content.combatMechanics.map((mech: any, i: number) => {
+                        const mType = (mech.type || '').toLowerCase();
+                        const Icon = mType === 'combo' ? Swords : mType === 'utility' ? Zap : mType === 'core' ? Hexagon : mType === 'passive' ? Shield : Target;
+                        const typeLabel = mech.type || 'CORE MECHANIC';
+
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                            className={cn(
+                              "group relative bg-white rounded-2xl border border-slate-100 overflow-hidden transition-all duration-500",
+                              "hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] hover:border-slate-200",
+                              `hover:ring-1 ${elementStyle.color.replace('text-', 'ring-')}/20`
+                            )}
+                          >
+                            {/* Element accent bar - left side */}
+                            <div className={cn("absolute left-0 top-0 w-1 h-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-l-2xl", elementStyle.bg)} />
+
+                            {/* Card content */}
+                            <div className="flex flex-col lg:flex-row">
+                              {/* Text content */}
+                              <div className="flex-1 p-6 sm:p-8 relative">
+                                {/* Subtle gradient overlay on hover */}
+                                <div className={cn("absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-700 pointer-events-none", elementStyle.bg)} />
+
+                                <div className="relative z-10">
+                                  {/* Top row: number + type + title */}
+                                  <div className="flex items-start gap-4 mb-5">
+                                    {/* Numbered badge */}
+                                    <div className={cn(
+                                      "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-sm font-black transition-all duration-500 border shadow-sm",
+                                      "bg-slate-50 text-slate-400 border-slate-100",
+                                      `group-hover:${elementStyle.bg} group-hover:text-white group-hover:border-transparent group-hover:shadow-lg`
+                                    )}>
+                                      {String(i + 1).padStart(2, '0')}
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                      {/* Type pill */}
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className={cn(
+                                          "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.15em] border transition-colors duration-300",
+                                          "bg-white border-slate-200 text-slate-500",
+                                          `group-hover:${elementStyle.color} group-hover:${elementStyle.color.replace("text-", "border-")}`
+                                        )}>
+                                          <Icon size={10} strokeWidth={2.5} />
+                                          {typeLabel}
+                                        </span>
+                                      </div>
+
+                                      {/* Title */}
+                                      <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-800 group-hover:text-slate-900 transition-colors leading-tight">
+                                        {mech.title}
+                                      </h3>
+                                    </div>
+                                  </div>
+
+                                  {/* Description */}
+                                  <div className="pl-14 relative">
+                                    <div className="absolute left-7 top-0 bottom-0 w-px bg-slate-100 group-hover:bg-slate-200 transition-colors" />
+                                    <p className="text-slate-500 leading-relaxed text-[13px] sm:text-sm max-w-2xl whitespace-pre-wrap [text-wrap:pretty]">
+                                      <RichText html={mech.description} />
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Video / Image section */}
+                              <div className="lg:w-[380px] xl:w-[420px] shrink-0 p-3 sm:p-4">
+                                <div className={cn(
+                                  "w-full h-[200px] lg:h-full min-h-[180px] overflow-hidden rounded-xl bg-slate-900 border border-slate-800/60 relative transition-all duration-700",
+                                  "flex items-center justify-center",
+                                  `group-hover:shadow-xl group-hover:ring-2 ${elementStyle.color.replace('text-', 'ring-')}/15`
+                                )}>
+                                  {/* Scanline overlay for cinematic feel */}
+                                  <div className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                                    <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(rgba(255,255,255,0)_50%,rgba(0,0,0,0.15)_50%)] bg-[length:100%_3px]" />
+                                  </div>
+
+                                  {/* Play hint overlay */}
+                                  <div className="absolute inset-0 z-10 flex items-center justify-center opacity-100 group-hover:opacity-0 transition-opacity duration-500 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent">
+                                    <div className="flex flex-col items-center gap-2">
+                                      <div className={cn("w-10 h-10 rounded-full border-2 border-white/30 flex items-center justify-center backdrop-blur-sm bg-white/5")}>
+                                        <Play size={16} className="text-white/60 ml-0.5" />
+                                      </div>
+                                      <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-white/40">Hover to play</span>
+                                    </div>
+                                  </div>
+
+                                  <MechanicVideoFeed mechanic={mech} />
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    /* Empty state */
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                      <div className={cn("w-20 h-20 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center mb-6 shadow-sm relative")}>
+                        <Workflow className="w-8 h-8 text-slate-300" strokeWidth={1.5} />
+                        <span className={cn("absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white", elementStyle.bg)} />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-400 mb-2">No Mechanics Data</h3>
+                      <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
+                        Combat mechanics haven&apos;t been configured for this resonator yet.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
