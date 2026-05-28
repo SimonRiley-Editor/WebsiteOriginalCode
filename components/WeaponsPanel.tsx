@@ -206,22 +206,7 @@ export function WeaponsPanel({ weapons, fallbackImage = "" }: { weapons: Weapon[
 
   return (
     <div className="weapons-scope min-h-screen bg-weapons-background text-weapons-foreground font-sans selection:bg-weapons-primary/40 selection:text-weapons-bone">
-      {/* Top punk marquee */}
-      <div className="border-y border-weapons-primary/40 bg-weapons-primary/10 overflow-hidden" aria-hidden="true">
-        <div className="flex animate-[marquee_28s_linear_infinite] whitespace-nowrap py-2 font-display text-sm tracking-[0.3em] uppercase text-weapons-primary [animation-play-state:running] hover:[animation-play-state:paused]">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="flex shrink-0 gap-8 pr-8">
-              {["Arsenal v4.1", "★ Tier List Updated", "Patch 2.4 Live", "Best in Slot", "Meta Report",
-                "Crit DMG Optimized", "Echo Resonance", "★ S+ Class", "◆ Damage Comparison"].map((t) => (
-                  <span key={t} className="flex items-center gap-3">
-                    <span className="size-1.5 rounded-full bg-weapons-primary inline-block" />
-                    {t}
-                  </span>
-                ))}
-            </div>
-          ))}
-        </div>
-      </div>
+
 
       <div className="mx-auto max-w-[1500px] px-6 py-10 lg:py-14 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8">
         {/* SIDEBAR */}

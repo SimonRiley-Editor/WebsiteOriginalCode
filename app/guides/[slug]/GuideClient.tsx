@@ -52,7 +52,9 @@ import {
   PieChart,
   Dna,
   AudioWaveform,
-  Menu
+  Menu,
+  Minimize2,
+  Maximize2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -85,7 +87,7 @@ const RichText = ({ html, fallback = '', className = '' }: { html?: string, fall
   if (!content) return null;
   // If it contains HTML tags, render as HTML
   if (/<[a-z][\s\S]*>/i.test(content)) {
-    return <span className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) } } />;
+    return <span className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }} />;
   }
   // Plain text fallback
   return <span className={className}>{content}</span>;
@@ -132,7 +134,7 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
         {/* Deep mysterious space background with subtle noise */}
         <div
           className="absolute inset-0 opacity-[0.25] mix-blend-lighten grayscale-[50%]"
-          style={ { backgroundImage: `url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&q=80&w=1600')`, backgroundSize: 'cover' } }
+          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&q=80&w=1600')`, backgroundSize: 'cover' }}
         />
 
         {/* Colorful nebula gradients */}
@@ -144,7 +146,7 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
         <div className="absolute top-1/2 left-1/2 w-[200%] h-[2px] bg-gradient-to-r from-transparent via-red-500/30 to-transparent rotate-[45deg] origin-center -translate-x-1/2 -translate-y-1/2 blur-[1px]" />
 
         {/* Background Grid for depth */}
-        <div className="absolute inset-0 opacity-[0.05]" style={ { backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px', transform: 'perspective(1000px) rotateX(70deg) scale(2.5) translateY(-20%)', transformOrigin: 'top' } } />
+        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px', transform: 'perspective(1000px) rotateX(70deg) scale(2.5) translateY(-20%)', transformOrigin: 'top' }} />
 
         {/* Floating dust particles / stars */}
         <div className="absolute top-[20%] left-[30%] w-1 h-1 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,1)] animate-pulse" />
@@ -220,21 +222,21 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
                 key={shard.id}
                 drag
                 dragMomentum={false}
-                initial={{ x: shard.tx, y: shard.ty, scale: 1, zIndex: 10 } }
-                whileHover={{ scale: 1.05, zIndex: 40 } }
-                whileDrag={{ scale: 1.1, zIndex: 50 } }
+                initial={{ x: shard.tx, y: shard.ty, scale: 1, zIndex: 10 }}
+                whileHover={{ scale: 1.05, zIndex: 40 }}
+                whileDrag={{ scale: 1.1, zIndex: 50 }}
                 className="absolute inset-0 z-10"
-                style={ {
+                style={{
                   filter: isHovered
                     ? "drop-shadow(0 0 25px rgba(244,63,94,0.5)) drop-shadow(0 15px 30px rgba(0,0,0,0.8))"
                     : "drop-shadow(0 0 1px rgba(255,255,255,0.4)) drop-shadow(0 8px 16px rgba(0,0,0,0.5))",
-                } }
+                }}
               >
                 <div
                   onMouseEnter={() => setHoveredIdx(shard.id)}
                   onMouseLeave={() => setHoveredIdx(null)}
                   className="w-full h-full cursor-grab active:cursor-grabbing group relative pointer-events-auto"
-                  style={ { clipPath: shard.clip } }
+                  style={{ clipPath: shard.clip }}
                 >
                   {/* Full size image background (replaces simple frosted glass if image exists) */}
                   <div className={cn(
@@ -253,11 +255,11 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
                             ? "opacity-100 grayscale-[10%]"
                             : "opacity-60 grayscale-[60%]"
                         )}
-                        style={ {
+                        style={{
                           transform: isHovered
                             ? `translate(calc(-50% + ${seq.offsetX || 0}%), calc(-50% + ${seq.offsetY || 0}%)) scale(${0.85 * (seq.iconScale || 1.0)})`
                             : `translate(calc(-50% + ${seq.offsetX || 0}%), calc(-50% + ${seq.offsetY || 0}%)) scale(${0.8 * (seq.iconScale || 1.0)})`,
-                        } }
+                        }}
                       />
                     )}
                     {!seq.icon && (
@@ -282,11 +284,11 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
                       "absolute inset-0 transition-all duration-1000 mix-blend-soft-light pointer-events-none z-20",
                       isHovered ? "opacity-100" : "opacity-0"
                     )}
-                    style={ {
+                    style={{
                       backgroundImage: `url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&q=80&w=800')`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                    } }
+                    }}
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent pointer-events-none z-30" />
@@ -308,15 +310,15 @@ const SequenceFracture = ({ sequences = [] }: { sequences?: any[] }) => {
       <AnimatePresence>
         {activeSeq && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 10 } }
-            animate={{ opacity: 1, scale: 1, y: 0 } }
-            exit={{ opacity: 0, scale: 0.9, y: 10 } }
-            transition={{ duration: 0.2 } }
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ duration: 0.2 }}
             className="fixed z-[9999] pointer-events-none w-72 md:w-96 bg-[#0a0a0a]/95 backdrop-blur-xl border border-rose-500/30 rounded-2xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.9),0_0_30px_rgba(225,29,72,0.15)]"
-            style={ {
+            style={{
               left: tooltipX,
               top: tooltipY,
-            } }
+            }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-transparent rounded-2xl pointer-events-none" />
 
@@ -395,10 +397,10 @@ const SkillVideoPlayer = ({ url, start, end, playbackRate = 1 }: { url: string, 
                   iv_load_policy: 3
                 }
               }
-            } }
+            }}
             onReady={() => {
               if (start) safeSeekTo(start);
-            } }
+            }}
           />
         </div>
         <div className="w-[120%] h-[120%] absolute pointer-events-none z-0">
@@ -425,11 +427,11 @@ const SkillVideoPlayer = ({ url, start, end, playbackRate = 1 }: { url: string, 
                   iv_load_policy: 3
                 }
               }
-            } }
+            }}
             onProgress={handleProgress}
             onReady={() => {
               if (start) safeSeekTo(start);
-            } }
+            }}
           />
         </div>
         <div className="absolute inset-0 border-[3px] border-rose-500/20 rounded-2xl z-20 pointer-events-none mix-blend-overlay shadow-[inset_0_0_20px_theme('colors.rose.500/20')]"></div>
@@ -441,7 +443,7 @@ const SkillVideoPlayer = ({ url, start, end, playbackRate = 1 }: { url: string, 
   return (
     <div className="w-full h-full relative group">
       <video
-        ref={(el) => { if (el) el.playbackRate = playbackRate; } }
+        ref={(el) => { if (el) el.playbackRate = playbackRate; }}
         src={url}
         autoPlay
         loop={!end}
@@ -452,12 +454,12 @@ const SkillVideoPlayer = ({ url, start, end, playbackRate = 1 }: { url: string, 
             e.currentTarget.currentTime = start || 0;
             e.currentTarget.play();
           }
-        } }
+        }}
         onLoadedMetadata={(e) => {
           if (start) {
             e.currentTarget.currentTime = start;
           }
-        } }
+        }}
         className="w-full h-full object-cover rounded-2xl brightness-90 relative z-0"
       />
       <div className="absolute inset-0 rounded-2xl shadow-[inset_0_0_30px_rgba(0,0,0,0.4)] pointer-events-none z-10"></div>
@@ -507,7 +509,7 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
       <div
         className="w-full h-full opacity-50 group-hover:opacity-100 transition-opacity duration-500 relative bg-black flex items-center justify-center overflow-hidden"
         onMouseEnter={() => setIsPlaying(true)}
-        onMouseLeave={() => { setIsPlaying(false); safeSeekTo(startSeconds || 0); } }
+        onMouseLeave={() => { setIsPlaying(false); safeSeekTo(startSeconds || 0); }}
       >
         <div className="absolute inset-0 z-10"></div>
         <div className="w-[140%] h-[140%] absolute pointer-events-none">
@@ -533,13 +535,13 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
                   iv_load_policy: 3
                 }
               }
-            } }
+            }}
             onProgress={handleProgress}
             onReady={() => {
               if (startSeconds && !isPlaying) {
                 safeSeekTo(startSeconds);
               }
-            } }
+            }}
           />
         </div>
       </div>
@@ -559,7 +561,7 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
           playPromiseRef.current = playPromise;
           playPromise.catch((_err: any) => { });
         }
-      } }
+      }}
       onMouseOut={(e: any) => {
         const pauseVideo = () => {
           e.target.pause();
@@ -575,8 +577,8 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
         } else {
           pauseVideo();
         }
-      } }
-      onLoadedMetadata={(e: any) => { if (startSeconds) e.target.currentTime = startSeconds; } }
+      }}
+      onLoadedMetadata={(e: any) => { if (startSeconds) e.target.currentTime = startSeconds; }}
       onTimeUpdate={(e: any) => {
         if (endSeconds && e.target.currentTime >= endSeconds) {
           e.target.currentTime = startSeconds || 0;
@@ -585,7 +587,7 @@ const MechanicVideoFeed = ({ mechanic }: { mechanic: any }) => {
             playPromise.catch((_err: any) => { });
           }
         }
-      } }
+      }}
     />
   );
 };
@@ -599,6 +601,7 @@ export default function GuideClient({ guide }: { guide: any }) {
   const [selectedSkillId, setSelectedSkillId] = useState('basicAttack');
   const [isSlowMo, setIsSlowMo] = useState(false);
   const [activeEchoSetIdx, setActiveEchoSetIdx] = useState(0);
+  const [isPanelMinimized, setIsPanelMinimized] = useState(false);
   const tabs = ['OVERVIEW', 'SKILLS', 'SEQUENCE', 'WEAPONS', 'TEAMS', 'ROTATION', 'ECHOES', 'MECHANICS'];
   const content = guide.content || {};
 
@@ -802,17 +805,17 @@ export default function GuideClient({ guide }: { guide: any }) {
             <div className="absolute inset-0 opacity-[0.15] bg-[radial-gradient(#000_2px,transparent_2px)] bg-[length:32px_32px]" />
 
             <motion.div
-              style={ { x: bgTextX, y: bgTextY } }
+              style={{ x: bgTextX, y: bgTextY }}
               className="absolute top-[5%] left-[-5%] overflow-hidden pointer-events-none w-[150%] select-none"
             >
               <span
                 className="text-[30vw] lg:text-[35vw] font-black uppercase tracking-tighter leading-none break-all block"
-                style={ {
+                style={{
                   WebkitTextStroke: '3px rgba(0,0,0,0.08)',
                   color: 'transparent',
                   WebkitTextFillColor: 'transparent',
                   textShadow: '0 0 80px rgba(0,0,0,0.02)',
-                } }
+                }}
               >
                 {guide.name}
               </span>
@@ -833,16 +836,16 @@ export default function GuideClient({ guide }: { guide: any }) {
             </div>
 
             <motion.div
-              initial={{ x: '100%', skewX: -15 } }
-              animate={{ x: '5%', skewX: -15 } }
-              transition={{ duration: 0.8, ease: "easeOut" } }
+              initial={{ x: '100%', skewX: -15 }}
+              animate={{ x: '5%', skewX: -15 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
               className="absolute top-[-10%] right-[-15%] w-[55%] h-[120%] bg-gradient-to-bl from-slate-900 to-[#0a0a0a] z-0 shadow-[-30px_0_100px_rgba(0,0,0,0.5)] overflow-hidden"
             >
               <div className="absolute inset-0 w-[150%] h-[120%] -top-[10%] -left-[25%] skew-x-[15deg] pointer-events-none">
                 <img src={content.images?.splash || content.images?.splashArt || content.cardImage || content.foregroundImage || renderImage} className="absolute inset-0 w-full h-full object-cover object-center mix-blend-overlay opacity-30" alt="" />
               </div>
-              <div className="absolute inset-0 opacity-20 pointer-events-none" style={ { backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' } } />
-              <div className={cn("absolute inset-y-0 left-0 w-3 opacity-90", elementStyle.bg)} style={ { boxShadow: '0 0 30px currentColor' } } />
+              <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+              <div className={cn("absolute inset-y-0 left-0 w-3 opacity-90", elementStyle.bg)} style={{ boxShadow: '0 0 30px currentColor' }} />
 
               <div className="absolute bottom-[20%] right-[-10%] flex gap-2 opacity-20 rotate-[-15deg]">
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -856,21 +859,21 @@ export default function GuideClient({ guide }: { guide: any }) {
             </motion.div>
 
             <motion.div
-              style={ { x: charX, y: charY } }
+              style={{ x: charX, y: charY }}
               className="absolute top-[18%] bottom-[-10%] right-[-5%] lg:right-[0%] w-[100%] lg:w-[70%] pointer-events-none z-20"
             >
               <motion.div
-                initial={{ x: 100, opacity: 0 } }
-                animate={{ x: 0, opacity: 1 } }
-                transition={{ delay: 0.4, duration: 0.8, type: "spring", stiffness: 40 } }
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.8, type: "spring", stiffness: 40 }}
                 className="w-full h-full origin-bottom sm:origin-bottom-right"
               >
                 <img
                   src={renderImage}
                   alt={guide.name}
-                  style={ {
+                  style={{
                     transform: `translate(${content.imageOffset?.x || 0}%, ${content.imageOffset?.y || 0}%) scale(${content.imageOffset?.scale || 1})`
-                  } }
+                  }}
                   className="w-full h-full object-contain object-bottom drop-shadow-[0_0_60px_rgba(0,0,0,0.5)] lg:object-right-bottom mix-blend-normal"
                 />
               </motion.div>
@@ -888,7 +891,7 @@ export default function GuideClient({ guide }: { guide: any }) {
             <div className="absolute bottom-[5%] left-[5%] pointer-events-none z-10 hidden md:block">
               <div className="flex gap-1 mb-2">
                 {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className={`w-1.5 h-6 ${i % 3 === 0 ? 'bg-black/40' : 'bg-black/10'}`} style={ { height: `${(i * 7 % 20) + 10}px` } } />
+                  <div key={i} className={`w-1.5 h-6 ${i % 3 === 0 ? 'bg-black/40' : 'bg-black/10'}`} style={{ height: `${(i * 7 % 20) + 10}px` }} />
                 ))}
               </div>
               <p className="font-mono text-[8px] tracking-[0.4em] uppercase text-black/30 mb-2">SYS.SYNC // OK</p>
@@ -902,9 +905,9 @@ export default function GuideClient({ guide }: { guide: any }) {
 
             <div className="relative z-30 w-full h-full pt-[15vh] pb-12 px-8 lg:px-16 max-w-[95rem] mx-auto pointer-events-none flex flex-col md:flex-row items-center md:items-start justify-start">
               <motion.div
-                initial={{ x: -40, opacity: 0 } }
-                animate={{ x: 0, opacity: 1 } }
-                transition={{ delay: 0.2, duration: 0.6 } }
+                initial={{ x: -40, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
                 className="flex-1 max-w-xl lg:max-w-2xl xl:max-w-3xl pointer-events-auto"
               >
                 <div className="flex items-center gap-4 mb-4">
@@ -1034,52 +1037,108 @@ export default function GuideClient({ guide }: { guide: any }) {
                 </div>
               </motion.div>
 
+              {/* Movable Panel - positioned top-right corner */}
               <motion.div
                 drag
                 dragMomentum={false}
-                initial={{ x: content.movablePanel?.x || 30, y: content.movablePanel?.y || 0, opacity: 0 } }
-                animate={{ x: content.movablePanel?.x || 0, y: content.movablePanel?.y || 0, opacity: 1 } }
-                transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" } }
-                className="hidden xl:flex absolute top-8 right-8 flex-col gap-4 pointer-events-auto z-40 transform-gpu cursor-grab active:cursor-grabbing"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+                className="hidden xl:flex fixed top-24 right-6 flex-col gap-4 pointer-events-auto z-[60] transform-gpu cursor-grab active:cursor-grabbing"
               >
-                <div className="bg-white/5 backdrop-blur-2xl border border-white/20 p-6 rounded-[2rem] w-[24rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] relative overflow-hidden group/hud">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover/hud:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/20 rounded-full" />
+                <AnimatePresence mode="wait">
+                  {isPanelMinimized ? (
+                    /* Minimized state — small icon button */
+                    <motion.button
+                      key="minimized"
+                      initial={{ opacity: 0, scale: 0.6 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.6 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      onClick={() => setIsPanelMinimized(false)}
+                      className="relative p-3.5 bg-white/[0.08] backdrop-blur-3xl border border-white/[0.18] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(255,255,255,0.05)] hover:bg-white/[0.14] hover:border-white/[0.28] hover:shadow-[0_8px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.25),0_0_20px_rgba(255,255,255,0.06)] transition-all duration-400 cursor-pointer active:cursor-grabbing group/expand overflow-hidden"
+                      title="Expand Panel"
+                    >
+                      {/* Glass refraction highlight */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-transparent to-white/5 pointer-events-none" />
+                      <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_180deg,transparent_60%,rgba(255,255,255,0.08)_75%,transparent_90%)] animate-[spin_8s_linear_infinite] pointer-events-none opacity-0 group-hover/expand:opacity-100 transition-opacity duration-500" />
+                      <div className="relative">
+                        <div className={cn("p-2.5 rounded-xl bg-white/[0.08] backdrop-blur-sm border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]", elementStyle.color)}>
+                          <Target size={20} />
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 p-0.5 bg-white/[0.1] backdrop-blur-sm rounded-full border border-white/20 opacity-0 group-hover/expand:opacity-100 transition-opacity duration-200 shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                          <Maximize2 size={10} className="text-white/80" />
+                        </div>
+                      </div>
+                    </motion.button>
+                  ) : (
+                    /* Expanded state — full panel */
+                    <motion.div
+                      key="expanded"
+                      initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className="relative bg-white/[0.06] backdrop-blur-3xl border border-white/[0.15] p-6 rounded-[2rem] w-[24rem] shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.12),inset_0_-1px_0_rgba(255,255,255,0.04)] overflow-hidden group/hud"
+                    >
+                      {/* Glassmorphism layers */}
+                      <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/[0.12] via-transparent to-white/[0.03] pointer-events-none" />
+                      <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-white/[0.08] via-transparent to-transparent pointer-events-none" />
+                      {/* Rainbow refraction edge — subtle prismatic shimmer */}
+                      <div className="absolute inset-[1px] rounded-[2rem] bg-gradient-to-br from-rose-500/[0.04] via-blue-500/[0.03] to-emerald-500/[0.04] pointer-events-none opacity-60 group-hover/hud:opacity-100 transition-opacity duration-700" />
+                      {/* Animated light sweep on hover */}
+                      <div className="absolute -top-[100%] -left-[100%] w-[300%] h-[300%] bg-[conic-gradient(from_0deg,transparent_65%,rgba(255,255,255,0.06)_78%,transparent_92%)] animate-[spin_12s_linear_infinite] pointer-events-none opacity-0 group-hover/hud:opacity-100 transition-opacity duration-700" />
+                      {/* Inner glow highlight */}
+                      <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_0_40px_rgba(255,255,255,0.04)] pointer-events-none" />
+                      {/* Drag handle */}
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/15 rounded-full shadow-[0_0_6px_rgba(255,255,255,0.05)]" />
 
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4 mt-2">
-                    <div className="flex items-center gap-3">
-                      <div className={cn("p-2 rounded-xl bg-white/10 shadow-inner", elementStyle.color)}>
-                        <Target size={18} />
+                      <div className="relative z-10 flex items-center justify-between border-b border-white/[0.08] pb-4 mb-4 mt-2">
+                        <div className="flex items-center gap-3">
+                          <div className={cn("p-2 rounded-xl bg-white/[0.07] backdrop-blur-sm border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_0_12px_rgba(255,255,255,0.03)]", elementStyle.color)}>
+                            <Target size={18} />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold text-white/40 tracking-widest uppercase mb-0.5">Movable Panel</p>
+                            <p className="text-sm font-black font-sans tracking-tight text-white/90 drop-shadow-[0_0_8px_rgba(255,255,255,0.08)]">{content.movablePanel?.title || "SYS.DIAGNOSTICS"}</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setIsPanelMinimized(true); }}
+                          className="p-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.14] border border-white/[0.08] hover:border-white/[0.2] transition-all duration-200 cursor-pointer group/min backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                          title="Minimize Panel"
+                        >
+                          <Minimize2 size={14} className="text-white/50 group-hover/min:text-white/90 transition-colors" />
+                        </button>
                       </div>
-                      <div>
-                        <p className="text-[10px] font-bold text-white/50 tracking-widest uppercase mb-0.5">Movable Panel</p>
-                        <p className="text-sm font-black font-sans tracking-tight text-white/90">{content.movablePanel?.title || "SYS.DIAGNOSTICS"}</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold text-white/80 tracking-widest bg-white/10 px-2.5 py-1 rounded-md border border-white/10 shadow-inner">v2.0.4</span>
-                  </div>
 
-                  <div className="relative z-10">
-                    <p className="text-white/80 font-medium text-sm leading-relaxed mb-6">
-                      <RichText html={content.movablePanel?.description} fallback={`${guide.name}'s optimal combat efficiency relies on rapid burst sequences and tight rotations. Observe combat flow limits to maximize output.`} />
-                    </p>
+                      <div className="relative z-10">
+                        <p className="text-white/70 font-medium text-sm leading-relaxed mb-6">
+                          <RichText html={content.movablePanel?.description} fallback={`${guide.name}'s optimal combat efficiency relies on rapid burst sequences and tight rotations. Observe combat flow limits to maximize output.`} />
+                        </p>
 
-                    <div className="bg-black/20 rounded-xl p-4 border border-white/5 flex flex-col gap-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold tracking-widest uppercase text-white/50 flex items-center gap-1.5"><Activity size={12} /> Combat Flow</span>
-                        <span className="text-[10px] font-bold font-mono text-white/90 bg-white/10 px-2 py-0.5 rounded">{content.movablePanel?.percentage ?? 85}% OPTIMAL</span>
+                        <div className="bg-white/[0.04] backdrop-blur-sm rounded-xl p-4 border border-white/[0.08] flex flex-col gap-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_-1px_0_rgba(0,0,0,0.1)]">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold tracking-widest uppercase text-white/40 flex items-center gap-1.5"><Activity size={12} /> Combat Flow</span>
+                            <span className="text-[10px] font-bold font-mono text-white/90 bg-white/[0.08] px-2 py-0.5 rounded border border-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">{content.movablePanel?.percentage ?? 85}% OPTIMAL</span>
+                          </div>
+                          <div className="w-full h-2.5 bg-black/30 rounded-full overflow-hidden shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)] relative">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${content.movablePanel?.percentage ?? 85}%` }}
+                              transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
+                              className={cn("h-full rounded-full relative overflow-hidden", elementStyle.bg)}
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                              <div className="absolute inset-0 shadow-[0_0_12px_rgba(255,255,255,0.3),inset_0_1px_0_rgba(255,255,255,0.3)]" />
+                            </motion.div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-full h-2 bg-black/40 rounded-full overflow-hidden shadow-inner">
-                        <motion.div
-                          initial={{ width: 0 } }
-                          animate={{ width: `${content.movablePanel?.percentage ?? 85}%` } }
-                          transition={{ delay: 1, duration: 1.5, ease: "easeOut" } }
-                          className={cn("h-full rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]", elementStyle.bg)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             </div>
           </motion.div>
@@ -1185,9 +1244,9 @@ export default function GuideClient({ guide }: { guide: any }) {
                       if (!skillData || (!skillData.name && !skillData.description && !skillData.video)) return (
                         <motion.div
                           key="empty"
-                          initial={{ opacity: 0, scale: 0.95 } }
-                          animate={{ opacity: 1, scale: 1 } }
-                          exit={{ opacity: 0, scale: 0.95 } }
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
                           className="flex-1 flex flex-col items-center justify-center text-slate-500 font-mono text-xs tracking-[0.2em] uppercase mt-40 text-center"
                         >
                           <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center mb-6">
@@ -1201,10 +1260,10 @@ export default function GuideClient({ guide }: { guide: any }) {
                       return (
                         <motion.div
                           key={selectedSkillId}
-                          initial={{ opacity: 0, y: 20 } }
-                          animate={{ opacity: 1, y: 0 } }
-                          exit={{ opacity: 0, y: -20 } }
-                          transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] } }
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.4, ease: [0.25, 1, 0.5, 1] }}
                           className="flex flex-col xl:flex-row w-full gap-10 lg:items-start"
                         >
                           <div className="flex flex-col flex-1">
@@ -1388,13 +1447,13 @@ export default function GuideClient({ guide }: { guide: any }) {
             className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-7xl mx-auto w-full h-full z-30"
           >
             {content.rotation_timeline ? (
-              <TeamRotationTimeline 
-                config={content.rotation_timeline} 
-                elementColor={elementStyle.color ? elementStyle.color.replace('text-', '') : undefined} 
+              <TeamRotationTimeline
+                config={content.rotation_timeline}
+                elementColor={elementStyle.color ? elementStyle.color.replace('text-', '') : undefined}
               />
             ) : (
-              <RotationEmptyState 
-                elementColor={elementStyle.color ? elementStyle.color.replace('text-', '') : undefined} 
+              <RotationEmptyState
+                elementColor={elementStyle.color ? elementStyle.color.replace('text-', '') : undefined}
               />
             )}
           </motion.div>
@@ -1860,7 +1919,6 @@ export default function GuideClient({ guide }: { guide: any }) {
           </motion.div>
         )}
 
-
         {activeTab === 'TEAMS' && (
           <motion.div
             key="teams"
@@ -1870,57 +1928,148 @@ export default function GuideClient({ guide }: { guide: any }) {
             exit="exit"
             className="absolute inset-0 pt-28 pb-8 px-4 sm:px-8 max-w-[1400px] mx-auto w-full h-full z-30"
           >
-            <div className="w-full h-full bg-[#faf8f5] rounded-[2rem] border border-slate-200/60 shadow-2xl flex overflow-hidden relative font-sans text-slate-800">
+            <div className="w-full h-full bg-[#0a0a0f] rounded-[2rem] border border-white/[0.06] shadow-[0_25px_80px_-12px_rgba(0,0,0,0.6)] flex overflow-hidden relative font-sans text-white">
+              {/* Ambient background effects */}
               <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-100/60 rounded-full blur-[100px] opacity-70 translate-x-1/3 -translate-y-1/4 mix-blend-multiply" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-100/60 rounded-full blur-[100px] opacity-70 -translate-x-1/4 translate-y-1/4 mix-blend-multiply" />
+                <div className={cn("absolute top-[-20%] right-[-10%] w-[700px] h-[700px] rounded-full blur-[160px] opacity-[0.08] mix-blend-screen", elementStyle.bg)} />
+                <div className="absolute bottom-[-15%] left-[-10%] w-[600px] h-[600px] bg-indigo-600 rounded-full blur-[160px] opacity-[0.05] mix-blend-screen" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(255,255,255,0.015)_0%,transparent_70%)]" />
+                {/* Subtle grid */}
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+                {/* Top edge glow */}
+                <div className="absolute top-0 left-[10%] right-[10%] h-px bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" />
               </div>
 
-              <div className="hidden lg:flex w-[35%] flex-col bg-white/40 backdrop-blur-2xl border-r border-slate-200/60 z-10 p-6 sm:p-8 relative shadow-[10px_0_30px_-15px_rgba(0,0,0,0.05)]">
-                <div className="flex items-center gap-3 mb-8 ml-1">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                    <Users className="text-emerald-600" size={16} />
+              {/* ═══ SIDEBAR ═══ */}
+              <div className="hidden lg:flex w-[33%] flex-col bg-white/[0.02] backdrop-blur-xl border-r border-white/[0.06] z-10 p-6 sm:p-8 relative">
+                {/* Sidebar inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-transparent pointer-events-none" />
+
+                <div className="flex items-center gap-3 mb-8 ml-1 relative z-10">
+                  <div className={cn("w-10 h-10 rounded-xl bg-white/[0.06] backdrop-blur-sm flex items-center justify-center border border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]", elementStyle.color)}>
+                    <Users size={18} />
                   </div>
-                  <h2 className="text-sm font-black text-slate-800 uppercase tracking-widest drop-shadow-sm">
-                    Team Compositions
-                  </h2>
+                  <div>
+                    <h2 className="text-sm font-black text-white/90 uppercase tracking-widest">
+                      Squads
+                    </h2>
+                    <p className="text-[10px] text-white/50 font-medium tracking-wider mt-0.5">{(content.teams || []).length} COMPOSITIONS</p>
+                  </div>
                 </div>
-                <div className="flex-1 flex flex-col space-y-4 pb-6 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-transparent">
+
+                <div className="flex-1 flex flex-col gap-3 pb-6 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent relative z-10">
                   {(content.teams || []).map((team: any, i: number) => {
                     const isSelected = selectedTeamIdx === i;
                     const isOptimal = !!team.isOptimal;
+                    const memberCount = team.characters?.length || 0;
 
                     return (
-                      <div
+                      <motion.div
                         key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.08, duration: 0.4, ease: "easeOut" }}
                         onClick={() => setSelectedTeamIdx(i)}
-                        className={`group relative h-[100px] rounded-2xl flex flex-col justify-center transition-all duration-500 cursor-pointer overflow-hidden border p-4 gap-2 ${isSelected
-                          ? 'border-emerald-300 bg-white shadow-[0_10px_25px_-5px_rgba(16,185,129,0.15)] scale-[1.02] z-10'
-                          : 'border-slate-200/50 bg-slate-50/50 hover:bg-white hover:border-slate-300 hover:shadow-sm hover:-translate-y-0.5'
-                          }`}
+                        className={cn(
+                          "group relative rounded-2xl flex flex-col justify-center transition-all duration-500 cursor-pointer overflow-hidden border p-5 gap-2",
+                          isSelected
+                            ? "border-white/[0.12] bg-white/[0.06] backdrop-blur-xl shadow-[0_8px_30px_-5px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.08)] scale-[1.02]"
+                            : "border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.08] hover:shadow-lg"
+                        )}
                       >
+                        {/* Active indicator bar */}
                         {isSelected && (
-                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 rounded-r-md bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]" />
+                          <motion.div
+                            layoutId="teamActiveBar"
+                            className={cn("absolute left-0 top-[20%] w-[3px] h-[60%] rounded-r-full shadow-[0_0_12px_rgba(255,255,255,0.2)]", elementStyle.bg)}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          />
                         )}
 
+                        {/* Optimal badge */}
                         {isOptimal && (
-                          <div className={`absolute top-0 right-0 px-2 py-0.5 rounded-bl-lg border-b border-l flex items-center gap-1 z-20 ${isSelected ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-100 border-slate-200'}`}>
-                            <Star size={8} className={isSelected ? 'fill-emerald-500 text-emerald-500' : 'fill-slate-400 text-slate-400'} />
-                            <span className={`text-[8px] font-black uppercase tracking-wider ${isSelected ? 'text-emerald-700' : 'text-slate-500'}`}>Optimal</span>
+                          <div className={cn(
+                            "absolute top-0 right-0 px-2.5 py-1 rounded-bl-xl border-b border-l flex items-center gap-1 z-20 text-[8px] font-black uppercase tracking-wider",
+                            isSelected
+                              ? "bg-amber-500/20 border-amber-500/20 text-amber-300"
+                              : "bg-white/[0.04] border-white/[0.06] text-white/60"
+                          )}>
+                            <Star size={8} className={isSelected ? "fill-amber-400 text-amber-400" : "fill-white/30 text-white/30"} />
+                            Best
                           </div>
                         )}
 
-                        <div className="relative z-20 pl-2">
-                          <h3 className={`font-bold text-sm tracking-wide leading-tight truncate ${isSelected ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900 transition-colors'}`}>{team.name}</h3>
-                          <p className={`text-[10px] uppercase tracking-widest mt-1 truncate ${isSelected ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>{team.version || 'General Composition'}</p>
+                        {/* Content */}
+                        <div className="relative z-20 pl-3">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className={cn(
+                              "font-bold text-sm tracking-wide leading-tight truncate transition-colors duration-300",
+                              isSelected ? "text-white" : "text-white/70 group-hover:text-white/90"
+                            )}>
+                              {team.name}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <p className={cn(
+                              "text-[10px] uppercase tracking-widest truncate transition-colors duration-300",
+                              isSelected ? cn("font-semibold", elementStyle.color) : "text-white/45"
+                            )}>
+                              {team.version || 'General'}
+                            </p>
+                            <span className="text-[9px] text-white/40 font-mono">{memberCount} members</span>
+                          </div>
                         </div>
-                      </div>
+
+                        {/* Mini character preview circles */}
+                        {team.characters && team.characters.length > 0 && (
+                          <div className="flex -space-x-2 pl-3 mt-2">
+                            {team.characters.slice(0, 4).map((c: any, ci: number) => (
+                              <div key={ci} className={cn(
+                                "w-7 h-7 rounded-full border-2 overflow-hidden transition-all duration-300 shadow-sm",
+                                isSelected ? "border-white/20" : "border-white/[0.06] group-hover:border-white/10"
+                              )}>
+                                {(c.imageUrl || c.image) ? (
+                                  <img src={c.imageUrl || c.image} alt={c.name} className="w-full h-full object-cover object-top" />
+                                ) : (
+                                  <div className="w-full h-full bg-white/[0.06] flex items-center justify-center">
+                                    <span className="text-[8px] text-white/50 font-bold">{(c.name || '?')[0]}</span>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Hover glow for selected */}
+                        {isSelected && (
+                          <div className={cn("absolute inset-0 rounded-2xl opacity-[0.04] pointer-events-none", elementStyle.bg)} />
+                        )}
+                      </motion.div>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="flex-1 relative z-10 p-8 lg:p-12 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent flex flex-col pt-10 pb-24">
+              {/* ═══ MAIN CONTENT ═══ */}
+              <div className="flex-1 relative z-10 p-8 lg:p-12 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex flex-col pt-10 pb-24">
+                {/* Mobile team selector */}
+                <div className="lg:hidden flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10">
+                  {(content.teams || []).map((team: any, i: number) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedTeamIdx(i)}
+                      className={cn(
+                        "px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-all duration-300 shrink-0",
+                        selectedTeamIdx === i
+                          ? "bg-white/[0.1] border-white/[0.15] text-white shadow-lg"
+                          : "bg-white/[0.03] border-white/[0.05] text-white/60 hover:text-white/90"
+                      )}
+                    >
+                      {team.name}
+                    </button>
+                  ))}
+                </div>
+
                 {content.teams && content.teams.length > 0 && (
                   (() => {
                     const team = content.teams[selectedTeamIdx] || content.teams[0];
@@ -1929,61 +2078,111 @@ export default function GuideClient({ guide }: { guide: any }) {
                     return (
                       <motion.div
                         key={selectedTeamIdx}
-                        initial={{ opacity: 0, x: 20 } }
-                        animate={{ opacity: 1, x: 0 } }
-                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                         className="flex flex-col min-h-full relative w-full pb-24"
                       >
-                        <div className="mb-10">
-                          <div className="flex flex-wrap gap-2 mb-4">
+                        {/* Header */}
+                        <div className="mb-12">
+                          <div className="flex flex-wrap items-center gap-3 mb-5">
                             {isOptimal && (
-                              <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded border border-emerald-200 flex items-center gap-1.5 shadow-sm">
-                                <Star size={12} className="fill-emerald-600 text-emerald-600" /> OPTIMAL TEAM
+                              <span className="px-3.5 py-1.5 bg-amber-500/10 text-amber-300 text-[10px] font-black uppercase tracking-widest rounded-lg border border-amber-500/20 flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.08)]">
+                                <Star size={12} className="fill-amber-400 text-amber-400" /> OPTIMAL TEAM
                               </span>
                             )}
+                            <span className="text-[10px] font-mono text-white/45 tracking-widest uppercase">
+                              {team.characters?.length || 0} Resonators
+                            </span>
                           </div>
-                          <h2 className="font-sans font-black text-[38px] lg:text-[46px] text-slate-900 leading-[1.1] mb-2 tracking-tight drop-shadow-sm">{team.name}</h2>
-                          <p className="text-emerald-600 font-mono text-sm tracking-widest uppercase font-bold">{team.version || 'Current Meta'}</p>
+                          <h2 className="font-sans font-black text-[42px] lg:text-[52px] text-white leading-[1.05] mb-3 tracking-tight">
+                            {team.name}
+                          </h2>
+                          <div className="flex items-center gap-3">
+                            <div className={cn("w-8 h-px", elementStyle.bg)} />
+                            <p className={cn("font-mono text-sm tracking-widest uppercase font-bold", elementStyle.color)}>
+                              {team.version || 'Current Meta'}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full xl:w-[90%] shrink-0">
+                        {/* Character Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-12 w-full shrink-0">
                           {team.characters?.map((char: any, idx: number) => (
-                            <div key={idx} className="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden group hover:border-emerald-200 hover:shadow-xl transition-all duration-300 shadow-sm">
-                              <div className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center bg-slate-50/50 rounded-bl-xl border-l border-b border-slate-100">
-                                <span className="text-[10px] font-mono text-slate-400 font-bold">0{idx + 1}</span>
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 30 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.15 + idx * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                              className="group relative bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] rounded-2xl p-7 flex flex-col items-center justify-center overflow-hidden hover:bg-white/[0.06] hover:border-white/[0.12] transition-all duration-500 shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)]"
+                            >
+                              {/* Card ambient glow */}
+                              <div className={cn("absolute top-[-30%] left-1/2 -translate-x-1/2 w-[200px] h-[200px] rounded-full blur-[80px] opacity-0 group-hover:opacity-[0.08] transition-opacity duration-700", elementStyle.bg)} />
+                              {/* Glass edge highlight */}
+                              <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
+                              {/* Index badge */}
+                              <div className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-white/[0.04] backdrop-blur-sm rounded-lg border border-white/[0.06]">
+                                <span className="text-[10px] font-mono text-white/40 font-bold">0{idx + 1}</span>
                               </div>
 
-                              <div className="w-24 h-24 sm:w-32 sm:h-32 mb-4 relative z-10 shrink-0">
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-b from-emerald-100 to-transparent p-[3px]">
-                                  <div className="w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center shadow-inner">
+                              {/* Character Avatar */}
+                              <div className="w-28 h-28 sm:w-32 sm:h-32 mb-5 relative z-10 shrink-0">
+                                {/* Glow ring */}
+                                <div className={cn("absolute inset-[-4px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-[2px]", elementStyle.bg, "bg-opacity-20")} />
+                                <div className={cn("absolute inset-0 rounded-full p-[2px] bg-gradient-to-b from-white/[0.15] via-white/[0.05] to-transparent group-hover:from-white/[0.25] group-hover:via-white/[0.1] transition-all duration-500")}>
+                                  <div className="w-full h-full rounded-full overflow-hidden bg-[#111118] flex items-center justify-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.5)]">
                                     {char.imageUrl || char.image ? (
-                                      <img src={char.imageUrl || char.image} alt={char.name} className="w-full h-[120%] object-cover object-top group-hover:scale-110 transition-transform duration-700 mix-blend-normal" />
+                                      <img
+                                        src={char.imageUrl || char.image}
+                                        alt={char.name}
+                                        className="w-full h-[125%] object-cover object-top group-hover:scale-110 transition-transform duration-700 ease-out"
+                                      />
                                     ) : (
-                                      <Users size={32} className="text-slate-300" />
+                                      <Users size={32} className="text-white/40" />
                                     )}
                                   </div>
                                 </div>
                               </div>
 
+                              {/* Character Info */}
                               <div className="text-center relative z-10 w-full">
-                                <h3 className="font-black text-xl text-slate-800 tracking-wide truncate">{char.name}</h3>
-                                <p className="text-xs uppercase tracking-[0.2em] text-emerald-600 mt-2 font-bold truncate">{char.role}</p>
+                                <h3 className="font-black text-lg text-white/90 tracking-wide truncate group-hover:text-white transition-colors duration-300">
+                                  {char.name}
+                                </h3>
+                                <p className={cn("text-xs uppercase tracking-[0.2em] mt-2 font-bold truncate transition-colors duration-300", elementStyle.color, "opacity-90 group-hover:opacity-100")}>
+                                  {char.role}
+                                </p>
                               </div>
-                            </div>
+
+                              {/* Bottom accent line */}
+                              <div className={cn("absolute bottom-0 left-[20%] right-[20%] h-px opacity-0 group-hover:opacity-40 transition-all duration-500 group-hover:left-[10%] group-hover:right-[10%]", elementStyle.bg)} />
+                            </motion.div>
                           ))}
                         </div>
 
+                        {/* Synergy Analysis */}
                         {team.description && (
-                          <div className="z-10 w-full xl:w-[90%] bg-white/70 backdrop-blur-xl rounded-2xl p-6 md:p-8 border border-slate-200 shadow-xl relative overflow-hidden shrink-0">
-                            <div className="absolute left-0 top-0 w-1.5 h-full bg-gradient-to-b from-emerald-400 to-teal-500" />
-                            <div className="flex items-center gap-2 mb-4">
-                              <Activity size={18} className="text-emerald-600" />
-                              <span className="font-black text-emerald-700 uppercase tracking-widest text-xs">Synergy Analysis</span>
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.5 }}
+                            className="z-10 w-full bg-white/[0.03] backdrop-blur-xl rounded-2xl p-7 md:p-9 border border-white/[0.06] shadow-[0_8px_30px_rgba(0,0,0,0.2)] relative overflow-hidden shrink-0 group/synergy"
+                          >
+                            {/* Left accent */}
+                            <div className={cn("absolute left-0 top-0 w-[3px] h-full bg-gradient-to-b opacity-60", `from-transparent ${elementStyle.bg.replace('bg-', 'via-')} to-transparent`)} />
+                            {/* Glass top edge */}
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.04] via-transparent to-transparent pointer-events-none" />
+
+                            <div className="flex items-center gap-3 mb-5 relative z-10">
+                              <div className={cn("p-2 rounded-lg bg-white/[0.06] border border-white/[0.06]", elementStyle.color)}>
+                                <Activity size={16} />
+                              </div>
+                              <span className="font-black text-white/80 uppercase tracking-widest text-xs">Synergy Analysis</span>
                             </div>
-                            <p className="text-sm md:text-base text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">
+                            <p className="text-sm md:text-base text-white/75 leading-relaxed font-medium whitespace-pre-wrap relative z-10 group-hover/synergy:text-white/90 transition-colors duration-500">
                               <RichText html={team.description} />
                             </p>
-                          </div>
+                          </motion.div>
                         )}
                       </motion.div>
                     );
@@ -1991,8 +2190,13 @@ export default function GuideClient({ guide }: { guide: any }) {
                 )}
               </div>
 
-              <button onClick={() => setActiveTab('OVERVIEW')} aria-label="Back to Overview" className="absolute top-6 right-8 text-slate-400 hover:text-slate-700 bg-white/50 hover:bg-white p-3 rounded-full backdrop-blur-md border border-slate-200 transition-all z-40 shadow-sm">
-                <X size={24} />
+              {/* Close button */}
+              <button
+                onClick={() => setActiveTab('OVERVIEW')}
+                aria-label="Back to Overview"
+                className="absolute top-6 right-8 text-white/50 hover:text-white bg-white/[0.08] hover:bg-white/[0.15] p-3 rounded-full backdrop-blur-xl border border-white/[0.1] hover:border-white/[0.2] transition-all z-40 shadow-lg hover:shadow-xl"
+              >
+                <X size={20} />
               </button>
             </div>
           </motion.div>
@@ -2177,9 +2381,9 @@ export default function GuideClient({ guide }: { guide: any }) {
       <AnimatePresence>
         {showTrailer && (
           <motion.div
-            initial={{ opacity: 0, backdropFilter: "blur(0px)" } }
-            animate={{ opacity: 1, backdropFilter: "blur(20px)" } }
-            exit={{ opacity: 0, backdropFilter: "blur(0px)" } }
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(20px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 sm:p-8 md:p-12"
             onClick={() => setShowTrailer(false)}
           >
