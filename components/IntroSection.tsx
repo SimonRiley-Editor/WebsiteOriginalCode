@@ -28,27 +28,34 @@ const Particles = memo(() => {
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none">
-      {particles.map((p, i) => (
-        <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{ 
-                x: p.xRatio * window.innerWidth, 
-                y: p.yRatio * window.innerHeight,
-                opacity: p.opacityOffset * 0.5 + 0.1,
-                scale: p.scaleOffset * 2 
-            }}
-            animate={{
-                y: [null, p.yEndOffset * -150 - 50],
-                opacity: [null, p.opEndOffset * 0.8 + 0.2, 0]
-            }}
-            transition={{
-                duration: p.durOffset * 15 + 10,
-                repeat: Infinity,
-                ease: "linear"
-            }}
-        />
-      ))}
+      {particles.map((p, i) => {
+        const isGold = i % 3 === 0;
+        const isRed = i % 5 === 0;
+        const size = isGold ? 'w-1.5 h-1.5' : isRed ? 'w-[3px] h-[3px]' : 'w-1 h-1';
+        const color = isGold ? 'bg-amber-400' : isRed ? 'bg-red-400' : 'bg-white';
+        const glow = isGold ? 'shadow-[0_0_6px_rgba(251,191,36,0.6)]' : isRed ? 'shadow-[0_0_4px_rgba(239,68,68,0.4)]' : '';
+        return (
+          <motion.div
+              key={i}
+              className={`absolute ${size} ${color} rounded-full ${glow}`}
+              initial={{ 
+                  x: p.xRatio * window.innerWidth, 
+                  y: p.yRatio * window.innerHeight,
+                  opacity: p.opacityOffset * 0.5 + 0.1,
+                  scale: p.scaleOffset * 2 
+              }}
+              animate={{
+                  y: [null, p.yEndOffset * -150 - 50],
+                  opacity: [null, p.opEndOffset * 0.8 + 0.2, 0]
+              }}
+              transition={{
+                  duration: p.durOffset * 15 + 10,
+                  repeat: Infinity,
+                  ease: "linear"
+              }}
+          />
+        );
+      })}
     </div>
   );
 });
@@ -57,10 +64,10 @@ Particles.displayName = 'Particles';
 const GrimVeilLogo = () => (
   <div className="absolute top-4 left-4 md:top-8 md:left-8 z-50 pointer-events-auto">
     <div className="relative group cursor-pointer flex items-center gap-4">
-      <div className="absolute -inset-4 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/20 to-red-500/15 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
       {/* Glass Container */}
-      <div className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl md:rounded-3xl md:backdrop-blur-md bg-black/60 md:bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+      <div className="relative w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-2xl md:rounded-3xl md:backdrop-blur-md bg-black/60 md:bg-white/5 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-amber-500/30 group-hover:shadow-[0_0_20px_rgba(251,191,36,0.25)]">
         
         {/* Inner Glare */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
@@ -69,8 +76,9 @@ const GrimVeilLogo = () => (
         <svg viewBox="0 0 100 100" className="w-8 h-8 md:w-11 md:h-11 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">
           <defs>
             <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e2e8f0" />
-              <stop offset="100%" stopColor="#9333ea" />
+              <stop offset="0%" stopColor="#fef3c7" />
+              <stop offset="50%" stopColor="#fbbf24" />
+              <stop offset="100%" stopColor="#ef4444" />
             </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
@@ -92,30 +100,39 @@ const GrimVeilLogo = () => (
           <path d="M 45 45 L 60 80 L 75 45 L 68 45 L 60 68 L 52 45 Z" fill="#fff" filter="url(#glow)" />
           
           {/* Center Star */}
-          <path d="M 50 40 L 52 48 L 60 50 L 52 52 L 50 60 L 48 52 L 40 50 L 48 48 Z" fill="#a855f7" filter="url(#glow)" className="animate-pulse" />
+          <path d="M 50 40 L 52 48 L 60 50 L 52 52 L 50 60 L 48 52 L 40 50 L 48 48 Z" fill="#fbbf24" filter="url(#glow)" className="animate-pulse" />
         </svg>
       </div>
       
       {/* Title next to logo on hover */}
       <div className="hidden md:flex flex-col opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
           <span className="font-black text-2xl tracking-[0.2em] text-white leading-none uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" style={{ fontFamily: 'var(--font-cinzel), serif' }}>GRIMVEIL</span>
-          <span className="text-[10px] tracking-[0.3em] text-purple-400 uppercase mt-1" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Guide School</span>
+          <span className="text-[10px] tracking-[0.3em] text-amber-400 uppercase mt-1" style={{ fontFamily: 'var(--font-cinzel), serif' }}>Guide School</span>
       </div>
     </div>
   </div>
 );
 
 const SocialSidebar = () => (
-  <div className="absolute left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-6 z-30 pointer-events-auto">
-    <SocialIcon icon={<Twitter size={20} strokeWidth={1.5} />} href="https://x.com/saintontas" />
-    <SocialIcon icon={<Youtube size={22} strokeWidth={1.5} />} href="https://www.youtube.com/@saintontas" />
-    <SocialIcon icon={<Twitch size={20} strokeWidth={1.5} />} href="https://www.twitch.tv/saintontas" />
+  <div className="absolute left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-30 pointer-events-auto">
+    {/* Top decorative line */}
+    <div className="w-[1px] h-10 bg-gradient-to-b from-transparent via-amber-400/30 to-amber-400/60 mb-1"></div>
+    
+    <SocialIcon icon={<Twitter size={18} strokeWidth={1.5} />} href="https://x.com/saintontas" />
+    <SocialIcon icon={<Youtube size={20} strokeWidth={1.5} />} href="https://www.youtube.com/@saintontas" />
+    <SocialIcon icon={<Twitch size={18} strokeWidth={1.5} />} href="https://www.twitch.tv/saintontas" />
+    
+    {/* Bottom decorative line */}
+    <div className="w-[1px] h-10 bg-gradient-to-b from-amber-400/60 via-amber-400/30 to-transparent mt-1"></div>
+    
+    {/* Vertical label */}
+    <div className="text-[7px] font-mono tracking-[0.3em] text-amber-400/40 uppercase rotate-90 origin-center whitespace-nowrap mt-6">SOCIAL</div>
   </div>
 );
 
 const SocialIcon = ({ icon, href = "#" }: { icon: React.ReactNode, href?: string }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" className="relative flex items-center justify-center text-white/50 hover:text-white transition-all duration-300 hover:scale-110">
-    <div className="relative z-10">{icon}</div>
+  <a href={href} target="_blank" rel="noopener noreferrer" className="relative flex items-center justify-center w-9 h-9 rounded-lg bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-amber-300 hover:bg-amber-400/10 hover:border-amber-400/30 hover:shadow-[0_0_15px_rgba(251,191,36,0.15)] transition-all duration-300 hover:scale-110 backdrop-blur-sm group/social">
+    <div className="relative z-10 transition-transform duration-300 group-hover/social:scale-110">{icon}</div>
   </a>
 );
 
@@ -315,8 +332,12 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
           {/* Dark overlay just for video */}
           <div className="absolute inset-0 bg-black/75 z-0" />
           
-          {/* Center node radial highlight */}
-          <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-to-b from-amber-900/10 via-amber-500/10 to-transparent rounded-full blur-[80px] pointer-events-none"></div>
+          {/* Multi-layer warm ambient glow */}
+          <div className="absolute top-[65%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-gradient-to-b from-amber-900/12 via-amber-500/10 to-transparent rounded-full blur-[80px] pointer-events-none"></div>
+          <div className="absolute top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[40vw] max-w-[600px] max-h-[400px] bg-gradient-to-b from-red-900/8 via-transparent to-transparent rounded-full blur-[100px] pointer-events-none"></div>
+          
+          {/* Cinematic vignette */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.5)_100%)] pointer-events-none z-[1]"></div>
       </motion.div>
       
       <GrimVeilLogo />
@@ -359,13 +380,13 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
               >
                   <h1 className="relative z-10 flex items-center justify-center w-full h-full my-auto transition-transform duration-700">
                      <span className="flex items-end justify-center w-full h-full opacity-90 group-hover/title:opacity-100 group-hover/title:tracking-[0.1em] transition-all duration-700 ease-out uppercase drop-shadow-lg font-black" style={{ fontFamily: 'var(--font-cinzel), serif', letterSpacing: '0.1em' }}>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">GRIM</span>
-                        <span className="relative text-purple-400 font-bold" style={{ textShadow: '0 0 20px rgba(168,85,247,0.8), 0 0 40px rgba(168,85,247,0.4)', margin: '0 0.02em' }}>
-                           V
-                           <span className="absolute inset-0 text-purple-300 blur-[4px] animate-[pulse_2s_ease-in-out_infinite] pointer-events-none select-none md:mix-blend-screen hidden md:inline" style={{ textShadow: 'none' }}>V</span>
-                        </span>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">EIL</span>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-b from-purple-400 to-indigo-600 ml-2 text-[1.25rem] md:text-[2.25rem] lg:text-[3.25rem] leading-[0.8] mb-[2px] md:mb-[4px]">.GG</span>
+                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-300">GRIM</span>
+                         <span className="relative text-amber-400 font-bold" style={{ textShadow: '0 0 20px rgba(251,191,36,0.8), 0 0 40px rgba(239,68,68,0.3)', margin: '0 0.02em' }}>
+                            V
+                            <span className="absolute inset-0 text-amber-300 blur-[4px] animate-[pulse_2s_ease-in-out_infinite] pointer-events-none select-none md:mix-blend-screen hidden md:inline" style={{ textShadow: 'none' }}>V</span>
+                         </span>
+                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-300">EIL</span>
+                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-amber-400 to-red-500 ml-2 text-[1.25rem] md:text-[2.25rem] lg:text-[3.25rem] leading-[0.8] mb-[2px] md:mb-[4px]">.GG</span>
                      </span>
                   </h1>
 
@@ -597,8 +618,16 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
 
               {/* Laser connecting center node to planet */}
               <div className="absolute top-[55%] bottom-[-50vh] left-1/2 -translate-x-1/2 flex flex-col items-center pt-[35px] md:pt-[45px]">
-                 <div className="w-[1px] h-[60vh] bg-gradient-to-b from-amber-400/80 to-amber-400/20 z-10 relative overflow-hidden">
+                 <div className="w-[1px] h-[60vh] bg-gradient-to-b from-amber-400/80 via-amber-400/40 to-amber-400/10 z-10 relative overflow-hidden">
+                    {/* Animated energy pulse traveling down the beam */}
+                    <motion.div 
+                       className="absolute w-full h-[30px] bg-gradient-to-b from-transparent via-white/80 to-transparent shadow-[0_0_8px_rgba(251,191,36,0.6)]" 
+                       animate={{ top: ['-30px', '100%'] }}
+                       transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+                    />
                  </div>
+                 {/* Subtle side glow */}
+                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[3px] h-full bg-amber-400/10 blur-[4px] pointer-events-none"></div>
               </div>
           </motion.div>
           
@@ -611,8 +640,10 @@ export const IntroSection = ({ setActiveSection, onExplore }: { setActiveSection
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[100vw] sm:w-[90vw] md:w-[70vw] lg:w-[60vw] max-w-[900px] h-[100px] md:h-[140px] hover:h-[350px] md:hover:h-[500px] translate-y-1/2 hover:translate-y-[5%] flex justify-center z-50 group cursor-pointer transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu"
       >
           {/* Atmospheric Glow */}
-          <div className="absolute top-[-5px] left-1/2 -translate-x-1/2 w-[60%] h-[30px] rounded-[100%] bg-amber-400/20 group-hover:bg-[#ef4444]/20 blur-[20px] z-20 md:mix-blend-screen transition-colors duration-700"></div>
+          <div className="absolute top-[-5px] left-1/2 -translate-x-1/2 w-[60%] h-[30px] rounded-[100%] bg-amber-400/25 group-hover:bg-[#ef4444]/25 blur-[20px] z-20 md:mix-blend-screen transition-colors duration-700"></div>
           <div className="absolute top-[0px] left-1/2 -translate-x-1/2 w-[40%] h-[10px] rounded-[100%] bg-white/30 blur-[10px] z-30 md:mix-blend-screen group-hover:opacity-0 transition-opacity duration-700"></div>
+          {/* Pulsing energy ring behind planet */}
+          <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 w-[80%] h-[40px] rounded-[100%] border border-amber-400/15 group-hover:border-amber-400/30 group-hover:w-[90%] group-hover:h-[50px] transition-all duration-1000 blur-[1px] pointer-events-none z-10"></div>
           
           {/* Planet Body Curved Outline morphing to Screen */}
           <div className="absolute inset-0 rounded-[100%] group-hover:rounded-[30px] overflow-hidden bg-[#0f0f0f]/95 group-hover:bg-[#181818]/95 md:backdrop-blur-xl border-t-[1.5px] border-amber-400/30 group-hover:border-[1px] group-hover:border-amber-500/40 shadow-[0_0_30px_rgba(251,191,36,0.1)] group-hover:shadow-[0_0_80px_rgba(251,191,36,0.15)] flex flex-col items-center pt-[15px] md:pt-[20px] transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-auto group-hover:border-b-0">
